@@ -16,41 +16,26 @@ st.set_page_config(
 )
 
 # ============================================================
-# CUSTOM CSS (AI/ML Background Image + Dark Visual Theme)
+# CUSTOM CSS (FORCED LIGHT MODE - GLOTTIS THEME)
 # ============================================================
 
 st.markdown(
     """
 <style>
-/* HIDE DEFAULT SIDEBAR ENTIRELY */
+/* 1. GLOBAL APP BACKGROUND */
+html, body, [data-testid="stAppViewContainer"], .stApp, [data-testid="stHeader"] {
+    background-color: #F8FAFC !important;
+    color: #1E293B !important;
+}
+
+/* HIDE DEFAULT SIDEBAR */
 [data-testid="stSidebar"] {
     display: none !important;
 }
 
-/* FIX TOP HEADER BAR BACKGROUND & BUTTON VISIBILITY */
+/* HEADER BAR */
 [data-testid="stHeader"] {
     background-color: transparent !important;
-}
-
-[data-testid="stHeader"] * {
-    color: #F9FAFB !important;
-}
-
-/* HIGH-TECH AI/ML DATA ANALYTICS BACKGROUND */
-.stApp {
-    background-color: #030712;
-    background-image: 
-        /* Radial glow accents for contrast */
-        radial-gradient(circle at 15% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
-        /* Dark overlay gradient to keep text crisp */
-        linear-gradient(180deg, rgba(3, 7, 18, 0.82) 0%, rgba(3, 7, 18, 0.92) 100%),
-        /* AI Neural Mesh & Data Visualization Image */
-        url("https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2000&auto=format&fit=crop");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: #F3F4F6 !important;
 }
 
 .block-container {
@@ -59,38 +44,37 @@ st.markdown(
     max-width: 1400px;
 }
 
-/* HEADER WITH GLOW EFFECTS */
+/* MAIN TITLE & SUBTITLE */
 .main-title {
     font-size: 42px;
     font-weight: 900;
     margin-bottom: 0px;
-    background: linear-gradient(90deg, #38BDF8 0%, #818CF8 50%, #C084FC 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #0B2545 !important;
     letter-spacing: -0.5px;
 }
 
 .sub-title {
     font-size: 16px;
-    color: #9CA3AF !important;
+    color: #0066CC !important;
+    font-weight: 600;
     margin-top: 4px;
     margin-bottom: 20px;
     letter-spacing: 0.5px;
 }
 
-/* TOP NAVIGATION STYLING */
+/* TOP NAVIGATION BAR */
 div[data-testid="stHorizontalBlock"] {
-    background: rgba(17, 24, 39, 0.65);
+    background: #FFFFFF !important;
     padding: 8px 12px;
     border-radius: 12px;
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    backdrop-filter: blur(12px);
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
     margin-bottom: 25px;
 }
 
 div[data-testid="stHorizontalBlock"] button {
     background-color: transparent !important;
-    color: #9CA3AF !important;
+    color: #475569 !important;
     border: none !important;
     font-weight: 600 !important;
     border-radius: 8px !important;
@@ -98,74 +82,73 @@ div[data-testid="stHorizontalBlock"] button {
 }
 
 div[data-testid="stHorizontalBlock"] button:hover {
-    color: #38BDF8 !important;
-    background: rgba(56, 189, 248, 0.15) !important;
+    color: #0066CC !important;
+    background: #EFF6FF !important;
 }
 
-/* HERO CONTAINER WITH GLASSMORPHISM & NEON BORDER */
+/* HERO CONTAINER (FORCED BRIGHT WHITE TEXT ON DARK BLUE BACKGROUND) */
 .hero {
     padding: 40px 35px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.7) 100%);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    box-shadow: 0 0 25px rgba(56, 189, 248, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(16px);
-    color: #FFFFFF !important;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0B2545 0%, #134074 100%) !important;
+    border: 1px solid #0B2545 !important;
+    box-shadow: 0 10px 25px rgba(11, 37, 69, 0.15) !important;
     margin-top: 10px;
     margin-bottom: 35px;
 }
 
 .hero h1, .hero h2 {
     color: #FFFFFF !important;
-    font-weight: 800;
+    font-weight: 800 !important;
+    margin-bottom: 12px !important;
 }
 
 .hero p {
-    color: #D1D5DB !important;
-    font-size: 17px;
-    line-height: 1.7;
+    color: #E2E8F0 !important;
+    font-size: 17px !important;
+    line-height: 1.7 !important;
 }
 
 /* SECTIONS */
 .section-title {
     font-size: 28px;
     font-weight: 800;
-    color: #F9FAFB !important;
+    color: #0B2545 !important;
     margin-top: 35px;
     margin-bottom: 6px;
 }
 
 .section-subtitle {
-    color: #9CA3AF !important;
+    color: #64748B !important;
     font-size: 15px;
     margin-bottom: 25px;
 }
 
-/* GLASS CARDS & METRICS */
+/* LIGHT CARDS & METRIC CONTAINERS */
 .card, .project-card, .metric-card {
-    background: rgba(15, 23, 42, 0.75);
+    background: #FFFFFF !important;
     padding: 24px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(12px);
+    border-radius: 14px;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
     transition: all 0.3s ease;
     margin-bottom: 20px;
 }
 
 .card:hover, .project-card:hover, .metric-card:hover {
-    border-color: rgba(56, 189, 248, 0.5);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+    border-color: #0066CC !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.12) !important;
 }
 
 .card h3, .project-card h3 {
-    color: #38BDF8 !important;
-    margin-bottom: 10px;
+    color: #0B2545 !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
 }
 
 .card p, .card li, .project-card p, .project-card b {
-    color: #D1D5DB !important;
+    color: #334155 !important;
     line-height: 1.6;
 }
 
@@ -177,24 +160,23 @@ div[data-testid="stHorizontalBlock"] button:hover {
 .metric-value {
     font-size: 32px;
     font-weight: 800;
-    background: linear-gradient(90deg, #38BDF8, #818CF8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #0066CC !important;
 }
 
 .metric-label {
-    color: #9CA3AF !important;
+    color: #64748B !important;
     font-size: 14px;
     margin-top: 4px;
+    font-weight: 600;
 }
 
-/* WORKFLOW */
+/* WORKFLOW SECTION */
 .workflow {
-    background: rgba(15, 23, 42, 0.75);
-    border-radius: 18px;
+    background: #FFFFFF !important;
+    border-radius: 16px;
     padding: 30px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
     margin-top: 20px;
     margin-bottom: 30px;
     overflow-x: auto;
@@ -220,27 +202,66 @@ div[data-testid="stHorizontalBlock"] button:hover {
 .workflow-name {
     font-size: 15px;
     font-weight: 700;
-    color: #F9FAFB !important;
+    color: #0B2545 !important;
 }
 
 .workflow-desc {
     font-size: 12px;
-    color: #9CA3AF !important;
+    color: #64748B !important;
     margin-top: 4px;
 }
 
 .workflow-arrow {
     font-size: 22px;
-    color: #38BDF8 !important;
+    color: #0066CC !important;
 }
 
-/* FORM OVERRIDES */
+/* FORM ELEMENTS FIX */
 div[data-testid="stForm"] {
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04) !important;
     border-radius: 16px;
     padding: 25px;
+}
+
+div[data-testid="stForm"] label,
+div[data-testid="stWidgetLabel"] label,
+div[data-testid="stWidgetLabel"] p {
+    color: #0B2545 !important;
+    font-weight: 700 !important;
+}
+
+div[data-testid="stForm"] input, 
+div[data-testid="stForm"] textarea {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+}
+
+div[data-testid="stForm"] div[role="combobox"] {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+}
+
+div[data-testid="stForm"] div[role="combobox"] * {
+    color: #0F172A !important;
+}
+
+div[data-testid="stForm"] button[type="submit"] {
+    background: #0B2545 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+}
+
+div[data-testid="stForm"] button[type="submit"]:hover {
+    background: #0066CC !important;
 }
 </style>
 """,
@@ -590,7 +611,7 @@ elif page == "Projects":
                     st.markdown(
                         f"""
 <div class="project-card">
-<div style="font-size:13px; color:#38BDF8; font-weight: 700;">PROJECT {number}</div>
+<div style="font-size:13px; color:#0066CC; font-weight: 700;">PROJECT {number}</div>
 <h3>{title}</h3>
 <p>{description}</p>
 <b>Technology:</b> <p>{tech}</p>
@@ -754,9 +775,9 @@ elif page == "Contact":
             """
 <div class="card">
 <h3>Email</h3>
-<p><a href="mailto:sumansekar1205@gmail.com" style="color: #38BDF8;">sumansekar1205@gmail.com</a></p>
+<p><a href="mailto:sumansekar1205@gmail.com" style="color: #0066CC;">sumansekar1205@gmail.com</a></p>
 <h3>Phone / WhatsApp</h3>
-<p><a href="https://wa.me/918825674102" target="_blank" style="color: #38BDF8;">📱 +91 8825674102 (Chat on WhatsApp)</a></p>
+<p><a href="https://wa.me/918825674102" target="_blank" style="color: #0066CC;">📱 +91 8825674102 (Chat on WhatsApp)</a></p>
 </div>
 """,
             unsafe_allow_html=True,
@@ -767,9 +788,9 @@ elif page == "Contact":
             """
 <div class="card">
 <h3>LinkedIn</h3>
-<p><a href="https://linkedin.com/in/sumansekar12/" target="_blank" style="color: #38BDF8;">linkedin.com/in/sumansekar12/</a></p>
+<p><a href="https://linkedin.com/in/sumansekar12/" target="_blank" style="color: #0066CC;">linkedin.com/in/sumansekar12/</a></p>
 <h3>GitHub</h3>
-<p><a href="https://github.com/Suman-SekarSagadev" target="_blank" style="color: #38BDF8;">github.com/Suman-SekarSagadev</a></p>
+<p><a href="https://github.com/Suman-SekarSagadev" target="_blank" style="color: #0066CC;">github.com/Suman-SekarSagadev</a></p>
 </div>
 """,
             unsafe_allow_html=True,
