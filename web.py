@@ -525,8 +525,6 @@ render_html(
 
     --light-blue: #7EC8FF;
 
-    --text-blue: #0B3C6F;
-
     --body-text: #60758A;
 
     --border: #D9E5F0;
@@ -572,11 +570,14 @@ body {
 
 .block-container {
 
-    padding-top: 1rem !important;
+    padding-top:
+        1rem !important;
 
-    padding-bottom: 4rem !important;
+    padding-bottom:
+        4rem !important;
 
-    max-width: 1400px !important;
+    max-width:
+        1400px !important;
 
 }
 
@@ -587,26 +588,28 @@ body {
 
 #MainMenu {
 
-    visibility: hidden !important;
+    visibility:
+        hidden !important;
 
 }
 
 footer {
 
-    visibility: hidden !important;
+    visibility:
+        hidden !important;
 
 }
 
 header[data-testid="stHeader"] {
 
-    background: transparent !important;
+    background:
+        transparent !important;
 
 }
 
 
 /* ============================================================
-   STREAMLIT DEFAULT HEADINGS
-   Prevent dark/black headings
+   DEFAULT HEADINGS
    ============================================================ */
 
 h1,
@@ -616,7 +619,8 @@ h4,
 h5,
 h6 {
 
-    color: var(--heading-blue) !important;
+    color:
+        #075EAD !important;
 
 }
 
@@ -627,23 +631,30 @@ h6 {
 
 .logo-title {
 
-    font-size: 27px;
+    font-size:
+        27px;
 
-    font-weight: 800;
+    font-weight:
+        800;
 
-    color: var(--primary-blue) !important;
+    color:
+        #0066CC !important;
 
-    line-height: 1.2;
+    line-height:
+        1.2;
 
 }
 
 .logo-subtitle {
 
-    font-size: 12px;
+    font-size:
+        12px;
 
-    color: var(--body-text) !important;
+    color:
+        #60758A !important;
 
-    margin-top: 4px;
+    margin-top:
+        4px;
 
 }
 
@@ -654,17 +665,23 @@ h6 {
 
 .stButton > button {
 
-    border-radius: 10px !important;
+    border-radius:
+        10px !important;
 
-    border: 1px solid #D9E3EE !important;
+    border:
+        1px solid #D9E3EE !important;
 
-    background: white !important;
+    background:
+        white !important;
 
-    color: var(--text-blue) !important;
+    color:
+        #123F73 !important;
 
-    font-weight: 600 !important;
+    font-weight:
+        600 !important;
 
-    min-height: 40px !important;
+    min-height:
+        40px !important;
 
     transition:
         all 0.2s ease !important;
@@ -673,11 +690,14 @@ h6 {
 
 .stButton > button:hover {
 
-    border-color: var(--primary-blue) !important;
+    border-color:
+        #0066CC !important;
 
-    color: var(--primary-blue) !important;
+    color:
+        #0066CC !important;
 
-    background: #F4F9FF !important;
+    background:
+        #F4F9FF !important;
 
 }
 
@@ -688,13 +708,17 @@ h6 {
 
 .hero {
 
-    width: 100%;
+    width:
+        100%;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
 
-    padding: 65px 45px;
+    padding:
+        65px 45px;
 
-    border-radius: 28px;
+    border-radius:
+        28px;
 
     background:
         linear-gradient(
@@ -704,11 +728,14 @@ h6 {
             #0066CC 100%
         );
 
-    color: white;
+    color:
+        white;
 
-    margin-top: 20px;
+    margin-top:
+        20px;
 
-    margin-bottom: 35px;
+    margin-bottom:
+        35px;
 
     box-shadow:
         0 20px 60px rgba(0, 50, 100, 0.20);
@@ -717,43 +744,58 @@ h6 {
 
 .hero-small-title {
 
-    color: #7EC8FF !important;
+    color:
+        #7EC8FF !important;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 800;
+    font-weight:
+        800;
 
-    letter-spacing: 1px;
+    letter-spacing:
+        1px;
 
-    margin-bottom: 12px;
+    margin-bottom:
+        12px;
 
 }
 
 .hero h1 {
 
-    color: #FFFFFF !important;
+    color:
+        #FFFFFF !important;
 
-    font-size: 50px;
+    font-size:
+        50px;
 
-    line-height: 1.1;
+    line-height:
+        1.1;
 
-    font-weight: 800;
+    font-weight:
+        800;
 
-    margin: 0 0 15px 0;
+    margin:
+        0 0 15px 0;
 
 }
 
 .hero p {
 
-    max-width: 850px;
+    max-width:
+        850px;
 
-    color: #DBEEFF !important;
+    color:
+        #DBEEFF !important;
 
-    font-size: 18px;
+    font-size:
+        18px;
 
-    line-height: 1.7;
+    line-height:
+        1.7;
 
-    margin: 0;
+    margin:
+        0;
 
 }
 
@@ -764,44 +806,59 @@ h6 {
 
 .section-title {
 
-    display: block;
+    display:
+        block;
 
-    width: 100%;
+    width:
+        100%;
 
-    color: #075EAD !important;
+    color:
+        #075EAD !important;
 
-    font-size: 30px;
+    font-size:
+        30px;
 
-    font-weight: 800;
+    font-weight:
+        800;
 
-    line-height: 1.3;
+    line-height:
+        1.3;
 
-    margin-top: 35px;
+    margin-top:
+        35px;
 
-    margin-bottom: 20px;
+    margin-bottom:
+        20px;
 
-    padding: 0;
+    padding:
+        0;
 
 }
 
 
 /* ============================================================
-   SECTION TITLE DECORATION
+   SECTION TITLE BLUE LINE
    ============================================================ */
 
 .section-title::after {
 
-    content: "";
+    content:
+        "";
 
-    display: block;
+    display:
+        block;
 
-    width: 48px;
+    width:
+        48px;
 
-    height: 4px;
+    height:
+        4px;
 
-    margin-top: 8px;
+    margin-top:
+        8px;
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
     background:
         linear-gradient(
@@ -1039,7 +1096,10 @@ h6 {
 
 
 /* ============================================================
-   CHAT LAUNCHER
+   ============================================================
+   FLOATING CHAT BUTTON
+   MOVED UP TO AVOID STREAMLIT MANAGE APP
+   ============================================================
    ============================================================ */
 
 .st-key-chat_launcher {
@@ -1051,7 +1111,7 @@ h6 {
         25px !important;
 
     bottom:
-        25px !important;
+        85px !important;
 
     width:
         170px !important;
@@ -1111,7 +1171,10 @@ h6 {
 
 
 /* ============================================================
+   ============================================================
    CHAT PANEL
+   MOVED UP ABOVE CHAT BUTTON
+   ============================================================
    ============================================================ */
 
 .st-key-chat_panel {
@@ -1123,7 +1186,7 @@ h6 {
         25px !important;
 
     bottom:
-        90px !important;
+        150px !important;
 
     width:
         390px !important;
@@ -1135,7 +1198,7 @@ h6 {
         610px !important;
 
     max-height:
-        calc(100vh - 120px) !important;
+        calc(100vh - 180px) !important;
 
     z-index:
         999998 !important;
@@ -1259,11 +1322,6 @@ h6 {
 
 }
 
-
-/* ============================================================
-   CHAT MESSAGE TEXT
-   ============================================================ */
-
 [data-testid="stChatMessage"] p {
 
     color:
@@ -1327,7 +1385,7 @@ h6 {
 
 
 /* ============================================================
-   SUCCESS / ERROR
+   ALERTS
    ============================================================ */
 
 [data-testid="stAlert"] {
@@ -1354,6 +1412,7 @@ h6 {
 
     }
 
+
     .hero {
 
         padding:
@@ -1364,12 +1423,14 @@ h6 {
 
     }
 
+
     .hero h1 {
 
         font-size:
             36px;
 
     }
+
 
     .hero p {
 
@@ -1378,6 +1439,7 @@ h6 {
 
     }
 
+
     .section-title {
 
         font-size:
@@ -1385,18 +1447,24 @@ h6 {
 
     }
 
+
+    /* Mobile chat button */
+
     .st-key-chat_launcher {
 
         right:
             15px !important;
 
         bottom:
-            15px !important;
+            75px !important;
 
         width:
             155px !important;
 
     }
+
+
+    /* Mobile chat panel */
 
     .st-key-chat_panel {
 
@@ -1404,13 +1472,16 @@ h6 {
             10px !important;
 
         bottom:
-            80px !important;
+            140px !important;
 
         width:
             calc(100vw - 20px) !important;
 
         height:
             70vh !important;
+
+        max-height:
+            calc(100vh - 160px) !important;
 
     }
 
