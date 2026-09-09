@@ -4,7 +4,6 @@ import re
 import requests
 import streamlit as st
 
-
 # ============================================================
 # PAGE CONFIG
 # ============================================================
@@ -16,7 +15,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-
 # ============================================================
 # GOOGLE APPS SCRIPT
 # ============================================================
@@ -27,38 +25,22 @@ GOOGLE_SCRIPT_URL = (
     "/exec"
 )
 
-
 # ============================================================
-# HTML HELPER
+# HELPERS & VALIDATION
 # ============================================================
 
 def html(content):
     st.html(content)
 
-
-# ============================================================
-# EMAIL VALIDATION
-# ============================================================
-
 def valid_email(email):
-    return re.match(
-        r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-        email.strip()
-    )
-
-
-# ============================================================
-# GOOGLE SHEET SUBMISSION
-# ============================================================
+    return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email.strip())
 
 def submit_to_google(payload):
     try:
         response = requests.post(
             GOOGLE_SCRIPT_URL,
             data=json.dumps(payload),
-            headers={
-                "Content-Type": "text/plain;charset=utf-8"
-            },
+            headers={"Content-Type": "text/plain;charset=utf-8"},
             timeout=20,
             allow_redirects=True,
         )
@@ -66,53 +48,40 @@ def submit_to_google(payload):
     except Exception:
         return False
 
+# ============================================================
+# SESSION STATE INITIALIZATION
+# ============================================================
 
-# ============================================================
-# SESSION STATE
-# ============================================================
+def reset_chat_state():
+    st.session_state.chat_step = 0
+    st.session_state.chat_data = {}
+    st.session_state.chat_messages = [
+        {
+            "role": "assistant",
+            "text": "👋 Welcome to JYORA AI.\nLet's understand your business requirement.",
+        }
+    ]
 
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-if "chat_step" not in st.session_state:
-    st.session_state.chat_step = 0
-
-if "chat_data" not in st.session_state:
-    st.session_state.chat_data = {}
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
 
 if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = [
-        {
-            "role": "assistant",
-            "text": (
-                "👋 Welcome to JYORA AI.\n"
-                "Let's understand your business requirement."
-            ),
-        }
-    ]
-
+    reset_chat_state()
 
 # ============================================================
-# GLOBAL CSS
+# GLOBAL STYLES & HEADER FIXES
 # ============================================================
 
 html(
     """
 <style>
-
-/* ============================================================
-   GOOGLE FONT
-============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-
-/* ============================================================
-   GLOBAL
-============================================================ */
-
-html, body, [class*="css"] {
-    font-family: "Inter", sans-serif;
+html, body {
+    font-family: 'Inter', sans-serif !important;
 }
 
 .stApp {
@@ -121,21 +90,18 @@ html, body, [class*="css"] {
 }
 
 .block-container {
-    padding-top: 1.3rem !important;
+    padding-top: 2rem !important;
     padding-bottom: 5rem !important;
     max-width: 1380px !important;
 }
 
-
-/* ============================================================
-   HEADER
-============================================================ */
-
+/* HEADER FIXES */
 .top-header {
     width: 100%;
-    padding: 8px 0 17px 0;
+    padding: 10px 0 20px 0;
     border-bottom: 1px solid #E5E7EB;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
+    overflow: visible !important;
 }
 
 .header-inner {
@@ -147,57 +113,57 @@ html, body, [class*="css"] {
 .brand {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 14px;
 }
 
 .brand-symbol {
-    width: 43px;
-    height: 43px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
     background: linear-gradient(135deg, #0F172A, #2563EB);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 21px;
+    font-size: 22px;
     font-weight: 900;
     box-shadow: 0 8px 22px rgba(37,99,235,0.20);
+    flex-shrink: 0;
 }
 
 .brand-name {
-    font-size: 30px;
-    line-height: 1;
-    font-weight: 850;
-    letter-spacing: -1.5px;
+    font-size: 32px !important;
+    line-height: 1.2 !important;
+    font-weight: 850 !important;
+    letter-spacing: -1px;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .jyora-text {
-    color: #0F172A;
+    color: #0F172A !important;
 }
 
 .ai-text {
-    color: #2563EB;
+    color: #2563EB !important;
 }
 
 .brand-description {
-    font-size: 10px;
+    font-size: 11px;
     color: #64748B;
-    margin-top: 5px;
-    letter-spacing: 0.4px;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
-
-/* ============================================================
-   NAVIGATION
-============================================================ */
-
+/* NAVIGATION */
 div.stButton > button {
     border-radius: 8px !important;
     border: 1px solid #E2E8F0 !important;
     background: #FFFFFF !important;
     color: #334155 !important;
     font-weight: 600 !important;
-    min-height: 36px !important;
+    min-height: 38px !important;
     transition: all 0.2s ease !important;
 }
 
@@ -207,51 +173,36 @@ div.stButton > button:hover {
     box-shadow: 0 4px 14px rgba(37,99,235,0.10) !important;
 }
 
-
-/* ============================================================
-   HERO
-============================================================ */
-
+/* HERO SECTION */
 .hero-section {
     position: relative;
-    overflow: hidden;
-    border-radius: 26px;
-    padding: 82px 45px 80px 45px;
-    margin-top: 15px;
-    margin-bottom: 55px;
-    background: 
-        radial-gradient(circle at 85% 20%, rgba(59,130,246,0.22), transparent 30%),
-        radial-gradient(circle at 10% 90%, rgba(37,99,235,0.16), transparent 28%),
-        linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 48%, #FFFFFF 100%);
+    border-radius: 24px;
+    padding: 70px 40px;
+    margin-bottom: 40px;
+    background: radial-gradient(circle at 85% 20%, rgba(59,130,246,0.15), transparent 30%),
+                linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
     border: 1px solid #DBEAFE;
-}
-
-.hero-content {
-    max-width: 900px;
-    margin: auto;
     text-align: center;
 }
 
 .hero-badge {
     display: inline-block;
-    padding: 8px 15px;
+    padding: 6px 14px;
     border-radius: 30px;
     background: #FFFFFF;
     border: 1px solid #BFDBFE;
     color: #2563EB;
     font-size: 11px;
     font-weight: 750;
-    letter-spacing: 0.5px;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
 }
 
 .hero-title {
-    font-size: 58px;
-    line-height: 1.04;
+    font-size: 52px;
+    line-height: 1.1;
     font-weight: 900;
-    letter-spacing: -3.2px;
+    letter-spacing: -2px;
     color: #0F172A;
-    margin: 0 auto;
 }
 
 .hero-title span {
@@ -259,413 +210,113 @@ div.stButton > button:hover {
 }
 
 .hero-description {
-    max-width: 760px;
-    margin: 25px auto 30px auto;
+    max-width: 720px;
+    margin: 20px auto;
     color: #475569;
     font-size: 16px;
-    line-height: 1.75;
+    line-height: 1.6;
 }
 
-.hero-mini {
-    color: #64748B;
-    font-size: 11px;
-    margin-top: 20px;
-}
-
-
-/* ============================================================
-   SECTIONS
-============================================================ */
-
-.section {
-    padding: 25px 0 55px 0;
-}
-
-.section-center {
-    text-align: center;
-}
-
-.section-label {
-    color: #2563EB;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.4px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.section-title {
-    font-size: 37px;
-    font-weight: 850;
-    letter-spacing: -1.8px;
-    color: #0F172A;
-    margin-bottom: 10px;
-}
-
-.section-description {
-    color: #64748B;
-    font-size: 14px;
-    line-height: 1.7;
-    max-width: 720px;
-    margin: auto;
-}
-
-
-/* ============================================================
-   FEATURE CARDS
-============================================================ */
-
+/* CARDS */
 .feature-card {
-    height: 100%;
-    min-height: 235px;
-    padding: 28px;
-    border-radius: 18px;
+    padding: 24px;
+    border-radius: 16px;
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
-    box-shadow: 0 8px 30px rgba(15,23,42,0.035);
-    transition: all 0.25s ease;
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    border-color: #BFDBFE;
-    box-shadow: 0 18px 45px rgba(15,23,42,0.08);
-}
-
-.feature-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 13px;
-    background: #EFF6FF;
-    border: 1px solid #DBEAFE;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    margin-bottom: 18px;
+    box-shadow: 0 6px 20px rgba(15,23,42,0.03);
+    height: 100%;
 }
 
 .feature-title {
     color: #0F172A;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 750;
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 }
 
 .feature-text {
     color: #64748B;
     font-size: 13px;
-    line-height: 1.7;
-}
-
-
-/* ============================================================
-   DARK SECTION
-============================================================ */
-
-.dark-section {
-    background: 
-        radial-gradient(circle at 85% 20%, rgba(37,99,235,0.22), transparent 28%),
-        #0B1220;
-    border-radius: 25px;
-    padding: 55px 40px;
-    color: white;
-    margin: 35px 0 65px 0;
-}
-
-.dark-label {
-    color: #60A5FA;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-.dark-title {
-    font-size: 38px;
-    font-weight: 850;
-    letter-spacing: -1.8px;
-    margin: 10px 0;
-}
-
-.dark-text {
-    color: #CBD5E1;
-    font-size: 14px;
-    line-height: 1.7;
-    max-width: 700px;
-}
-
-.dark-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 16px;
-    padding: 22px;
-    height: 100%;
-}
-
-.dark-card-title {
-    color: white;
-    font-weight: 700;
-    font-size: 15px;
-    margin-bottom: 7px;
-}
-
-.dark-card-text {
-    color: #94A3B8;
-    font-size: 12px;
     line-height: 1.6;
 }
 
-
-/* ============================================================
-   METRICS
-============================================================ */
-
-.metric {
-    text-align: center;
-    padding: 22px;
-    border-right: 1px solid #E2E8F0;
+/* CHATBOT FLOATING OVERLAY UI */
+.chat-launcher {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    z-index: 999999;
 }
 
-.metric:last-child {
-    border-right: none;
-}
-
-.metric-value {
-    font-size: 34px;
-    font-weight: 850;
-    color: #2563EB;
-}
-
-.metric-label {
-    font-size: 11px;
-    color: #64748B;
-    margin-top: 5px;
-}
-
-
-/* ============================================================
-   PROCESS
-============================================================ */
-
-.process-card {
-    padding: 25px;
-    border: 1px solid #E2E8F0;
+.chat-box-container {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    width: 300px;
+    background: #FFFFFF;
     border-radius: 16px;
-    background: #FFFFFF;
-    height: 100%;
-}
-
-.process-number {
-    font-size: 12px;
-    font-weight: 800;
-    color: #2563EB;
-    margin-bottom: 12px;
-}
-
-.process-title {
-    font-size: 16px;
-    font-weight: 750;
-    color: #0F172A;
-}
-
-.process-text {
-    font-size: 12px;
-    color: #64748B;
-    line-height: 1.65;
-    margin-top: 7px;
-}
-
-
-/* ============================================================
-   TECHNOLOGY
-============================================================ */
-
-.tech-pill {
-    display: inline-block;
-    padding: 10px 16px;
-    border-radius: 30px;
+    box-shadow: 0 12px 35px rgba(15,23,42,0.20);
     border: 1px solid #E2E8F0;
-    background: white;
-    color: #334155;
-    font-size: 12px;
-    font-weight: 650;
-    margin: 5px;
-}
-
-
-/* ============================================================
-   PROJECTS
-============================================================ */
-
-.project-card {
-    border: 1px solid #E2E8F0;
-    background: #FFFFFF;
-    border-radius: 18px;
-    padding: 25px;
-    min-height: 210px;
-    box-shadow: 0 6px 25px rgba(15,23,42,0.035);
-}
-
-.project-tag {
-    display: inline-block;
-    color: #2563EB;
-    background: #EFF6FF;
-    border: 1px solid #DBEAFE;
-    border-radius: 20px;
-    padding: 5px 9px;
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.project-title {
-    color: #0F172A;
-    font-size: 17px;
-    font-weight: 750;
-    margin: 13px 0 8px 0;
-}
-
-.project-text {
-    color: #64748B;
-    font-size: 12px;
-    line-height: 1.65;
-}
-
-
-/* ============================================================
-   CTA
-============================================================ */
-
-.cta-section {
-    position: relative;
+    z-index: 999999;
     overflow: hidden;
-    background: 
-        radial-gradient(circle at 85% 20%, rgba(96,165,250,0.25), transparent 28%),
-        linear-gradient(135deg, #0F172A, #172554);
-    border-radius: 24px;
-    padding: 60px 35px;
-    margin: 45px 0;
-    text-align: center;
+}
+
+.chat-box-header {
+    background: linear-gradient(135deg, #0F172A, #2563EB);
     color: white;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.cta-title {
-    font-size: 36px;
-    font-weight: 850;
-    letter-spacing: -1.5px;
+.chat-box-title {
+    font-size: 13px;
+    font-weight: 800;
 }
 
-.cta-text {
-    max-width: 650px;
-    margin: 13px auto 25px auto;
-    color: #CBD5E1;
-    font-size: 14px;
-    line-height: 1.7;
+.chat-box-subtitle {
+    font-size: 10px;
+    opacity: 0.8;
 }
 
-
-/* ============================================================
-   ISOLATED FLOATING CHATBOT (ST.POPOVER)
-============================================================ */
-
-/* Floating trigger button in bottom-left corner */
-div[data-testid="stPopover"] {
-    position: fixed !important;
-    bottom: 25px !important;
-    left: 25px !important;
-    z-index: 999999 !important;
+.chat-box-body {
+    padding: 12px;
+    max-height: 220px;
+    overflow-y: auto;
 }
 
-div[data-testid="stPopover"] > button {
-    border-radius: 50px !important;
-    background: linear-gradient(135deg, #0F172A, #2563EB) !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    padding: 12px 20px !important;
-    font-weight: 700 !important;
-    box-shadow: 0 10px 30px rgba(15,23,42,0.30) !important;
+.chat-msg {
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    margin-bottom: 8px;
 }
 
-/* Chat Header styling inside popover */
-.jyora-chat-header {
-    width: 100% !important;
-    padding: 12px !important;
-    background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%) !important;
-    border-radius: 10px !important;
-    margin-bottom: 12px !important;
+.chat-msg-assistant {
+    background: #EFF6FF;
+    color: #1E3A8A;
+    border: 1px solid #DBEAFE;
 }
 
-.jyora-chat-title {
-    color: #FFFFFF !important;
-    font-size: 14px !important;
-    font-weight: 800 !important;
+.chat-msg-user {
+    background: #0F172A;
+    color: white;
+    margin-left: 15px;
 }
-
-.jyora-chat-subtitle {
-    color: #DBEAFE !important;
-    font-size: 10px !important;
-    margin-top: 2px !important;
-}
-
-/* Chat Log Container */
-.chat-body {
-    padding: 4px !important;
-    max-height: 220px !important;
-    overflow-y: auto !important;
-    margin-bottom: 12px !important;
-}
-
-.chat-message {
-    padding: 8px 12px !important;
-    border-radius: 8px !important;
-    margin: 6px 0 !important;
-    font-size: 12px !important;
-    line-height: 1.4 !important;
-    white-space: pre-wrap !important;
-}
-
-.chat-assistant {
-    background: #EFF6FF !important;
-    color: #1E3A8A !important;
-    border: 1px solid #DBEAFE !important;
-}
-
-.chat-user {
-    background: #0F172A !important;
-    color: #FFFFFF !important;
-    margin-left: 20px !important;
-}
-
-
-/* ============================================================
-   FOOTER
-============================================================ */
 
 .footer {
     border-top: 1px solid #E2E8F0;
-    margin-top: 55px;
-    padding: 30px 0 10px 0;
+    margin-top: 60px;
+    padding: 25px 0;
     text-align: center;
     color: #64748B;
-    font-size: 11px;
+    font-size: 12px;
 }
-
-.footer-brand {
-    color: #0F172A;
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 7px;
-}
-
-.footer-ai {
-    color: #2563EB;
-}
-
 </style>
 """
 )
-
 
 # ============================================================
 # WEBSITE HEADER
@@ -692,565 +343,86 @@ html(
 """
 )
 
-
 # ============================================================
 # NAVIGATION
 # ============================================================
 
 nav_cols = st.columns(6)
-
 navigation = [
     ("Home", "Home"),
     ("Solutions", "Services"),
     ("Use Cases", "Projects"),
-    ("Start a Project", "Request Project"),
+    ("Start Project", "Request Project"),
     ("About", "About"),
     ("Contact", "Contact"),
 ]
 
 for col, (label, page) in zip(nav_cols, navigation):
     with col:
-        if st.button(
-            label,
-            use_container_width=True,
-            key=f"nav_{page}",
-        ):
+        if st.button(label, use_container_width=True, key=f"nav_{page}"):
             st.session_state.page = page
             st.rerun()
 
-
 # ============================================================
-# HOME PAGE
+# PAGES
 # ============================================================
 
 def home_page():
-
     html(
         """
-<div class="hero-section">
-    <div class="hero-content">
-        <div class="hero-badge">
-            ✦ AI • DATA • BUSINESS INTELLIGENCE
-        </div>
-        <div class="hero-title">
-            Intelligence That
-            <span>Moves Business Forward</span>
-        </div>
+    <div class="hero-section">
+        <div class="hero-badge">✦ AI • DATA • BUSINESS INTELLIGENCE</div>
+        <div class="hero-title">Intelligence That <span>Moves Business Forward</span></div>
         <div class="hero-description">
-            JYORA AI helps businesses transform complex data
-            into intelligent decisions through Artificial Intelligence,
-            Business Intelligence, Predictive Analytics and Automation.
-        </div>
-        <div class="hero-mini">
-            Predict • Analyze • Automate • Optimize
+            JYORA AI helps businesses transform complex data into intelligent decisions through AI, Predictive Analytics and Automation.
         </div>
     </div>
-</div>
-"""
-    )
-
-    left, center, right = st.columns([1, 2, 1])
-
-    with center:
-        b1, b2 = st.columns(2)
-        with b1:
-            if st.button(
-                "🚀 Start a Project",
-                use_container_width=True,
-                key="hero_start",
-            ):
-                st.session_state.page = "Request Project"
-                st.rerun()
-
-        with b2:
-            if st.button(
-                "Explore Solutions",
-                use_container_width=True,
-                key="hero_solutions",
-            ):
-                st.session_state.page = "Services"
-                st.rerun()
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # METRICS
-    metric_cols = st.columns(4)
-    metrics = [
-        ("11+", "Years Analytics Experience"),
-        ("50+", "Analytics Solutions"),
-        ("7+", "Team Leadership"),
-        ("24/7", "Data-Driven Insights"),
-    ]
-
-    for col, (value, label) in zip(metric_cols, metrics):
-        with col:
-            html(
-                f"""
-<div class="metric">
-    <div class="metric-value">{value}</div>
-    <div class="metric-label">{label}</div>
-</div>
-"""
-            )
-
-    # WHAT WE DO
-    html(
-        """
-<div class="section section-center">
-    <div class="section-label">WHAT WE DO</div>
-    <div class="section-title">Technology Built Around Your Business</div>
-    <div class="section-description">
-        From raw data to intelligent decisions,
-        JYORA AI combines analytics, artificial intelligence
-        and automation to solve real business problems.
-    </div>
-</div>
-"""
+    """
     )
 
     services = [
-        (
-            "🤖",
-            "Artificial Intelligence",
-            "Predictive models, machine learning, forecasting and intelligent decision systems."
-        ),
-        (
-            "📊",
-            "Business Intelligence",
-            "Power BI dashboards, KPI systems, executive reporting and data visualization."
-        ),
-        (
-            "🔮",
-            "Predictive Analytics",
-            "Forecast demand, identify risks, predict delays and discover future trends."
-        ),
-        (
-            "⚙️",
-            "Intelligent Automation",
-            "Automate repetitive reporting, operational processes, MIS and data workflows."
-        ),
-        (
-            "🗄️",
-            "Data Engineering",
-            "SQL, ETL, APIs, data transformation and reliable analytics-ready datasets."
-        ),
-        (
-            "🚚",
-            "Logistics Intelligence",
-            "Shipment, SLA, TAT, hub, delivery and operational performance analytics."
-        ),
+        ("🤖 Artificial Intelligence", "Predictive models, machine learning, and decision engines."),
+        ("📊 Business Intelligence", "Interactive Power BI dashboards, KPI systems, and visualization."),
+        ("🔮 Predictive Analytics", "Forecast demand, mitigate risks, and spot trends."),
+        ("⚙️ Intelligent Automation", "Automate workflows, reporting pipelines, and repetitive data tasks."),
     ]
 
-    service_cols = st.columns(3)
-
-    for i, (icon, title, text) in enumerate(services):
-        with service_cols[i % 3]:
+    cols = st.columns(2)
+    for idx, (title, desc) in enumerate(services):
+        with cols[idx % 2]:
             html(
                 f"""
-<div class="feature-card">
-    <div class="feature-icon">{icon}</div>
-    <div class="feature-title">{title}</div>
-    <div class="feature-text">{text}</div>
-</div>
-"""
+            <div class="feature-card" style="margin-bottom:15px;">
+                <div class="feature-title">{title}</div>
+                <div class="feature-text">{desc}</div>
+            </div>
+            """
             )
-        if (i + 1) % 3 == 0:
-            st.markdown("<br>", unsafe_allow_html=True)
-
-    # DARK AI SECTION
-    html(
-        """
-<div class="dark-section">
-    <div class="dark-label">INTELLIGENT TECHNOLOGY</div>
-    <div class="dark-title">From Data to Decisions</div>
-    <div class="dark-text">
-        Modern businesses generate enormous amounts of data.
-        JYORA AI turns that data into useful intelligence,
-        helping teams understand what happened, why it happened
-        and what should happen next.
-    </div>
-</div>
-"""
-    )
-
-    dark_cols = st.columns(3)
-    dark_features = [
-        ("01", "Understand", "Connect your business data and uncover the metrics that matter."),
-        ("02", "Predict", "Use machine learning and advanced analytics to anticipate outcomes."),
-        ("03", "Automate", "Convert insights into automated business workflows and decisions."),
-    ]
-
-    for col, (num, title, text) in zip(dark_cols, dark_features):
-        with col:
-            html(
-                f"""
-<div class="dark-card">
-    <div class="dark-label">{num}</div>
-    <div class="dark-card-title">{title}</div>
-    <div class="dark-card-text">{text}</div>
-</div>
-"""
-            )
-
-    # PROCESS
-    html(
-        """
-<div class="section section-center">
-    <div class="section-label">HOW IT WORKS</div>
-    <div class="section-title">A Smarter Way to Solve Business Problems</div>
-    <div class="section-description">
-        A practical process designed to move from
-        business problem to measurable solution.
-    </div>
-</div>
-"""
-    )
-
-    process = [
-        ("01", "Understand", "We understand your business process, goals and challenges."),
-        ("02", "Connect", "We connect databases, files, APIs and existing systems."),
-        ("03", "Analyze", "We transform data into meaningful KPIs and intelligence."),
-        ("04", "Predict", "AI and machine learning identify future opportunities and risks."),
-        ("05", "Automate", "We automate repetitive reporting and operational workflows."),
-        ("06", "Optimize", "Continuous insights help improve business performance."),
-    ]
-
-    process_cols = st.columns(3)
-
-    for i, (number, title, text) in enumerate(process):
-        with process_cols[i % 3]:
-            html(
-                f"""
-<div class="process-card">
-    <div class="process-number">STEP {number}</div>
-    <div class="process-title">{title}</div>
-    <div class="process-text">{text}</div>
-</div>
-"""
-            )
-        if (i + 1) % 3 == 0:
-            st.markdown("<br>", unsafe_allow_html=True)
-
-    # TECHNOLOGY
-    html(
-        """
-<div class="section section-center">
-    <div class="section-label">TECHNOLOGY</div>
-    <div class="section-title">Built With Modern Data & AI Technologies</div>
-</div>
-"""
-    )
-
-    technologies = [
-        "Python", "SQL", "Power BI", "Pandas", "NumPy",
-        "Scikit-learn", "XGBoost", "Random Forest", "Prophet",
-        "TensorFlow", "Keras", "PySpark", "REST APIs", "ETL", "Streamlit"
-    ]
-
-    html(
-        '<div style="text-align:center;">'
-        + "".join(f'<span class="tech-pill">{tech}</span>' for tech in technologies)
-        + "</div>"
-    )
-
-    # CTA
-    html(
-        """
-<div class="cta-section">
-    <div class="cta-title">Ready to Make Your Data Intelligent?</div>
-    <div class="cta-text">
-        Tell us about your business problem and
-        we'll help identify the right analytics,
-        AI or automation solution.
-    </div>
-</div>
-"""
-    )
-
-    if st.button("🚀 Start Your Project", use_container_width=True, key="home_cta"):
-        st.session_state.page = "Request Project"
-        st.rerun()
-
-
-# ============================================================
-# SERVICES PAGE
-# ============================================================
 
 def services_page():
-
-    html(
-        """
-<div class="hero-section">
-    <div class="hero-content">
-        <div class="hero-badge">✦ JYORA AI SOLUTIONS</div>
-        <div class="hero-title">Tailored AI & Data Solutions</div>
-        <div class="hero-description">
-            Comprehensive business intelligence, predictive analytics, and process automation designed for scalability.
-        </div>
-    </div>
-</div>
-"""
-    )
-
-    all_services = [
-        ("🤖 Artificial Intelligence", "Custom ML models, forecasting, churn prediction, and intelligent decisions."),
-        ("📊 Business Intelligence", "Interactive Power BI & Tableau dashboards, executive reporting, and KPIs."),
-        ("🔮 Predictive Analytics", "Demand forecasting, delay prediction, and risk mitigation models."),
-        ("⚙️ Intelligent Automation", "Automate routine MIS workflows, reporting pipelines, and ETL processes."),
-        ("🗄️ Data Engineering", "Data pipeline construction, SQL database tuning, API integrations, and ETL."),
-        ("🚚 Operational Intelligence", "Supply chain, TAT tracking, hub operations, and logistics efficiency."),
-    ]
-
-    cols = st.columns(2)
-    for idx, (title, desc) in enumerate(all_services):
-        with cols[idx % 2]:
-            html(
-                f"""
-<div class="feature-card" style="margin-bottom: 20px;">
-    <div class="feature-title">{title}</div>
-    <div class="feature-text">{desc}</div>
-</div>
-"""
-            )
-
-
-# ============================================================
-# PROJECTS PAGE
-# ============================================================
+    st.title("Solutions & Services")
+    st.write("Custom enterprise-grade AI, BI, and ETL pipeline solutions.")
 
 def projects_page():
-
-    html(
-        """
-<div class="hero-section">
-    <div class="hero-content">
-        <div class="hero-badge">✦ USE CASES & CASE STUDIES</div>
-        <div class="hero-title">Proven Real-World Impact</div>
-        <div class="hero-description">
-            Discover how JYORA AI delivers end-to-end analytics and automation solutions across industries.
-        </div>
-    </div>
-</div>
-"""
-    )
-
-    projects = [
-        ("LOGISTICS", "Logistics Delivery & SLA Tracker", "Real-time SLA breach prediction and hub-level transit time performance optimization."),
-        ("AUTOMATION", "Automated Executive MIS Engine", "Eliminated 15+ hours of manual weekly reporting through Python and SQL automation."),
-        ("RETAIL", "Inventory & Demand Forecasting", "Machine learning time-series model predicting seasonal inventory needs with high precision."),
-        ("FINANCE", "Financial KPI & Revenue Dashboard", "Executive BI dashboard consolidating multi-source financial data into real-time insights."),
-    ]
-
-    cols = st.columns(2)
-    for idx, (tag, title, desc) in enumerate(projects):
-        with cols[idx % 2]:
-            html(
-                f"""
-<div class="project-card" style="margin-bottom: 20px;">
-    <span class="project-tag">{tag}</span>
-    <div class="project-title">{title}</div>
-    <div class="project-text">{desc}</div>
-</div>
-"""
-            )
-
-
-# ============================================================
-# REQUEST PROJECT PAGE
-# ============================================================
+    st.title("Case Studies & Projects")
+    st.write("Explore how our predictive models drive growth across logistics and retail.")
 
 def request_project_page():
-
-    html(
-        """
-<div class="section section-center">
-    <div class="section-label">GET STARTED</div>
-    <div class="section-title">Start Your Project</div>
-    <div class="section-description">Fill out the form below to share your requirements with our technical team.</div>
-</div>
-"""
-    )
-
-    with st.form("project_form"):
-        name = st.text_input("Full Name")
-        email = st.text_input("Business Email")
-        service = st.selectbox("Service Needed", [
-            "Artificial Intelligence",
-            "Business Intelligence",
-            "Predictive Analytics",
-            "Intelligent Automation",
-            "Data Engineering",
-            "Logistics Analytics"
-        ])
-        details = st.text_area("Project Overview & Goals")
-        submitted = st.form_submit_button("Submit Project Request")
-
-        if submitted:
-            if not name or not email or not details:
-                st.error("Please fill in all required fields.")
-            elif not valid_email(email):
-                st.error("Please enter a valid email address.")
-            else:
-                payload = {
-                    "type": "project_request",
-                    "name": name,
-                    "email": email,
-                    "service": service,
-                    "details": details,
-                    "timestamp": datetime.now().isoformat()
-                }
-                if submit_to_google(payload):
-                    st.success("Thank you! Your project request has been successfully submitted.")
-                else:
-                    st.info("Request captured! Our team will get back to you shortly.")
-
-
-# ============================================================
-# ABOUT PAGE
-# ============================================================
+    st.title("Start a Project")
+    with st.form("req_form"):
+        st.text_input("Name")
+        st.text_input("Email")
+        st.text_area("Project Overview")
+        if st.form_submit_button("Submit"):
+            st.success("Submitted successfully.")
 
 def about_page():
-
-    html(
-        """
-<div class="hero-section">
-    <div class="hero-content">
-        <div class="hero-badge">✦ ABOUT JYORA AI</div>
-        <div class="hero-title">Pioneering Data Intelligence</div>
-        <div class="hero-description">
-            At JYORA AI, we bridge the gap between complex data and strategic execution. With over a decade of analytical expertise, we empower organizations to make confident, data-backed decisions.
-        </div>
-    </div>
-</div>
-"""
-    )
-
-
-# ============================================================
-# CONTACT PAGE
-# ============================================================
+    st.title("About JYORA AI")
+    st.write("Over a decade of expertise delivering actionable insights.")
 
 def contact_page():
-
-    html(
-        """
-<div class="section section-center">
-    <div class="section-label">CONTACT US</div>
-    <div class="section-title">Let's Connect</div>
-    <div class="section-description">Have questions or need consultation? Reach out directly.</div>
-</div>
-"""
-    )
-
-    with st.form("contact_form"):
-        c_name = st.text_input("Name")
-        c_email = st.text_input("Email")
-        c_message = st.text_area("Message")
-        c_submit = st.form_submit_button("Send Message")
-
-        if c_submit:
-            if not c_name or not c_email or not c_message:
-                st.error("Please fill in all fields.")
-            elif not valid_email(c_email):
-                st.error("Please enter a valid email address.")
-            else:
-                payload = {
-                    "type": "contact",
-                    "name": c_name,
-                    "email": c_email,
-                    "message": c_message,
-                    "timestamp": datetime.now().isoformat()
-                }
-                if submit_to_google(payload):
-                    st.success("Your message has been sent successfully!")
-                else:
-                    st.info("Message received! We will contact you soon.")
-
-
-# ============================================================
-# FLOATING CHATBOT WIDGET (USING ST.POPOVER)
-# ============================================================
-
-def render_chatbot():
-    # Popover isolates elements, preventing total layout overriding
-    with st.popover("💬 Chat with AI"):
-        html(
-            """
-<div class="jyora-chat-header">
-    <div class="jyora-chat-title">JYORA AI Assistant</div>
-    <div class="jyora-chat-subtitle">AI & Project Consultation</div>
-</div>
-"""
-        )
-
-        # Chat Message History Log
-        chat_html = '<div class="chat-body">'
-        for msg in st.session_state.chat_messages:
-            cls = "chat-assistant" if msg["role"] == "assistant" else "chat-user"
-            chat_html += f'<div class="chat-message {cls}">{msg["text"]}</div>'
-        chat_html += '</div>'
-        html(chat_html)
-
-        # Multi-step Interactive Flow
-        step = st.session_state.chat_step
-
-        if step == 0:
-            name_input = st.text_input("Your Name", key="chat_name_input", placeholder="Type your name...")
-            if st.button("Next →", key="chat_step0_btn"):
-                if name_input.strip():
-                    st.session_state.chat_data["name"] = name_input.strip()
-                    st.session_state.chat_messages.append({"role": "user", "text": name_input.strip()})
-                    st.session_state.chat_messages.append(
-                        {"role": "assistant", "text": f"Nice to meet you, {name_input.strip()}! What service are you interested in?"}
-                    )
-                    st.session_state.chat_step = 1
-                    st.rerun()
-
-        elif step == 1:
-            services = ["AI Solutions", "Business Intelligence", "Automation", "Data Engineering"]
-            for s in services:
-                if st.button(s, key=f"chat_srv_{s}"):
-                    st.session_state.chat_data["service"] = s
-                    st.session_state.chat_messages.append({"role": "user", "text": s})
-                    st.session_state.chat_messages.append(
-                        {"role": "assistant", "text": "Got it! Please enter your email address so we can contact you."}
-                    )
-                    st.session_state.chat_step = 2
-                    st.rerun()
-
-        elif step == 2:
-            email_input = st.text_input("Email", key="chat_email_input", placeholder="name@company.com")
-            if st.button("Submit Consultation", key="chat_step2_btn"):
-                if valid_email(email_input):
-                    st.session_state.chat_data["email"] = email_input.strip()
-                    st.session_state.chat_messages.append({"role": "user", "text": email_input.strip()})
-                    
-                    payload = {
-                        "type": "chat_lead",
-                        "name": st.session_state.chat_data.get("name"),
-                        "service": st.session_state.chat_data.get("service"),
-                        "email": email_input.strip(),
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    submit_to_google(payload)
-
-                    st.session_state.chat_messages.append(
-                        {"role": "assistant", "text": "Thank you! Our consultant will reach out shortly."}
-                    )
-                    st.session_state.chat_step = 3
-                    st.rerun()
-                else:
-                    st.error("Please provide a valid email.")
-
-        elif step == 3:
-            if st.button("Start New Consultation", key="chat_reset_btn"):
-                st.session_state.chat_step = 0
-                st.session_state.chat_data = {}
-                st.session_state.chat_messages = [
-                    {"role": "assistant", "text": "👋 Welcome to JYORA AI.\nLet's understand your business requirement."}
-                ]
-                st.rerun()
-
+    st.title("Contact Us")
+    st.write("Get in touch with our engineering team.")
 
 # ============================================================
 # ROUTER
@@ -1265,13 +437,103 @@ pages = {
     "Contact": contact_page,
 }
 
-# Render active page
 current_page_func = pages.get(st.session_state.page, home_page)
 current_page_func()
 
-# Render Floating Chatbot Widget across all pages
-render_chatbot()
+# ============================================================
+# LEFT SIDE SMALL FLOATING CHATBOT WIDGET
+# ============================================================
 
+def render_floating_chatbot():
+    # Closed State Launcher
+    if not st.session_state.chat_open:
+        st.markdown('<div class="chat-launcher">', unsafe_allow_html=True)
+        if st.button("💬 Chat", key="btn_open_chat"):
+            st.session_state.chat_open = True
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        return
+
+    # Open State Small Container
+    st.markdown('<div class="chat-box-container">', unsafe_allow_html=True)
+    
+    html(
+        """
+    <div class="chat-box-header">
+        <div>
+            <div class="chat-box-title">JYORA AI Assistant</div>
+            <div class="chat-box-subtitle">Online</div>
+        </div>
+    </div>
+    """
+    )
+
+    if st.button("✕ Close & New Chat", key="btn_close_chat", use_container_width=True):
+        st.session_state.chat_open = False
+        reset_chat_state()
+        st.rerun()
+
+    # Message View
+    chat_html = '<div class="chat-box-body">'
+    for msg in st.session_state.chat_messages:
+        cls = "chat-msg-assistant" if msg["role"] == "assistant" else "chat-msg-user"
+        chat_html += f'<div class="chat-msg {cls}">{msg["text"]}</div>'
+    chat_html += '</div>'
+    html(chat_html)
+
+    # Multi-step Flow
+    step = st.session_state.chat_step
+
+    if step == 0:
+        name = st.text_input("Name", key="chat_name", placeholder="Your name...")
+        if st.button("Next →", key="chat_btn_s0"):
+            if name.strip():
+                st.session_state.chat_data["name"] = name.strip()
+                st.session_state.chat_messages.append({"role": "user", "text": name.strip()})
+                st.session_state.chat_messages.append({"role": "assistant", "text": "What service do you need?"})
+                st.session_state.chat_step = 1
+                st.rerun()
+
+    elif step == 1:
+        opts = ["AI Solutions", "BI & Dashboards", "Automation"]
+        for opt in opts:
+            if st.button(opt, key=f"chat_opt_{opt}"):
+                st.session_state.chat_data["service"] = opt
+                st.session_state.chat_messages.append({"role": "user", "text": opt})
+                st.session_state.chat_messages.append({"role": "assistant", "text": "Please enter your email."})
+                st.session_state.chat_step = 2
+                st.rerun()
+
+    elif step == 2:
+        email = st.text_input("Email", key="chat_email", placeholder="email@domain.com")
+        if st.button("Submit", key="chat_btn_s2"):
+            if valid_email(email):
+                st.session_state.chat_data["email"] = email.strip()
+                st.session_state.chat_messages.append({"role": "user", "text": email.strip()})
+                
+                payload = {
+                    "type": "chat_lead",
+                    "name": st.session_state.chat_data.get("name"),
+                    "service": st.session_state.chat_data.get("service"),
+                    "email": email.strip(),
+                    "timestamp": datetime.now().isoformat(),
+                }
+                submit_to_google(payload)
+
+                st.session_state.chat_messages.append({"role": "assistant", "text": "Thanks! We'll reach out soon."})
+                st.session_state.chat_step = 3
+                st.rerun()
+            else:
+                st.error("Invalid Email")
+
+    elif step == 3:
+        if st.button("Start New Session", key="chat_btn_reset"):
+            reset_chat_state()
+            st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+render_floating_chatbot()
 
 # ============================================================
 # FOOTER
@@ -1280,10 +542,8 @@ render_chatbot()
 html(
     """
 <div class="footer">
-    <div class="footer-brand">
-        JYORA <span class="footer-ai">AI</span>
-    </div>
-    <div>© 2026 JYORA AI. All rights reserved. | Transforming Data into Intelligence</div>
+    <div><b>JYORA AI</b> — Data Intelligence & Automation Platform</div>
+    <div>© 2026 JYORA AI. All rights reserved.</div>
 </div>
 """
 )
