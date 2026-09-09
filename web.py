@@ -1115,14 +1115,17 @@ elif page == "About":
 
     c1, c2 = st.columns(2)
 
-   with c1:
+    with c1:
         html("""
         <div class="card">
-            <h3>Contact Information</h3>
-            <p><strong>Email:</strong> <a class="contact-link" href="mailto:support@logiintelli.com">support@logiintelli.com</a>, <a class="contact-link" href="mailto:sumansekar1205@gmail.com">sumansekar1205@gmail.com</a></p>
-            <p><strong>WhatsApp:</strong> <a class="contact-link" href="https://wa.me/918825674102" target="_blank">+91 8825674102</a></p>
-            <p><strong>Business Hours:</strong> Monday – Friday, 9:00 AM – 6:00 PM IST</p>
-            <p><strong>Location:</strong> India</p>
+            <h3>Core Expertise</h3>
+            <ul>
+                <li>Power BI & Interactive Dashboard Engineering</li>
+                <li>SQL Data Warehousing & ETL Pipelines</li>
+                <li>Predictive Machine Learning (Delay & RTO Risk Scoring)</li>
+                <li>Automated MIS & Enterprise Reporting Systems</li>
+                <li>REST API Integrations & Webhooks</li>
+            </ul>
         </div>
         """)
 
@@ -1162,7 +1165,8 @@ elif page == "Contact":
         html("""
         <div class="card">
             <h3>Contact Information</h3>
-            <p><strong>Email:</strong> <a class="contact-link" href="mailto:support@logiintelli.com">support@logiintelli.com</a></p>
+            <p><strong>Email:</strong> <a class="contact-link" href="mailto:support@logiintelli.com">support@logiintelli.com</a>, <a class="contact-link" href="mailto:sumansekar1205@gmail.com">sumansekar1205@gmail.com</a></p>
+            <p><strong>WhatsApp:</strong> <a class="contact-link" href="https://wa.me/918825674102" target="_blank">+91 8825674102</a></p>
             <p><strong>Business Hours:</strong> Monday – Friday, 9:00 AM – 6:00 PM IST</p>
             <p><strong>Location:</strong> India</p>
         </div>
