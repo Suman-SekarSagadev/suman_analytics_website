@@ -10,7 +10,7 @@ import streamlit as st
 # ============================================================
 
 st.set_page_config(
-    page_title="LogiIntelli | Logistics Analytics, AI & BI",
+    page_title="JYORA Consulting | Data Analytics, AI & BI",
     page_icon="🚚",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -40,7 +40,7 @@ if "chat_messages" not in st.session_state:
         {
             "role": "assistant",
             "text": (
-                "👋 Hi! Welcome to LogiIntelli.<br><br>"
+                "👋 Hi! Welcome to JYORA Consulting.<br><br>"
                 "How can I help you today?"
             ),
         }
@@ -1086,7 +1086,7 @@ def show_home():
 <div class="hero">
 
     <div class="hero-badge">
-        🚚 LOGISTICS • DATA • AI • BUSINESS INTELLIGENCE
+        🚚 DATA • AI • BUSINESS INTELLIGENCE • AUTOMATION
     </div>
 
     <div class="hero-title">
@@ -1097,7 +1097,7 @@ def show_home():
     </div>
 
     <div class="hero-description">
-        LogiIntelli helps businesses transform operational data
+        JYORA Consulting helps businesses transform operational data
         into powerful dashboards, predictive models,
         automation solutions and actionable business intelligence.
     </div>
@@ -1770,7 +1770,7 @@ def show_request_project():
                     requirement.strip(),
 
                 "Source":
-                    "LogiIntelli Website",
+                    "JYORA Consulting Website",
             }
 
 
@@ -1825,7 +1825,7 @@ def show_about():
 <div class="hero">
 
     <div class="hero-badge">
-        ABOUT LOGIINTELLI
+        ABOUT JYORA CONSULTING
     </div>
 
     <div class="hero-title">
@@ -1836,7 +1836,7 @@ def show_about():
     </div>
 
     <div class="hero-description">
-        LogiIntelli focuses on transforming raw business data
+        JYORA Consulting focuses on transforming raw business data
         into meaningful insights, predictive intelligence
         and automated decision-making solutions.
     </div>
@@ -2015,7 +2015,7 @@ def show_contact():
     </div>
 
     <div class="contact-value">
-        support@logiintelli.com
+        sumansekar1205@gmail.com
     </div>
 
 </div>
@@ -2118,7 +2118,7 @@ html(
     """
 <div class="site-footer">
 
-    © 2026 LogiIntelli
+    © 2026 JYORA Consulting
 
     <br>
 
@@ -2149,7 +2149,7 @@ chatbot_html = r"""
             class="logi-chat-launcher"
             type="button"
             onclick="logiOpenChat()"
-            aria-label="Open LogiIntelli AI Assistant"
+            aria-label="Open JYORA AI Assistant"
         >
             💬
 
@@ -2185,7 +2185,7 @@ chatbot_html = r"""
                 <div>
 
                     <div class="logi-chat-name">
-                        LogiIntelli AI
+                        JYORA AI Assistant
                     </div>
 
                     <div class="logi-chat-status">
@@ -2218,7 +2218,7 @@ chatbot_html = r"""
 
             <div class="logi-message logi-message-bot">
 
-                👋 Hi! Welcome to <b>LogiIntelli</b>.
+                👋 Hi! Welcome to <b>JYORA Consulting</b>.
 
                 <br><br>
 
@@ -2325,7 +2325,7 @@ chatbot_html = r"""
        CHAT STORAGE
     ======================================================== */
 
-    const STORAGE_KEY = "logiintelli_chat_open";
+    const STORAGE_KEY = "jyora_consulting_chat_open";
 
 
 
