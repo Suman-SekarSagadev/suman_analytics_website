@@ -746,13 +746,13 @@ elif page == "Request Project":
 
 elif page == "About":
     st.markdown(
-        '<div class="section-title">About Suman Analytics</div>',
+        '<div class="section-title">About LogiIntelli</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
         """
 <div class="card">
-<p><b>Suman Analytics</b> delivers enterprise-grade analytics, machine learning, and automation solutions engineered for the logistics, courier, and supply chain industries.</p>
+<p><b>LogiIntelli</b> delivers enterprise-grade analytics, machine learning, and automation solutions engineered for the logistics, courier, and supply chain industries.</p>
 <p>By processing complex operational streams into interactive dashboards, predictive AI models, and automated data pipelines, businesses unlock end-to-end visibility, decrease manual reporting work, and optimize delivery SLA performance.</p>
 </div>
 """,
