@@ -53,10 +53,6 @@ if "chat_submitted" not in st.session_state:
 
 # ============================================================
 # HTML HELPER
-#
-# IMPORTANT:
-# Use st.html() for raw HTML.
-# Do NOT change this to st.markdown().
 # ============================================================
 
 def render_html(content):
@@ -516,6 +512,29 @@ render_html(
 <style>
 
 /* ============================================================
+   COLOR SYSTEM
+   ============================================================ */
+
+:root {
+
+    --primary-blue: #0066CC;
+
+    --heading-blue: #075EAD;
+
+    --dark-blue: #123F73;
+
+    --light-blue: #7EC8FF;
+
+    --text-blue: #0B3C6F;
+
+    --body-text: #60758A;
+
+    --border: #D9E5F0;
+
+}
+
+
+/* ============================================================
    GLOBAL
    ============================================================ */
 
@@ -539,9 +558,9 @@ body {
         ),
         linear-gradient(
             180deg,
-            #f8fbff 0%,
-            #ffffff 50%,
-            #f5f8fc 100%
+            #F8FBFF 0%,
+            #FFFFFF 50%,
+            #F5F8FC 100%
         );
 
 }
@@ -578,6 +597,29 @@ footer {
 
 }
 
+header[data-testid="stHeader"] {
+
+    background: transparent !important;
+
+}
+
+
+/* ============================================================
+   STREAMLIT DEFAULT HEADINGS
+   Prevent dark/black headings
+   ============================================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    color: var(--heading-blue) !important;
+
+}
+
 
 /* ============================================================
    LOGO
@@ -589,7 +631,7 @@ footer {
 
     font-weight: 800;
 
-    color: #0B2545;
+    color: var(--primary-blue) !important;
 
     line-height: 1.2;
 
@@ -599,7 +641,7 @@ footer {
 
     font-size: 12px;
 
-    color: #60758A;
+    color: var(--body-text) !important;
 
     margin-top: 4px;
 
@@ -614,23 +656,28 @@ footer {
 
     border-radius: 10px !important;
 
-    border: 1px solid #d9e3ee !important;
+    border: 1px solid #D9E3EE !important;
 
     background: white !important;
 
-    color: #0B2545 !important;
+    color: var(--text-blue) !important;
 
     font-weight: 600 !important;
 
     min-height: 40px !important;
 
+    transition:
+        all 0.2s ease !important;
+
 }
 
 .stButton > button:hover {
 
-    border-color: #0066CC !important;
+    border-color: var(--primary-blue) !important;
 
-    color: #0066CC !important;
+    color: var(--primary-blue) !important;
+
+    background: #F4F9FF !important;
 
 }
 
@@ -652,9 +699,9 @@ footer {
     background:
         linear-gradient(
             135deg,
-            #071d35 0%,
-            #0b3c6f 45%,
-            #0066cc 100%
+            #071D35 0%,
+            #0B3C6F 45%,
+            #0066CC 100%
         );
 
     color: white;
@@ -670,7 +717,7 @@ footer {
 
 .hero-small-title {
 
-    color: #7ec8ff;
+    color: #7EC8FF !important;
 
     font-size: 14px;
 
@@ -684,7 +731,7 @@ footer {
 
 .hero h1 {
 
-    color: #ffffff !important;
+    color: #FFFFFF !important;
 
     font-size: 50px;
 
@@ -700,7 +747,7 @@ footer {
 
     max-width: 850px;
 
-    color: #dbeeff;
+    color: #DBEEFF !important;
 
     font-size: 18px;
 
@@ -721,7 +768,7 @@ footer {
 
     width: 100%;
 
-    color: #0B2545 !important;
+    color: #075EAD !important;
 
     font-size: 30px;
 
@@ -739,6 +786,34 @@ footer {
 
 
 /* ============================================================
+   SECTION TITLE DECORATION
+   ============================================================ */
+
+.section-title::after {
+
+    content: "";
+
+    display: block;
+
+    width: 48px;
+
+    height: 4px;
+
+    margin-top: 8px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #0066CC,
+            #7EC8FF
+        );
+
+}
+
+
+/* ============================================================
    CARDS
    ============================================================ */
 
@@ -747,28 +822,43 @@ footer {
 .metric-card,
 .info-card {
 
-    background: rgba(255,255,255,0.96);
+    background:
+        rgba(255,255,255,0.96);
 
-    border: 1px solid #e2eaf2;
+    border:
+        1px solid #E2EAF2;
 
-    border-radius: 18px;
+    border-radius:
+        18px;
 
-    padding: 24px;
+    padding:
+        24px;
 
     box-shadow:
         0 8px 30px rgba(15,42,70,0.06);
 
-    height: 100%;
+    height:
+        100%;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
+
+    transition:
+        all 0.2s ease;
 
 }
 
 .service-card:hover,
 .project-card:hover {
 
+    transform:
+        translateY(-3px);
+
     box-shadow:
         0 15px 40px rgba(15,42,70,0.12);
+
+    border-color:
+        #C9DFF4;
 
 }
 
@@ -783,7 +873,8 @@ footer {
 .info-card h3,
 .info-card h4 {
 
-    color: #0B2545 !important;
+    color:
+        #075EAD !important;
 
 }
 
@@ -796,7 +887,8 @@ footer {
 .project-card p,
 .info-card p {
 
-    color: #60758A;
+    color:
+        #60758A !important;
 
 }
 
@@ -807,21 +899,27 @@ footer {
 
 .metric-number {
 
-    font-size: 34px;
+    font-size:
+        34px;
 
-    font-weight: 800;
+    font-weight:
+        800;
 
-    color: #0066CC;
+    color:
+        #0066CC !important;
 
 }
 
 .metric-label {
 
-    color: #60758A;
+    color:
+        #60758A !important;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    margin-top: 5px;
+    margin-top:
+        5px;
 
 }
 
@@ -834,9 +932,66 @@ footer {
 .stTextArea label,
 .stSelectbox label {
 
-    color: #0B2545 !important;
+    color:
+        #075EAD !important;
 
-    font-weight: 600 !important;
+    font-weight:
+        600 !important;
+
+}
+
+
+/* ============================================================
+   FORM INPUTS
+   ============================================================ */
+
+.stTextInput input,
+.stTextArea textarea {
+
+    border:
+        1px solid #D9E5F0 !important;
+
+    border-radius:
+        10px !important;
+
+    color:
+        #123F73 !important;
+
+    background:
+        #FFFFFF !important;
+
+}
+
+.stTextInput input:focus,
+.stTextArea textarea:focus {
+
+    border-color:
+        #0066CC !important;
+
+    box-shadow:
+        0 0 0 1px #0066CC !important;
+
+}
+
+
+/* ============================================================
+   SELECTBOX
+   ============================================================ */
+
+.stSelectbox div[data-baseweb="select"] > div {
+
+    border-radius:
+        10px !important;
+
+    border-color:
+        #D9E5F0 !important;
+
+}
+
+.stSelectbox div[data-baseweb="select"] span {
+
+    color:
+        #123F73 !important;
 
 }
 
@@ -850,17 +1005,35 @@ footer {
     background:
         linear-gradient(
             135deg,
-            #0B2545,
+            #0B3C6F,
             #0066CC
         ) !important;
 
-    color: white !important;
+    color:
+        white !important;
 
-    border: none !important;
+    border:
+        none !important;
 
-    border-radius: 10px !important;
+    border-radius:
+        10px !important;
 
-    font-weight: 800 !important;
+    font-weight:
+        800 !important;
+
+    min-height:
+        45px !important;
+
+}
+
+.stFormSubmitButton button:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0066CC,
+            #0085FF
+        ) !important;
 
 }
 
@@ -871,15 +1044,20 @@ footer {
 
 .st-key-chat_launcher {
 
-    position: fixed !important;
+    position:
+        fixed !important;
 
-    right: 25px !important;
+    right:
+        25px !important;
 
-    bottom: 25px !important;
+    bottom:
+        25px !important;
 
-    width: 170px !important;
+    width:
+        170px !important;
 
-    z-index: 999999 !important;
+    z-index:
+        999999 !important;
 
 }
 
@@ -893,24 +1071,41 @@ footer {
     background:
         linear-gradient(
             135deg,
-            #0B2545,
+            #0B3C6F,
             #0066CC
         ) !important;
 
-    color: white !important;
+    color:
+        white !important;
 
-    border: none !important;
+    border:
+        none !important;
 
-    border-radius: 50px !important;
+    border-radius:
+        50px !important;
 
-    min-height: 52px !important;
+    min-height:
+        52px !important;
 
-    font-size: 14px !important;
+    font-size:
+        14px !important;
 
-    font-weight: 800 !important;
+    font-weight:
+        800 !important;
 
     box-shadow:
         0 10px 35px rgba(0,82,160,0.35) !important;
+
+}
+
+.st-key-chat_launcher button:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0066CC,
+            #0085FF
+        ) !important;
 
 }
 
@@ -921,36 +1116,50 @@ footer {
 
 .st-key-chat_panel {
 
-    position: fixed !important;
+    position:
+        fixed !important;
 
-    right: 25px !important;
+    right:
+        25px !important;
 
-    bottom: 90px !important;
+    bottom:
+        90px !important;
 
-    width: 390px !important;
+    width:
+        390px !important;
 
-    max-width: calc(100vw - 30px) !important;
+    max-width:
+        calc(100vw - 30px) !important;
 
-    height: 610px !important;
+    height:
+        610px !important;
 
-    max-height: calc(100vh - 120px) !important;
+    max-height:
+        calc(100vh - 120px) !important;
 
-    z-index: 999998 !important;
+    z-index:
+        999998 !important;
 
-    background: white !important;
+    background:
+        white !important;
 
-    border-radius: 20px !important;
+    border-radius:
+        20px !important;
 
-    border: 1px solid #dce5ef !important;
+    border:
+        1px solid #DCE5EF !important;
 
     box-shadow:
         0 20px 70px rgba(0,0,0,0.25) !important;
 
-    overflow-y: auto !important;
+    overflow-y:
+        auto !important;
 
-    padding: 18px !important;
+    padding:
+        18px !important;
 
-    box-sizing: border-box !important;
+    box-sizing:
+        border-box !important;
 
 }
 
@@ -964,37 +1173,47 @@ footer {
     background:
         linear-gradient(
             135deg,
-            #071d35,
-            #0066cc
+            #071D35,
+            #0066CC
         );
 
-    color: white;
+    color:
+        white;
 
-    padding: 16px;
+    padding:
+        16px;
 
-    border-radius: 15px;
+    border-radius:
+        15px;
 
-    margin-bottom: 15px;
+    margin-bottom:
+        15px;
 
 }
 
 .chat-header-title {
 
-    font-size: 17px;
+    font-size:
+        17px;
 
-    font-weight: 800;
+    font-weight:
+        800;
 
-    color: white;
+    color:
+        white !important;
 
 }
 
 .chat-header-status {
 
-    font-size: 11px;
+    font-size:
+        11px;
 
-    margin-top: 4px;
+    margin-top:
+        4px;
 
-    color: #cce8ff;
+    color:
+        #CCE8FF !important;
 
 }
 
@@ -1005,19 +1224,26 @@ footer {
 
 .chat-info {
 
-    background: #f2f7fc;
+    background:
+        #F2F7FC;
 
-    border-radius: 12px;
+    border-radius:
+        12px;
 
-    padding: 12px;
+    padding:
+        12px;
 
-    color: #536a80;
+    color:
+        #536A80 !important;
 
-    font-size: 12px;
+    font-size:
+        12px;
 
-    line-height: 1.6;
+    line-height:
+        1.6;
 
-    margin-bottom: 15px;
+    margin-bottom:
+        15px;
 
 }
 
@@ -1028,7 +1254,20 @@ footer {
 
 [data-testid="stChatMessage"] {
 
-    background: transparent !important;
+    background:
+        transparent !important;
+
+}
+
+
+/* ============================================================
+   CHAT MESSAGE TEXT
+   ============================================================ */
+
+[data-testid="stChatMessage"] p {
+
+    color:
+        #123F73 !important;
 
 }
 
@@ -1039,13 +1278,29 @@ footer {
 
 [data-testid="stChatInput"] {
 
-    position: sticky !important;
+    position:
+        sticky !important;
 
-    bottom: 0 !important;
+    bottom:
+        0 !important;
 
-    background: white !important;
+    background:
+        white !important;
 
-    z-index: 10 !important;
+    z-index:
+        10 !important;
+
+}
+
+
+/* ============================================================
+   CHAT INPUT TEXT
+   ============================================================ */
+
+[data-testid="stChatInput"] textarea {
+
+    color:
+        #123F73 !important;
 
 }
 
@@ -1056,13 +1311,29 @@ footer {
 
 .footer {
 
-    text-align: center;
+    text-align:
+        center;
 
-    color: #718297;
+    color:
+        #718297 !important;
 
-    font-size: 12px;
+    font-size:
+        12px;
 
-    padding: 35px 10px;
+    padding:
+        35px 10px;
+
+}
+
+
+/* ============================================================
+   SUCCESS / ERROR
+   ============================================================ */
+
+[data-testid="stAlert"] {
+
+    border-radius:
+        12px !important;
 
 }
 
@@ -1075,57 +1346,71 @@ footer {
 
     .block-container {
 
-        padding-left: 15px !important;
+        padding-left:
+            15px !important;
 
-        padding-right: 15px !important;
+        padding-right:
+            15px !important;
 
     }
 
     .hero {
 
-        padding: 40px 25px;
+        padding:
+            40px 25px;
 
-        border-radius: 20px;
+        border-radius:
+            20px;
 
     }
 
     .hero h1 {
 
-        font-size: 36px;
+        font-size:
+            36px;
 
     }
 
     .hero p {
 
-        font-size: 15px;
+        font-size:
+            15px;
 
     }
 
     .section-title {
 
-        font-size: 25px;
+        font-size:
+            25px;
 
     }
 
     .st-key-chat_launcher {
 
-        right: 15px !important;
+        right:
+            15px !important;
 
-        bottom: 15px !important;
+        bottom:
+            15px !important;
 
-        width: 155px !important;
+        width:
+            155px !important;
 
     }
 
     .st-key-chat_panel {
 
-        right: 10px !important;
+        right:
+            10px !important;
 
-        bottom: 80px !important;
+        bottom:
+            80px !important;
 
-        width: calc(100vw - 20px) !important;
+        width:
+            calc(100vw - 20px) !important;
 
-        height: 70vh !important;
+        height:
+            70vh !important;
 
     }
 
@@ -1374,7 +1659,7 @@ if page == "Home":
     <div style="
         font-size:18px;
         font-weight:800;
-        color:#0B2545;
+        color:#075EAD;
         margin-bottom:10px;
     ">
         {title}
@@ -1456,7 +1741,7 @@ if page == "Home":
     </div>
 
     <h3 style="
-        color:#0B2545;
+        color:#075EAD !important;
         margin:8px 0;
     ">
         {title}
@@ -1552,7 +1837,7 @@ elif page == "Services":
     </div>
 
     <h3 style="
-        color:#0B2545;
+        color:#075EAD !important;
         margin-bottom:10px;
     ">
         {title}
@@ -1648,7 +1933,7 @@ elif page == "Projects":
     </div>
 
     <h3 style="
-        color:#0B2545;
+        color:#075EAD !important;
         margin-bottom:10px;
     ">
         {title}
@@ -1905,7 +2190,7 @@ elif page == "About":
 
 <div class="info-card">
 
-    <h2 style="color:#0B2545;">
+    <h2 style="color:#075EAD !important;">
         Logistics Intelligence Through Data
     </h2>
 
@@ -1978,7 +2263,7 @@ style="
     padding:16px;
 ">
 
-    <b style="color:#0B2545;">
+    <b style="color:#075EAD !important;">
         {technology}
     </b>
 
@@ -2022,7 +2307,7 @@ elif page == "Contact":
         📧
     </div>
 
-    <h4 style="color:#0B2545;">
+    <h4 style="color:#075EAD !important;">
         Email
     </h4>
 
@@ -2045,7 +2330,7 @@ elif page == "Contact":
         📱
     </div>
 
-    <h4 style="color:#0B2545;">
+    <h4 style="color:#075EAD !important;">
         WhatsApp
     </h4>
 
@@ -2068,7 +2353,7 @@ elif page == "Contact":
         💼
     </div>
 
-    <h4 style="color:#0B2545;">
+    <h4 style="color:#075EAD !important;">
         LinkedIn
     </h4>
 
@@ -2091,7 +2376,7 @@ elif page == "Contact":
         💻
     </div>
 
-    <h4 style="color:#0B2545;">
+    <h4 style="color:#075EAD !important;">
         GitHub
     </h4>
 
@@ -2112,7 +2397,9 @@ render_html(
     """
 <div class="footer">
 
-    🚚 <b>LogiIntelli</b>
+    🚚 <b style="color:#075EAD;">
+        LogiIntelli
+    </b>
 
     <br><br>
 
