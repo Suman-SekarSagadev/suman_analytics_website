@@ -569,157 +569,59 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   FORM
+   FLOATING CHATBOT WIDGET FIX
 ============================================================ */
 
-.form-container {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 35px rgba(15,23,42,0.05);
-}
-
-
-/* ============================================================
-   CHATBOT CONTAINER
-============================================================ */
-
-.st-key-floating_chatbot {
+/* Target the Streamlit container that wraps our chat header */
+div[data-testid="stVerticalBlock"]:has(> div .jyora-chat-header) {
     position: fixed !important;
     left: 20px !important;
     bottom: 20px !important;
-    width: 310px !important;
+    width: 320px !important;
     max-width: calc(100vw - 40px) !important;
     z-index: 999999 !important;
     background: #FFFFFF !important;
     border: 1px solid #D9E2EC !important;
     border-radius: 16px !important;
-    box-shadow: 
-        0 15px 45px rgba(15,23,42,0.20),
-        0 5px 15px rgba(15,23,42,0.08) !important;
-    overflow: visible !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    box-shadow: 0 15px 45px rgba(15,23,42,0.22) !important;
+    padding: 12px !important;
 }
 
-
-/* ============================================================
-   CHAT HEADER
-============================================================ */
-
+/* Chat Header */
 .jyora-chat-header {
     width: 100% !important;
-    min-height: 60px !important;
-    box-sizing: border-box !important;
-    padding: 12px 48px 11px 14px !important;
+    padding: 12px 14px !important;
     background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%) !important;
-    border-radius: 15px 15px 0 0 !important;
-    display: block !important;
-    position: relative !important;
-    overflow: visible !important;
+    border-radius: 12px 12px 0 0 !important;
+    margin-bottom: 10px !important;
 }
 
-
-/* ============================================================
-   CHAT TITLE & SUBTITLE
-============================================================ */
-
 .jyora-chat-title {
-    display: block !important;
-    width: 100% !important;
     color: #FFFFFF !important;
-    font-family: "Inter", sans-serif !important;
     font-size: 13px !important;
     font-weight: 800 !important;
-    line-height: 18px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-align: left !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    white-space: nowrap !important;
 }
 
 .jyora-chat-subtitle {
-    display: block !important;
-    width: 100% !important;
     color: #DBEAFE !important;
-    font-family: "Inter", sans-serif !important;
     font-size: 9px !important;
     font-weight: 500 !important;
-    line-height: 13px !important;
-    margin: 2px 0 0 0 !important;
-    padding: 0 !important;
-    text-align: left !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    white-space: nowrap !important;
+    margin-top: 2px !important;
 }
 
-
-/* ============================================================
-   CLOSE BUTTON
-============================================================ */
-
-.st-key-chat_close_btn {
-    position: absolute !important;
-    top: 10px !important;
-    right: 8px !important;
-    width: 27px !important;
-    height: 27px !important;
-    z-index: 1000000 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-}
-
-.st-key-chat_close_btn > div {
-    width: 27px !important;
-    height: 27px !important;
-}
-
-.st-key-chat_close_btn button {
-    width: 25px !important;
-    height: 25px !important;
-    min-height: 25px !important;
-    max-height: 25px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border-radius: 50% !important;
-    background: rgba(255,255,255,0.16) !important;
-    color: #FFFFFF !important;
-    border: 1px solid rgba(255,255,255,0.28) !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-    box-shadow: none !important;
-}
-
-.st-key-chat_close_btn button:hover {
-    background: rgba(255,255,255,0.30) !important;
-    color: #FFFFFF !important;
-    border-color: rgba(255,255,255,0.50) !important;
-}
-
-
-/* ============================================================
-   CHAT BODY
-============================================================ */
-
+/* Chat Messages */
 .chat-body {
-    padding: 8px 9px 5px 9px !important;
-    max-height: 220px !important;
+    padding: 6px 4px !important;
+    max-height: 200px !important;
     overflow-y: auto !important;
-    background: #FFFFFF !important;
 }
 
 .chat-message {
-    padding: 7px 9px !important;
-    border-radius: 9px !important;
-    margin: 5px 0 !important;
-    font-size: 10px !important;
-    line-height: 1.45 !important;
+    padding: 7px 10px !important;
+    border-radius: 8px !important;
+    margin: 4px 0 !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
     white-space: pre-wrap !important;
 }
 
@@ -731,67 +633,28 @@ div.stButton > button:hover {
 
 .chat-user {
     background: #0F172A !important;
-    color: white !important;
-    margin-left: 18px !important;
+    color: #FFFFFF !important;
+    margin-left: 15px !important;
 }
 
-
-/* ============================================================
-   CHAT INPUT
-============================================================ */
-
-.st-key-floating_chatbot input,
-.st-key-floating_chatbot textarea {
-    font-size: 10px !important;
-}
-
-.st-key-floating_chatbot button {
-    min-height: 28px !important;
-    padding: 4px 7px !important;
-    font-size: 9px !important;
-    border-radius: 7px !important;
-}
-
-
-/* ============================================================
-   CHAT SERVICE BUTTONS
-============================================================ */
-
-.st-key-floating_chatbot div[data-testid="stButton"] button {
-    white-space: normal !important;
-    text-align: left !important;
-    padding-left: 10px !important;
-    min-height: 28px !important;
-    font-size: 9px !important;
-}
-
-
-/* ============================================================
-   REOPEN CHAT
-============================================================ */
-
-.st-key-open_chat_container {
+/* Floating Reopen Button */
+.floating-reopen-btn {
     position: fixed !important;
     left: 20px !important;
     bottom: 20px !important;
     z-index: 999999 !important;
-    width: 56px !important;
-    height: 56px !important;
-    padding: 0 !important;
-    margin: 0 !important;
 }
 
-.st-key-open_chat_container button {
-    width: 56px !important;
-    height: 56px !important;
-    min-height: 56px !important;
-    padding: 0 !important;
+.floating-reopen-btn button {
+    width: 54px !important;
+    height: 54px !important;
+    min-height: 54px !important;
     border-radius: 50% !important;
     background: linear-gradient(135deg, #0F172A, #2563EB) !important;
     color: white !important;
     border: none !important;
-    box-shadow: 0 10px 30px rgba(15,23,42,0.25) !important;
-    font-size: 21px !important;
+    font-size: 22px !important;
+    box-shadow: 0 10px 25px rgba(15,23,42,0.30) !important;
 }
 
 
@@ -817,79 +680,6 @@ div.stButton > button:hover {
 
 .footer-ai {
     color: #2563EB;
-}
-
-
-/* ============================================================
-   MOBILE
-============================================================ */
-
-@media (max-width: 700px) {
-
-    .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
-    .hero-section {
-        padding: 55px 20px;
-        border-radius: 20px;
-    }
-
-    .hero-title {
-        font-size: 39px;
-        letter-spacing: -2px;
-    }
-
-    .hero-description {
-        font-size: 14px;
-    }
-
-    .section-title {
-        font-size: 29px;
-    }
-
-    .brand-name {
-        font-size: 25px;
-    }
-
-    .brand-description {
-        font-size: 8px;
-    }
-
-    .metric {
-        border-right: none;
-        border-bottom: 1px solid #E2E8F0;
-    }
-
-    .dark-section {
-        padding: 35px 20px;
-    }
-
-    .dark-title {
-        font-size: 29px;
-    }
-
-    .cta-section {
-        padding: 45px 20px;
-    }
-
-    .cta-title {
-        font-size: 29px;
-    }
-
-    .st-key-floating_chatbot {
-        left: 10px !important;
-        bottom: 10px !important;
-        width: 280px !important;
-        max-width: calc(100vw - 20px) !important;
-    }
-
-    .st-key-open_chat_container {
-        left: 10px !important;
-        bottom: 10px !important;
-    }
-
 }
 
 </style>
@@ -1403,102 +1193,98 @@ def contact_page():
 
 def render_chatbot():
     if not st.session_state.chat_open:
-        st.markdown('<div class="st-key-open_chat_container">', unsafe_allow_html=True)
+        st.markdown('<div class="floating-reopen-btn">', unsafe_allow_html=True)
         if st.button("💬", key="reopen_chat_btn"):
             st.session_state.chat_open = True
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
         return
 
-    st.markdown('<div class="st-key-floating_chatbot">', unsafe_allow_html=True)
-
-    # Render Header cleanly with st.html to prevent raw markup rendering
-    html(
-        """
+    # Native Streamlit Container enables CSS targeting
+    with st.container():
+        # Header HTML
+        html(
+            """
 <div class="jyora-chat-header">
     <div class="jyora-chat-title">JYORA AI Assistant</div>
     <div class="jyora-chat-subtitle">AI & Project Consultation</div>
 </div>
 """
-    )
+        )
 
-    # Header Close Button
-    st.markdown('<div class="st-key-chat_close_btn">', unsafe_allow_html=True)
-    if st.button("✕", key="close_chat_btn"):
-        st.session_state.chat_open = False
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Chat Messages Scroll Area
-    chat_html = '<div class="chat-body">'
-    for msg in st.session_state.chat_messages:
-        cls = "chat-assistant" if msg["role"] == "assistant" else "chat-user"
-        chat_html += f'<div class="chat-message {cls}">{msg["text"]}</div>'
-    chat_html += '</div>'
-    html(chat_html)
-
-    # Multi-step Interactive Flow
-    step = st.session_state.chat_step
-
-    if step == 0:
-        name_input = st.text_input("Your Name", key="chat_name_input", placeholder="Type your name...")
-        if st.button("Next →", key="chat_step0_btn"):
-            if name_input.strip():
-                st.session_state.chat_data["name"] = name_input.strip()
-                st.session_state.chat_messages.append({"role": "user", "text": name_input.strip()})
-                st.session_state.chat_messages.append(
-                    {"role": "assistant", "text": f"Nice to meet you, {name_input.strip()}! What service are you interested in?"}
-                )
-                st.session_state.chat_step = 1
-                st.rerun()
-
-    elif step == 1:
-        services = ["AI Solutions", "Business Intelligence", "Automation", "Data Engineering"]
-        for s in services:
-            if st.button(s, key=f"chat_srv_{s}"):
-                st.session_state.chat_data["service"] = s
-                st.session_state.chat_messages.append({"role": "user", "text": s})
-                st.session_state.chat_messages.append(
-                    {"role": "assistant", "text": "Got it! Please enter your email address so we can contact you."}
-                )
-                st.session_state.chat_step = 2
-                st.rerun()
-
-    elif step == 2:
-        email_input = st.text_input("Email", key="chat_email_input", placeholder="name@company.com")
-        if st.button("Submit Consultation", key="chat_step2_btn"):
-            if valid_email(email_input):
-                st.session_state.chat_data["email"] = email_input.strip()
-                st.session_state.chat_messages.append({"role": "user", "text": email_input.strip()})
-                
-                # Payload submission
-                payload = {
-                    "type": "chat_lead",
-                    "name": st.session_state.chat_data.get("name"),
-                    "service": st.session_state.chat_data.get("service"),
-                    "email": email_input.strip(),
-                    "timestamp": datetime.now().isoformat()
-                }
-                submit_to_google(payload)
-
-                st.session_state.chat_messages.append(
-                    {"role": "assistant", "text": "Thank you! Our consultant will reach out shortly."}
-                )
-                st.session_state.chat_step = 3
-                st.rerun()
-            else:
-                st.error("Please provide a valid email.")
-
-    elif step == 3:
-        if st.button("Start New Consultation", key="chat_reset_btn"):
-            st.session_state.chat_step = 0
-            st.session_state.chat_data = {}
-            st.session_state.chat_messages = [
-                {"role": "assistant", "text": "👋 Welcome to JYORA AI.\nLet's understand your business requirement."}
-            ]
+        # Header Close Button
+        if st.button("✕ Close Chat", key="close_chat_btn"):
+            st.session_state.chat_open = False
             st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        # Chat Messages Scroll Area
+        chat_html = '<div class="chat-body">'
+        for msg in st.session_state.chat_messages:
+            cls = "chat-assistant" if msg["role"] == "assistant" else "chat-user"
+            chat_html += f'<div class="chat-message {cls}">{msg["text"]}</div>'
+        chat_html += '</div>'
+        html(chat_html)
+
+        # Multi-step Interactive Flow
+        step = st.session_state.chat_step
+
+        if step == 0:
+            name_input = st.text_input("Your Name", key="chat_name_input", placeholder="Type your name...")
+            if st.button("Next →", key="chat_step0_btn"):
+                if name_input.strip():
+                    st.session_state.chat_data["name"] = name_input.strip()
+                    st.session_state.chat_messages.append({"role": "user", "text": name_input.strip()})
+                    st.session_state.chat_messages.append(
+                        {"role": "assistant", "text": f"Nice to meet you, {name_input.strip()}! What service are you interested in?"}
+                    )
+                    st.session_state.chat_step = 1
+                    st.rerun()
+
+        elif step == 1:
+            services = ["AI Solutions", "Business Intelligence", "Automation", "Data Engineering"]
+            for s in services:
+                if st.button(s, key=f"chat_srv_{s}"):
+                    st.session_state.chat_data["service"] = s
+                    st.session_state.chat_messages.append({"role": "user", "text": s})
+                    st.session_state.chat_messages.append(
+                        {"role": "assistant", "text": "Got it! Please enter your email address so we can contact you."}
+                    )
+                    st.session_state.chat_step = 2
+                    st.rerun()
+
+        elif step == 2:
+            email_input = st.text_input("Email", key="chat_email_input", placeholder="name@company.com")
+            if st.button("Submit Consultation", key="chat_step2_btn"):
+                if valid_email(email_input):
+                    st.session_state.chat_data["email"] = email_input.strip()
+                    st.session_state.chat_messages.append({"role": "user", "text": email_input.strip()})
+                    
+                    # Payload submission
+                    payload = {
+                        "type": "chat_lead",
+                        "name": st.session_state.chat_data.get("name"),
+                        "service": st.session_state.chat_data.get("service"),
+                        "email": email_input.strip(),
+                        "timestamp": datetime.now().isoformat()
+                    }
+                    submit_to_google(payload)
+
+                    st.session_state.chat_messages.append(
+                        {"role": "assistant", "text": "Thank you! Our consultant will reach out shortly."}
+                    )
+                    st.session_state.chat_step = 3
+                    st.rerun()
+                else:
+                    st.error("Please provide a valid email.")
+
+        elif step == 3:
+            if st.button("Start New Consultation", key="chat_reset_btn"):
+                st.session_state.chat_step = 0
+                st.session_state.chat_data = {}
+                st.session_state.chat_messages = [
+                    {"role": "assistant", "text": "👋 Welcome to JYORA AI.\nLet's understand your business requirement."}
+                ]
+                st.rerun()
 
 
 # ============================================================
