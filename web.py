@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import json
 import re
-import html
 from datetime import datetime
 
 # ============================================================
@@ -10,14 +9,14 @@ from datetime import datetime
 # ============================================================
 
 st.set_page_config(
-    page_title="LogiIntelli | Logistics AI, Data Analytics & BI",
+    page_title="LogiIntelli | Logistics Analytics & AI",
     page_icon="🚚",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="collapsed"
 )
 
 # ============================================================
-# GOOGLE APPS SCRIPT WEB APP
+# GOOGLE APPS SCRIPT URL
 # ============================================================
 
 GOOGLE_SHEET_WEB_APP_URL = (
@@ -50,26 +49,300 @@ if "chat_submitted" not in st.session_state:
 
 
 # ============================================================
-# HELPER FUNCTIONS
+# CSS
+# ============================================================
+
+st.markdown(
+    """
+<style>
+
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+.stApp {
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(0, 102, 204, 0.08),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #f8fbff 0%,
+            #ffffff 45%,
+            #f5f8fc 100%
+        );
+}
+
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 4rem;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.logo-title {
+    font-size: 27px;
+    font-weight: 800;
+    color: #0B2545;
+}
+
+.logo-subtitle {
+    font-size: 12px;
+    color: #60758A;
+    margin-top: 3px;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+.stButton > button {
+    border-radius: 10px;
+    border: 1px solid #d9e3ee;
+    background: white;
+    color: #0B2545;
+    font-weight: 600;
+    min-height: 40px;
+}
+
+.stButton > button:hover {
+    border-color: #0066CC;
+    color: #0066CC;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero {
+    padding: 65px 45px;
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            135deg,
+            #071d35 0%,
+            #0b3c6f 45%,
+            #0066cc 100%
+        );
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 35px;
+    box-shadow:
+        0 20px 60px rgba(0, 50, 100, 0.20);
+}
+
+.hero-small-title {
+    color: #7ec8ff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.hero h1 {
+    font-size: 50px;
+    line-height: 1.1;
+    margin: 0 0 15px 0;
+}
+
+.hero p {
+    max-width: 850px;
+    color: #dbeeff;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+/* ============================================================
+   SECTION
+   ============================================================ */
+
+.section-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #0B2545;
+    margin-top: 35px;
+    margin-bottom: 20px;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.service-card,
+.project-card,
+.info-card,
+.metric-card {
+    background: rgba(255,255,255,0.96);
+    border: 1px solid #e2eaf2;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow:
+        0 8px 30px rgba(15,42,70,0.06);
+    height: 100%;
+}
+
+.service-card:hover,
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 15px 40px rgba(15,42,70,0.12);
+}
+
+.metric-number {
+    font-size: 34px;
+    font-weight: 800;
+    color: #0066CC;
+}
+
+.metric-label {
+    color: #60758A;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* ============================================================
+   CHAT LAUNCHER
+   ============================================================ */
+
+.chat-launcher-space {
+    height: 80px;
+}
+
+.chat-launcher-box {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 9999;
+}
+
+.chat-launcher-label {
+    background:
+        linear-gradient(
+            135deg,
+            #0B2545,
+            #0066CC
+        );
+    color: white;
+    padding: 13px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow:
+        0 10px 35px rgba(0,82,160,0.35);
+}
+
+/* ============================================================
+   CHAT PANEL
+   ============================================================ */
+
+.chat-title {
+    font-size: 23px;
+    font-weight: 800;
+    color: #0B2545;
+    margin-bottom: 3px;
+}
+
+.chat-status {
+    color: #1d9b52;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.chat-info {
+    background: #f2f7fc;
+    padding: 13px;
+    border-radius: 12px;
+    color: #52677b;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.chat-summary {
+    background: #f7faff;
+    border: 1px solid #dbe8f5;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.footer {
+    text-align: center;
+    color: #718297;
+    font-size: 12px;
+    padding: 30px 10px;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    .hero {
+        padding: 40px 25px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .chat-launcher-box {
+        right: 14px;
+        bottom: 14px;
+    }
+
+    .chat-launcher-label {
+        padding: 12px 16px;
+    }
+}
+
+</style>
+""",
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# FUNCTIONS
 # ============================================================
 
 def valid_email(email):
-    return bool(
-        re.match(
-            r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-            email.strip()
-        )
-    )
+    pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+    return bool(re.match(pattern, email.strip()))
 
 
 def reset_chat():
+
     st.session_state.chat_messages = []
     st.session_state.chat_step = 0
     st.session_state.chat_data = {}
     st.session_state.chat_submitted = False
 
 
-def submit_chat_request():
+def submit_to_google_sheet():
 
     data = st.session_state.chat_data
 
@@ -84,7 +357,7 @@ def submit_chat_request():
         "Data_Source": data.get("data_source", ""),
         "Shipment_Volume": data.get("volume", ""),
         "Timeline": data.get("timeline", ""),
-        "Requirement": data.get("requirement", ""),
+        "Requirement": data.get("requirement", "")
     }
 
     try:
@@ -96,34 +369,32 @@ def submit_chat_request():
                 "Content-Type": "text/plain;charset=utf-8"
             },
             timeout=20,
-            allow_redirects=True,
+            allow_redirects=True
         )
 
         if response.status_code == 200:
-            return True, "success"
+            return True
 
-        return False, response.text
+        return False
 
-    except requests.exceptions.Timeout:
-        return False, "timeout"
-
-    except requests.exceptions.RequestException as e:
-        return False, str(e)
+    except Exception:
+        return False
 
 
 # ============================================================
-# CHATBOT LOGIC
+# CHATBOT RESPONSE
 # ============================================================
 
-def chatbot_response(user_message):
+def chatbot_response(message):
+
+    message = message.strip()
 
     step = st.session_state.chat_step
+
     data = st.session_state.chat_data
 
-    message = user_message.strip()
-
     # --------------------------------------------------------
-    # STEP 0 - NAME
+    # NAME
     # --------------------------------------------------------
 
     if step == 0:
@@ -138,7 +409,7 @@ def chatbot_response(user_message):
         )
 
     # --------------------------------------------------------
-    # STEP 1 - COMPANY
+    # COMPANY
     # --------------------------------------------------------
 
     if step == 1:
@@ -150,11 +421,12 @@ def chatbot_response(user_message):
         return (
             "Great! 👍\n\n"
             "Which industry does your company operate in?\n\n"
-            "**Courier / Logistics / E-commerce / Manufacturing / Other**"
+            "Courier / Logistics / E-commerce / "
+            "Manufacturing / Retail / Other"
         )
 
     # --------------------------------------------------------
-    # STEP 2 - INDUSTRY
+    # INDUSTRY
     # --------------------------------------------------------
 
     if step == 2:
@@ -164,20 +436,20 @@ def chatbot_response(user_message):
         st.session_state.chat_step = 3
 
         return (
-            "Thanks! What solution are you looking for?\n\n"
-            "📊 **Power BI Dashboard**\n\n"
-            "🗄️ **SQL Analytics**\n\n"
-            "🤖 **Predictive AI / Machine Learning**\n\n"
-            "⚙️ **MIS Automation**\n\n"
-            "🔗 **API / ERP Integration**\n\n"
-            "⏱️ **TAT & Ageing Analytics**\n\n"
-            "🏢 **Hub Performance Analytics**\n\n"
-            "📍 **Route Analytics**\n\n"
-            "**Other**"
+            "What solution are you looking for?\n\n"
+            "📊 Power BI Dashboard\n\n"
+            "🗄️ SQL Analytics\n\n"
+            "🤖 Predictive AI / Machine Learning\n\n"
+            "⚙️ MIS Automation\n\n"
+            "🔗 API / ERP Integration\n\n"
+            "⏱️ TAT & Ageing Analytics\n\n"
+            "🏢 Hub Performance Analytics\n\n"
+            "📍 Route Analytics\n\n"
+            "Other"
         )
 
     # --------------------------------------------------------
-    # STEP 3 - SERVICE
+    # SERVICE
     # --------------------------------------------------------
 
     if step == 3:
@@ -188,15 +460,15 @@ def chatbot_response(user_message):
 
         return (
             "Understood. 👍\n\n"
-            "Please describe the **business problem or requirement** "
-            "you want to solve.\n\n"
-            "For example:\n\n"
-            "> We need a dashboard to monitor delayed shipments, "
-            "hub performance and pending ageing."
+            "Please describe your **business problem "
+            "or project requirement**.\n\n"
+            "Example:\n\n"
+            "We need a dashboard to monitor delayed "
+            "shipments, hub performance and pending ageing."
         )
 
     # --------------------------------------------------------
-    # STEP 4 - REQUIREMENT
+    # REQUIREMENT
     # --------------------------------------------------------
 
     if step == 4:
@@ -206,13 +478,14 @@ def chatbot_response(user_message):
         st.session_state.chat_step = 5
 
         return (
-            "Perfect. What is your current **data source**?\n\n"
-            "Excel / CSV / MySQL / SQL Server / PostgreSQL / "
-            "ERP / REST API / Multiple Sources / Other"
+            "Perfect! What is your current **data source**?\n\n"
+            "Excel / CSV / MySQL / SQL Server / "
+            "PostgreSQL / ERP / REST API / "
+            "Multiple Sources / Other"
         )
 
     # --------------------------------------------------------
-    # STEP 5 - DATA SOURCE
+    # DATA SOURCE
     # --------------------------------------------------------
 
     if step == 5:
@@ -231,7 +504,7 @@ def chatbot_response(user_message):
         )
 
     # --------------------------------------------------------
-    # STEP 6 - DATA VOLUME
+    # VOLUME
     # --------------------------------------------------------
 
     if step == 6:
@@ -250,7 +523,7 @@ def chatbot_response(user_message):
         )
 
     # --------------------------------------------------------
-    # STEP 7 - TIMELINE
+    # TIMELINE
     # --------------------------------------------------------
 
     if step == 7:
@@ -265,7 +538,7 @@ def chatbot_response(user_message):
         )
 
     # --------------------------------------------------------
-    # STEP 8 - EMAIL
+    # EMAIL
     # --------------------------------------------------------
 
     if step == 8:
@@ -273,9 +546,8 @@ def chatbot_response(user_message):
         if not valid_email(message):
 
             return (
-                "⚠️ That doesn't look like a valid email address.\n\n"
-                "Please enter something like:\n\n"
-                "**name@company.com**"
+                "⚠️ Please enter a valid email address.\n\n"
+                "Example: **name@company.com**"
             )
 
         data["email"] = message
@@ -285,640 +557,119 @@ def chatbot_response(user_message):
         return (
             "Thanks! 📧\n\n"
             "Please provide your **Phone / WhatsApp number**.\n\n"
-            "You can also type **Skip** if you don't want to provide it."
+            "You can type **Skip** if you don't want to provide it."
         )
 
     # --------------------------------------------------------
-    # STEP 9 - PHONE
+    # PHONE
     # --------------------------------------------------------
 
     if step == 9:
 
         if message.lower() == "skip":
+
             data["phone"] = ""
+
         else:
+
             data["phone"] = message
 
         st.session_state.chat_step = 10
 
-        phone_display = data.get("phone") or "Not provided"
+        phone = data.get("phone") or "Not provided"
 
-        return f"""
-### 📋 Project Request Summary
-
-**Name:** {data.get("name", "")}
-
-**Company:** {data.get("company", "")}
-
-**Industry:** {data.get("industry", "")}
-
-**Solution:** {data.get("service", "")}
-
-**Requirement:** {data.get("requirement", "")}
-
-**Data Source:** {data.get("data_source", "")}
-
-**Data Volume:** {data.get("volume", "")}
-
-**Timeline:** {data.get("timeline", "")}
-
-**Email:** {data.get("email", "")}
-
-**Phone:** {phone_display}
-
----
-
-Would you like me to **submit this project request** to LogiIntelli?
-
-Type **Yes** or **No**.
-"""
+        return (
+            "### 📋 Project Request Summary\n\n"
+            f"**Name:** {data.get('name', '')}\n\n"
+            f"**Company:** {data.get('company', '')}\n\n"
+            f"**Industry:** {data.get('industry', '')}\n\n"
+            f"**Solution:** {data.get('service', '')}\n\n"
+            f"**Requirement:** {data.get('requirement', '')}\n\n"
+            f"**Data Source:** {data.get('data_source', '')}\n\n"
+            f"**Data Volume:** {data.get('volume', '')}\n\n"
+            f"**Timeline:** {data.get('timeline', '')}\n\n"
+            f"**Email:** {data.get('email', '')}\n\n"
+            f"**Phone:** {phone}\n\n"
+            "---\n\n"
+            "Would you like me to **submit this project request**?\n\n"
+            "Please type **Yes** or **No**."
+        )
 
     # --------------------------------------------------------
-    # STEP 10 - CONFIRMATION
+    # CONFIRMATION
     # --------------------------------------------------------
 
     if step == 10:
 
-        lower_message = message.lower()
+        answer = message.lower()
 
-        positive_words = [
+        yes_words = [
             "yes",
             "y",
-            "sure",
             "submit",
+            "sure",
             "confirm",
             "ok",
             "okay",
-            "go ahead",
+            "go ahead"
         ]
 
-        negative_words = [
+        no_words = [
             "no",
             "n",
             "cancel",
-            "not now",
+            "not now"
         ]
 
-        if lower_message in positive_words:
+        if answer in yes_words:
 
-            success, result = submit_chat_request()
+            success = submit_to_google_sheet()
 
             if success:
 
                 st.session_state.chat_submitted = True
+
                 st.session_state.chat_step = 11
 
                 return (
                     "🎉 **Your project request has been submitted successfully!**\n\n"
                     "Thank you for contacting **LogiIntelli**.\n\n"
-                    "We have received your requirement and will contact you "
-                    "using the details you provided.\n\n"
-                    "🚚 **LogiIntelli — Logistics AI • Data Analytics • BI**"
+                    "Our team will review your requirement "
+                    "and contact you using the details provided.\n\n"
+                    "🚚 LogiIntelli\n"
+                    "Logistics AI • Data Analytics • BI"
                 )
 
-            if result == "timeout":
+            else:
 
                 return (
-                    "⏱️ The submission timed out.\n\n"
+                    "❌ I couldn't submit your request right now.\n\n"
                     "Please type **Submit** to try again."
                 )
 
-            return (
-                "❌ I couldn't submit the request right now.\n\n"
-                "Please try again in a moment."
-            )
-
-        if lower_message in negative_words:
+        if answer in no_words:
 
             st.session_state.chat_step = 11
 
             return (
                 "No problem! 👍\n\n"
-                "I haven't submitted anything.\n\n"
-                "Whenever you're ready, you can start a new conversation."
+                "Your request has not been submitted.\n\n"
+                "You can start a new conversation whenever you're ready."
             )
 
         return (
-            "Please type **Yes** to submit the project request "
+            "Please type **Yes** to submit "
             "or **No** to cancel."
         )
 
+    # --------------------------------------------------------
+    # FINISHED
+    # --------------------------------------------------------
+
     return (
-        "Your request has already been submitted successfully. 🎉"
+        "Your conversation is complete. 🎉\n\n"
+        "Click **Start New Conversation** if you have another requirement."
     )
-
-
-# ============================================================
-# GLOBAL CSS
-# ============================================================
-
-st.markdown(
-    """
-<style>
-
-html, body, [class*="css"] {
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Main page */
-
-.stApp {
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(0, 102, 204, 0.08),
-            transparent 30%
-        ),
-        linear-gradient(
-            180deg,
-            #f8fbff 0%,
-            #ffffff 45%,
-            #f5f8fc 100%
-        );
-}
-
-/* Remove Streamlit top spacing */
-
-.block-container {
-    padding-top: 1rem;
-    padding-bottom: 3rem;
-}
-
-/* Buttons */
-
-.stButton > button {
-    border-radius: 10px;
-    border: 1px solid #d8e2ee;
-    background: white;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.stButton > button:hover {
-    border-color: #0066cc;
-    color: #0066cc;
-    transform: translateY(-1px);
-}
-
-/* Navigation */
-
-.nav-button button {
-    min-height: 42px;
-}
-
-/* Cards */
-
-.service-card,
-.project-card,
-.metric-card,
-.info-card {
-
-    background: rgba(255,255,255,0.95);
-
-    border: 1px solid #e4ebf3;
-
-    border-radius: 18px;
-
-    padding: 24px;
-
-    box-shadow:
-        0 8px 30px rgba(15, 42, 70, 0.06);
-
-    height: 100%;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.service-card:hover,
-.project-card:hover {
-
-    transform: translateY(-5px);
-
-    box-shadow:
-        0 16px 40px rgba(15, 42, 70, 0.12);
-}
-
-/* Hero */
-
-.hero {
-
-    padding: 65px 40px;
-
-    border-radius: 28px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #071d35 0%,
-            #0b3c6f 45%,
-            #0066cc 100%
-        );
-
-    color: white;
-
-    margin-bottom: 35px;
-
-    box-shadow:
-        0 20px 60px rgba(0, 50, 100, 0.20);
-}
-
-.hero h1 {
-
-    font-size: 52px;
-
-    margin-bottom: 12px;
-
-    line-height: 1.1;
-}
-
-.hero p {
-
-    font-size: 19px;
-
-    max-width: 800px;
-
-    color: #dbeeff;
-
-    line-height: 1.6;
-}
-
-/* Section */
-
-.section-title {
-
-    font-size: 30px;
-
-    font-weight: 800;
-
-    color: #0b2545;
-
-    margin-top: 30px;
-
-    margin-bottom: 20px;
-}
-
-/* Metrics */
-
-.metric-number {
-
-    font-size: 34px;
-
-    font-weight: 800;
-
-    color: #0066cc;
-}
-
-.metric-label {
-
-    font-size: 14px;
-
-    color: #60758a;
-
-    margin-top: 5px;
-}
-
-/* Chat launcher */
-
-#logi-chat-launcher {
-
-    position: fixed;
-
-    right: 25px;
-
-    bottom: 25px;
-
-    z-index: 999999;
-
-    border: none;
-
-    cursor: pointer;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 13px 19px;
-
-    border-radius: 50px;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0b2545,
-            #0066cc
-        );
-
-    box-shadow:
-        0 10px 35px rgba(0, 82, 160, 0.35);
-
-    font-size: 14px;
-
-    font-weight: 700;
-}
-
-#logi-chat-launcher:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 14px 40px rgba(0, 82, 160, 0.45);
-}
-
-.chat-icon {
-
-    width: 34px;
-
-    height: 34px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: white;
-
-    color: #0066cc;
-
-    border-radius: 50%;
-
-    font-size: 18px;
-}
-
-/* Chat window */
-
-#logi-chat-window {
-
-    position: fixed;
-
-    right: 25px;
-
-    bottom: 90px;
-
-    width: 380px;
-
-    max-width: calc(100vw - 30px);
-
-    height: 580px;
-
-    max-height: calc(100vh - 120px);
-
-    background: white;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 20px 70px rgba(0,0,0,0.22);
-
-    border: 1px solid #dce5ef;
-
-    overflow: hidden;
-
-    z-index: 999998;
-
-    display: none;
-
-    flex-direction: column;
-}
-
-#logi-chat-window.open {
-
-    display: flex;
-}
-
-/* Chat header */
-
-.chat-header {
-
-    background:
-        linear-gradient(
-            135deg,
-            #071d35,
-            #0066cc
-        );
-
-    color: white;
-
-    padding: 17px 18px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-.chat-header-left {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-}
-
-.chat-header-icon {
-
-    width: 40px;
-
-    height: 40px;
-
-    background: white;
-
-    color: #0066cc;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 20px;
-}
-
-.chat-header-title {
-
-    font-size: 15px;
-
-    font-weight: 800;
-}
-
-.chat-header-status {
-
-    font-size: 11px;
-
-    opacity: 0.85;
-
-    margin-top: 2px;
-}
-
-.chat-close {
-
-    background: rgba(255,255,255,0.15);
-
-    border: none;
-
-    color: white;
-
-    width: 32px;
-
-    height: 32px;
-
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    font-size: 18px;
-}
-
-/* Chat body */
-
-.chat-body {
-
-    flex: 1;
-
-    overflow-y: auto;
-
-    padding: 15px;
-
-    background: #f5f8fc;
-}
-
-/* Message */
-
-.chat-message {
-
-    max-width: 86%;
-
-    padding: 11px 13px;
-
-    margin-bottom: 10px;
-
-    border-radius: 15px;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-.chat-bot {
-
-    background: white;
-
-    color: #24384d;
-
-    border: 1px solid #e1e8f0;
-
-    border-bottom-left-radius: 5px;
-
-    margin-right: auto;
-}
-
-.chat-user {
-
-    background: #0066cc;
-
-    color: white;
-
-    border-bottom-right-radius: 5px;
-
-    margin-left: auto;
-}
-
-/* Chat input */
-
-.chat-input-area {
-
-    padding: 12px;
-
-    border-top: 1px solid #e4e9ef;
-
-    background: white;
-
-    display: flex;
-
-    gap: 8px;
-}
-
-.chat-input {
-
-    flex: 1;
-
-    border: 1px solid #d7e0ea;
-
-    border-radius: 12px;
-
-    padding: 10px 12px;
-
-    outline: none;
-
-    font-size: 13px;
-}
-
-.chat-send {
-
-    width: 42px;
-
-    border: none;
-
-    border-radius: 12px;
-
-    background: #0066cc;
-
-    color: white;
-
-    cursor: pointer;
-
-    font-size: 17px;
-}
-
-/* Mobile */
-
-@media (max-width: 600px) {
-
-    #logi-chat-window {
-
-        right: 10px;
-
-        bottom: 80px;
-
-        width: calc(100vw - 20px);
-
-        height: 70vh;
-    }
-
-    #logi-chat-launcher {
-
-        right: 15px;
-
-        bottom: 15px;
-
-        padding: 11px 15px;
-    }
-
-    .hero {
-
-        padding: 40px 25px;
-    }
-
-    .hero h1 {
-
-        font-size: 36px;
-    }
-}
-
-</style>
-""",
-    unsafe_allow_html=True,
-)
 
 
 # ============================================================
@@ -931,36 +682,32 @@ st.markdown(
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:12px 4px 18px 4px;
+    padding:8px 4px 15px 4px;
 ">
+
     <div>
-        <div style="
-            font-size:25px;
-            font-weight:800;
-            color:#0B2545;
-        ">
+
+        <div class="logo-title">
             🚚 LogiIntelli
         </div>
 
-        <div style="
-            font-size:12px;
-            color:#60758A;
-            margin-top:3px;
-        ">
+        <div class="logo-subtitle">
             Logistics Analytics • AI & Predictive Intelligence • BI Automation
         </div>
+
     </div>
 
     <div style="
-        font-size:12px;
         color:#0066CC;
-        font-weight:700;
+        font-size:12px;
+        font-weight:800;
     ">
         DATA • AI • AUTOMATION
     </div>
+
 </div>
 """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
 
 
@@ -974,29 +721,27 @@ pages = [
     "Projects",
     "Request Project",
     "About",
-    "Contact",
+    "Contact"
 ]
 
 nav_cols = st.columns(6)
 
-for idx, page_name in enumerate(pages):
+for i, page_name in enumerate(pages):
 
-    with nav_cols[idx]:
+    with nav_cols[i]:
 
-        selected = (
-            st.session_state.page == page_name
-        )
+        if st.session_state.page == page_name:
 
-        label = (
-            f"● {page_name}"
-            if selected
-            else page_name
-        )
+            label = f"● {page_name}"
+
+        else:
+
+            label = page_name
 
         if st.button(
             label,
-            key=f"nav_{idx}",
-            use_container_width=True,
+            key=f"navigation_{i}",
+            use_container_width=True
         ):
 
             st.session_state.page = page_name
@@ -1004,11 +749,15 @@ for idx, page_name in enumerate(pages):
             st.rerun()
 
 
+# ============================================================
+# CURRENT PAGE
+# ============================================================
+
 page = st.session_state.page
 
 
 # ============================================================
-# HOME
+# HOME PAGE
 # ============================================================
 
 if page == "Home":
@@ -1017,12 +766,7 @@ if page == "Home":
         """
 <div class="hero">
 
-    <div style="
-        font-size:14px;
-        font-weight:700;
-        color:#7ec8ff;
-        margin-bottom:12px;
-    ">
+    <div class="hero-small-title">
         LOGISTICS DATA & AI INTELLIGENCE
     </div>
 
@@ -1040,12 +784,12 @@ if page == "Home":
 
 </div>
 """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     st.markdown(
         '<div class="section-title">Our Impact</div>',
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     c1, c2, c3, c4 = st.columns(4)
@@ -1054,13 +798,15 @@ if page == "Home":
         ("10+", "Years Experience"),
         ("50+", "Analytics & AI Pipelines"),
         ("24/7", "Automated Systems"),
-        ("BI + AI", "Technology Architecture"),
+        ("BI + AI", "Technology Architecture")
     ]
 
-    for col, (number, label) in zip(
+    for col, metric in zip(
         [c1, c2, c3, c4],
         metrics
     ):
+
+        number, label = metric
 
         with col:
 
@@ -1078,12 +824,12 @@ if page == "Home":
 
 </div>
 """,
-                unsafe_allow_html=True,
+                unsafe_allow_html=True
             )
 
     st.markdown(
         '<div class="section-title">What We Build</div>',
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     services = [
@@ -1095,7 +841,7 @@ if page == "Home":
         (
             "⏱️",
             "TAT & Ageing Analytics",
-            "Identify delayed shipments, ageing patterns and operational bottlenecks."
+            "Identify delayed shipments, ageing patterns and bottlenecks."
         ),
         (
             "⚙️",
@@ -1105,7 +851,7 @@ if page == "Home":
         (
             "🏢",
             "Hub Performance",
-            "Measure hub productivity, volume, SLA and operational performance."
+            "Measure hub productivity, SLA and operational performance."
         ),
         (
             "🔗",
@@ -1115,181 +861,8 @@ if page == "Home":
         (
             "🤖",
             "Predictive AI",
-            "Use machine learning to predict shipment delays and operational risks."
-        ),
-    ]
-
-    service_cols = st.columns(3)
-
-    for index, service in enumerate(services):
-
-        icon, title, description = service
-
-        with service_cols[index % 3]:
-
-            st.markdown(
-                f"""
-<div class="service-card">
-
-    <div style="
-        font-size:30px;
-        margin-bottom:12px;
-    ">
-        {icon}
-    </div>
-
-    <div style="
-        font-size:18px;
-        font-weight:800;
-        color:#0B2545;
-        margin-bottom:8px;
-    ">
-        {title}
-    </div>
-
-    <div style="
-        font-size:13px;
-        line-height:1.6;
-        color:#60758A;
-    ">
-        {description}
-    </div>
-
-</div>
-""",
-                unsafe_allow_html=True,
-            )
-
-    st.markdown(
-        '<div class="section-title">How We Work</div>',
-        unsafe_allow_html=True,
-    )
-
-    workflow_cols = st.columns(4)
-
-    workflow = [
-        ("01", "Understand", "Understand your business problem and KPIs."),
-        ("02", "Connect", "Connect ERP, SQL, Excel, APIs and other data sources."),
-        ("03", "Build", "Build dashboards, automation and AI solutions."),
-        ("04", "Improve", "Monitor results and continuously improve operations."),
-    ]
-
-    for col, item in zip(
-        workflow_cols,
-        workflow
-    ):
-
-        number, title, description = item
-
-        with col:
-
-            st.markdown(
-                f"""
-<div class="info-card">
-
-    <div style="
-        font-size:13px;
-        color:#0066CC;
-        font-weight:800;
-    ">
-        {number}
-    </div>
-
-    <div style="
-        font-size:18px;
-        font-weight:800;
-        margin:8px 0;
-        color:#0B2545;
-    ">
-        {title}
-    </div>
-
-    <div style="
-        font-size:13px;
-        line-height:1.6;
-        color:#60758A;
-    ">
-        {description}
-    </div>
-
-</div>
-""",
-                unsafe_allow_html=True,
-            )
-
-    st.markdown(
-        """
-<div style="
-    margin-top:35px;
-    padding:35px;
-    border-radius:22px;
-    background:#0B2545;
-    color:white;
-    text-align:center;
-">
-
-    <div style="
-        font-size:27px;
-        font-weight:800;
-    ">
-        Have a Logistics Analytics Challenge?
-    </div>
-
-    <div style="
-        color:#cce6ff;
-        margin:10px 0 20px 0;
-    ">
-        Tell us your requirement and let's build the solution.
-    </div>
-
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-
-
-# ============================================================
-# SERVICES
-# ============================================================
-
-elif page == "Services":
-
-    st.markdown(
-        '<div class="section-title">Our Services</div>',
-        unsafe_allow_html=True,
-    )
-
-    services = [
-        (
-            "📊",
-            "Logistics BI",
-            "Power BI dashboards, KPI monitoring, operational reporting and executive analytics."
-        ),
-        (
-            "⏱️",
-            "TAT & Ageing Analytics",
-            "Shipment TAT, ageing buckets, SLA performance, pending shipment and delay analytics."
-        ),
-        (
-            "⚙️",
-            "MIS Automation",
-            "Automate daily MIS, scheduled reports, email distribution and operational reporting."
-        ),
-        (
-            "🏢",
-            "Hub Performance Analytics",
-            "Analyze booking, inbound, outbound, delivery and hub-level operational performance."
-        ),
-        (
-            "🔗",
-            "API & ERP Integration",
-            "Extract data from REST APIs, ERP systems, SQL databases and multiple sources."
-        ),
-        (
-            "🤖",
-            "Predictive AI & Machine Learning",
-            "Predict shipment delays, identify risk patterns and support proactive operations."
-        ),
+            "Predict shipment delays and operational risks."
+        )
     ]
 
     cols = st.columns(3)
@@ -1303,87 +876,6 @@ elif page == "Services":
             st.markdown(
                 f"""
 <div class="service-card">
-
-    <div style="font-size:34px;">
-        {icon}
-    </div>
-
-    <h3 style="
-        color:#0B2545;
-        margin-bottom:10px;
-    ">
-        {title}
-    </h3>
-
-    <p style="
-        color:#60758A;
-        font-size:14px;
-        line-height:1.7;
-    ">
-        {description}
-    </p>
-
-</div>
-""",
-                unsafe_allow_html=True,
-            )
-
-
-# ============================================================
-# PROJECTS
-# ============================================================
-
-elif page == "Projects":
-
-    st.markdown(
-        '<div class="section-title">Projects & Solutions</div>',
-        unsafe_allow_html=True,
-    )
-
-    projects = [
-        (
-            "🚚",
-            "Courier Operations Dashboard",
-            "End-to-end Power BI dashboard covering booking, delivery, pending and operational KPIs."
-        ),
-        (
-            "⏱️",
-            "Shipment TAT & Ageing Analytics",
-            "Monitor shipment lifecycle, ageing buckets, TAT and SLA performance."
-        ),
-        (
-            "🏢",
-            "Hub Performance Analytics",
-            "Analyze hub productivity, volume, service quality and operational bottlenecks."
-        ),
-        (
-            "📦",
-            "Inbound / Outbound Analytics",
-            "State, hub and route-level inbound and outbound shipment analytics."
-        ),
-        (
-            "🤖",
-            "Shipment Delay Prediction AI",
-            "Machine learning model to identify shipments with a higher probability of delay."
-        ),
-        (
-            "⚙️",
-            "Automated Daily MIS Engine",
-            "Python-based automated reporting pipeline for daily logistics operations."
-        ),
-    ]
-
-    cols = st.columns(3)
-
-    for i, project in enumerate(projects):
-
-        icon, title, description = project
-
-        with cols[i % 3]:
-
-            st.markdown(
-                f"""
-<div class="project-card">
 
     <div style="
         font-size:32px;
@@ -1402,36 +894,259 @@ elif page == "Projects":
     </div>
 
     <div style="
-        color:#60758A;
         font-size:13px;
         line-height:1.7;
+        color:#60758A;
     ">
         {description}
     </div>
 
 </div>
 """,
-                unsafe_allow_html=True,
+                unsafe_allow_html=True
+            )
+
+    st.markdown(
+        '<div class="section-title">How We Work</div>',
+        unsafe_allow_html=True
+    )
+
+    workflow = [
+        (
+            "01",
+            "Understand",
+            "Understand your business problem and KPIs."
+        ),
+        (
+            "02",
+            "Connect",
+            "Connect ERP, SQL, Excel, APIs and other data sources."
+        ),
+        (
+            "03",
+            "Build",
+            "Build dashboards, automation and AI solutions."
+        ),
+        (
+            "04",
+            "Improve",
+            "Monitor results and continuously improve operations."
+        )
+    ]
+
+    cols = st.columns(4)
+
+    for col, item in zip(cols, workflow):
+
+        number, title, description = item
+
+        with col:
+
+            st.markdown(
+                f"""
+<div class="info-card">
+
+    <div style="
+        color:#0066CC;
+        font-weight:800;
+        font-size:13px;
+    ">
+        {number}
+    </div>
+
+    <h3 style="
+        color:#0B2545;
+        margin:8px 0;
+    ">
+        {title}
+    </h3>
+
+    <p style="
+        color:#60758A;
+        font-size:13px;
+        line-height:1.6;
+    ">
+        {description}
+    </p>
+
+</div>
+""",
+                unsafe_allow_html=True
             )
 
 
 # ============================================================
-# REQUEST PROJECT
+# SERVICES PAGE
+# ============================================================
+
+elif page == "Services":
+
+    st.markdown(
+        '<div class="section-title">Our Services</div>',
+        unsafe_allow_html=True
+    )
+
+    services = [
+        (
+            "📊",
+            "Logistics BI",
+            "Power BI dashboards, KPI monitoring, operational reporting and executive analytics."
+        ),
+        (
+            "⏱️",
+            "TAT & Ageing Analytics",
+            "Shipment TAT, ageing buckets, SLA performance and pending shipment analytics."
+        ),
+        (
+            "⚙️",
+            "MIS Automation",
+            "Automate daily MIS, scheduled reports and operational reporting."
+        ),
+        (
+            "🏢",
+            "Hub Performance Analytics",
+            "Analyze hub productivity, volume, service quality and bottlenecks."
+        ),
+        (
+            "🔗",
+            "API & ERP Integration",
+            "Connect REST APIs, ERP systems and SQL databases."
+        ),
+        (
+            "🤖",
+            "Predictive AI & Machine Learning",
+            "Predict shipment delays and identify operational risk patterns."
+        )
+    ]
+
+    cols = st.columns(3)
+
+    for i, service in enumerate(services):
+
+        icon, title, description = service
+
+        with cols[i % 3]:
+
+            st.markdown(
+                f"""
+<div class="service-card">
+
+    <div style="font-size:35px;">
+        {icon}
+    </div>
+
+    <h3 style="color:#0B2545;">
+        {title}
+    </h3>
+
+    <p style="
+        color:#60758A;
+        font-size:14px;
+        line-height:1.7;
+    ">
+        {description}
+    </p>
+
+</div>
+""",
+                unsafe_allow_html=True
+            )
+
+
+# ============================================================
+# PROJECTS PAGE
+# ============================================================
+
+elif page == "Projects":
+
+    st.markdown(
+        '<div class="section-title">Projects & Solutions</div>',
+        unsafe_allow_html=True
+    )
+
+    projects = [
+        (
+            "🚚",
+            "Courier Operations Dashboard",
+            "End-to-end Power BI dashboard covering booking, delivery, pending and operational KPIs."
+        ),
+        (
+            "⏱️",
+            "Shipment TAT & Ageing Analytics",
+            "Monitor shipment lifecycle, ageing buckets, TAT and SLA performance."
+        ),
+        (
+            "🏢",
+            "Hub Performance Analytics",
+            "Analyze hub productivity, volume and operational performance."
+        ),
+        (
+            "📦",
+            "Inbound / Outbound Analytics",
+            "State, hub and route-level inbound and outbound analytics."
+        ),
+        (
+            "🤖",
+            "Shipment Delay Prediction AI",
+            "Machine learning solution to identify shipments with higher delay risk."
+        ),
+        (
+            "⚙️",
+            "Automated Daily MIS Engine",
+            "Python-based automated reporting pipeline for logistics operations."
+        )
+    ]
+
+    cols = st.columns(3)
+
+    for i, project in enumerate(projects):
+
+        icon, title, description = project
+
+        with cols[i % 3]:
+
+            st.markdown(
+                f"""
+<div class="project-card">
+
+    <div style="font-size:34px;">
+        {icon}
+    </div>
+
+    <h3 style="color:#0B2545;">
+        {title}
+    </h3>
+
+    <p style="
+        color:#60758A;
+        font-size:13px;
+        line-height:1.7;
+    ">
+        {description}
+    </p>
+
+</div>
+""",
+                unsafe_allow_html=True
+            )
+
+
+# ============================================================
+# REQUEST PROJECT PAGE
 # ============================================================
 
 elif page == "Request Project":
 
     st.markdown(
         '<div class="section-title">Request a Project</div>',
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     st.write(
-        "Tell us about your requirement. "
-        "We will review it and get back to you."
+        "Tell us about your requirement and we will review it."
     )
 
-    with st.form("project_request_form"):
+    with st.form("request_project_form"):
 
         col1, col2 = st.columns(2)
 
@@ -1463,8 +1178,8 @@ elif page == "Request Project":
                     "Manufacturing",
                     "Retail",
                     "Supply Chain",
-                    "Other",
-                ],
+                    "Other"
+                ]
             )
 
             service = st.selectbox(
@@ -1478,8 +1193,8 @@ elif page == "Request Project":
                     "API / ERP Integration",
                     "Predictive AI / Machine Learning",
                     "Route Analytics",
-                    "Other",
-                ],
+                    "Other"
+                ]
             )
 
             data_source = st.selectbox(
@@ -1492,8 +1207,8 @@ elif page == "Request Project":
                     "ERP",
                     "REST API",
                     "Multiple Sources",
-                    "Other",
-                ],
+                    "Other"
+                ]
             )
 
             timeline = st.selectbox(
@@ -1503,26 +1218,26 @@ elif page == "Request Project":
                     "1–2 weeks",
                     "2–4 weeks",
                     "1–2 months",
-                    "Not decided",
-                ],
+                    "Not decided"
+                ]
             )
 
         requirement = st.text_area(
             "Project Requirement *",
-            height=160,
+            height=170,
             placeholder=(
                 "Describe your business problem, "
-                "dashboard requirement, automation need, "
-                "AI requirement, etc."
-            ),
+                "dashboard requirement, automation requirement "
+                "or AI requirement."
+            )
         )
 
-        submitted = st.form_submit_button(
+        submit = st.form_submit_button(
             "🚀 Submit Project Request",
-            use_container_width=True,
+            use_container_width=True
         )
 
-        if submitted:
+        if submit:
 
             if not contact.strip():
 
@@ -1545,44 +1260,34 @@ elif page == "Request Project":
             elif not requirement.strip():
 
                 st.error(
-                    "Please describe your project requirement."
+                    "Please describe your requirement."
                 )
 
             else:
 
                 payload = {
-
                     "Date":
                         datetime.now().strftime(
                             "%Y-%m-%d %H:%M:%S"
                         ),
-
                     "Company":
                         company,
-
                     "Contact":
                         contact,
-
                     "Email":
                         email,
-
                     "Phone":
                         phone,
-
                     "Industry":
                         industry,
-
                     "Service":
                         service,
-
                     "Data_Source":
                         data_source,
-
                     "Timeline":
                         timeline,
-
                     "Requirement":
-                        requirement,
+                        requirement
                 }
 
                 try:
@@ -1595,7 +1300,7 @@ elif page == "Request Project":
                                 "text/plain;charset=utf-8"
                         },
                         timeout=20,
-                        allow_redirects=True,
+                        allow_redirects=True
                     )
 
                     if response.status_code == 200:
@@ -1604,78 +1309,70 @@ elif page == "Request Project":
                             "🎉 Project request submitted successfully!"
                         )
 
-                        st.info(
-                            "Thank you. We will contact you soon."
-                        )
-
                     else:
 
                         st.error(
                             "Unable to submit the request."
                         )
 
-                except Exception as e:
+                except Exception as error:
 
                     st.error(
-                        f"Submission error: {e}"
+                        f"Submission error: {error}"
                     )
 
 
 # ============================================================
-# ABOUT
+# ABOUT PAGE
 # ============================================================
 
 elif page == "About":
 
     st.markdown(
         '<div class="section-title">About LogiIntelli</div>',
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     st.markdown(
         """
 <div class="info-card">
 
-<h2 style="color:#0B2545;">
-Logistics Intelligence Through Data
-</h2>
+    <h2 style="color:#0B2545;">
+        Logistics Intelligence Through Data
+    </h2>
 
-<p style="
-    color:#60758A;
-    line-height:1.8;
-    font-size:15px;
-">
+    <p style="
+        color:#60758A;
+        font-size:15px;
+        line-height:1.8;
+    ">
+        LogiIntelli focuses on solving real-world logistics,
+        supply chain and operational challenges using data,
+        business intelligence, automation and artificial intelligence.
+    </p>
 
-LogiIntelli focuses on solving real-world logistics,
-supply chain and operational challenges using data,
-business intelligence, automation and artificial intelligence.
-
-</p>
-
-<p style="
-    color:#60758A;
-    line-height:1.8;
-    font-size:15px;
-">
-
-Our solutions combine SQL, Python, Power BI,
-REST APIs, ERP integration, automation and machine
-learning to transform operational data into actionable
-business intelligence.
-
-</p>
+    <p style="
+        color:#60758A;
+        font-size:15px;
+        line-height:1.8;
+    ">
+        Our solutions combine SQL, Python, Power BI,
+        REST APIs, ERP integration, automation and
+        machine learning to transform operational data
+        into actionable business intelligence.
+    </p>
 
 </div>
 """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     st.markdown(
         '<div class="section-title">Technology Stack</div>',
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
-    tech = [
+    technologies = [
         "SQL",
         "Python",
         "Pandas",
@@ -1687,12 +1384,12 @@ business intelligence.
         "REST APIs",
         "MySQL",
         "Streamlit",
-        "Automation",
+        "Automation"
     ]
 
     cols = st.columns(4)
 
-    for i, technology in enumerate(tech):
+    for i, technology in enumerate(technologies):
 
         with cols[i % 4]:
 
@@ -1705,25 +1402,25 @@ style="
     padding:16px;
 ">
 
-<b style="color:#0B2545;">
-{technology}
-</b>
+    <b style="color:#0B2545;">
+        {technology}
+    </b>
 
 </div>
 """,
-                unsafe_allow_html=True,
+                unsafe_allow_html=True
             )
 
 
 # ============================================================
-# CONTACT
+# CONTACT PAGE
 # ============================================================
 
 elif page == "Contact":
 
     st.markdown(
-        '<div class="section-title">Let's Work Together</div>',
-        unsafe_allow_html=True,
+        '<div class="section-title">Let\'s Work Together</div>',
+        unsafe_allow_html=True
     )
 
     st.write(
@@ -1738,19 +1435,21 @@ elif page == "Contact":
             """
 <div class="info-card">
 
-<div style="font-size:28px;">📧</div>
+    <div style="font-size:28px;">
+        📧
+    </div>
 
-<h4 style="color:#0B2545;">
-Email
-</h4>
+    <h4 style="color:#0B2545;">
+        Email
+    </h4>
 
-<p>
-sumansekar1205@gmail.com
-</p>
+    <p>
+        sumansekar1205@gmail.com
+    </p>
 
 </div>
 """,
-            unsafe_allow_html=True,
+            unsafe_allow_html=True
         )
 
     with c2:
@@ -1759,19 +1458,21 @@ sumansekar1205@gmail.com
             """
 <div class="info-card">
 
-<div style="font-size:28px;">📱</div>
+    <div style="font-size:28px;">
+        📱
+    </div>
 
-<h4 style="color:#0B2545;">
-WhatsApp
-</h4>
+    <h4 style="color:#0B2545;">
+        WhatsApp
+    </h4>
 
-<p>
-+91 8825674102
-</p>
+    <p>
+        +91 8825674102
+    </p>
 
 </div>
 """,
-            unsafe_allow_html=True,
+            unsafe_allow_html=True
         )
 
     with c3:
@@ -1780,19 +1481,21 @@ WhatsApp
             """
 <div class="info-card">
 
-<div style="font-size:28px;">💼</div>
+    <div style="font-size:28px;">
+        💼
+    </div>
 
-<h4 style="color:#0B2545;">
-LinkedIn
-</h4>
+    <h4 style="color:#0B2545;">
+        LinkedIn
+    </h4>
 
-<p>
-linkedin.com/in/sumansekar12/
-</p>
+    <p>
+        linkedin.com/in/sumansekar12/
+    </p>
 
 </div>
 """,
-            unsafe_allow_html=True,
+            unsafe_allow_html=True
         )
 
     with c4:
@@ -1801,20 +1504,188 @@ linkedin.com/in/sumansekar12/
             """
 <div class="info-card">
 
-<div style="font-size:28px;">💻</div>
+    <div style="font-size:28px;">
+        💻
+    </div>
 
-<h4 style="color:#0B2545;">
-GitHub
-</h4>
+    <h4 style="color:#0B2545;">
+        GitHub
+    </h4>
 
-<p>
-github.com/Suman-SekarSagadev
-</p>
+    <p>
+        github.com/Suman-SekarSagadev
+    </p>
 
 </div>
 """,
-            unsafe_allow_html=True,
+            unsafe_allow_html=True
         )
+
+
+# ============================================================
+# FLOATING CHATBOT BUTTON
+# ============================================================
+
+st.markdown(
+    """
+<div class="chat-launcher-box">
+
+    <div class="chat-launcher-label">
+        🤖 Chat with us
+    </div>
+
+</div>
+""",
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# CHATBOT CONTROL
+# ============================================================
+
+st.markdown(
+    "<div class='chat-launcher-space'></div>",
+    unsafe_allow_html=True
+)
+
+chat_button_col = st.columns([8, 1])
+
+with chat_button_col[1]:
+
+    if st.button(
+        "🤖",
+        key="open_chat",
+        help="Open LogiIntelli Project Assistant"
+    ):
+
+        st.session_state.chat_open = True
+
+        if not st.session_state.chat_messages:
+
+            st.session_state.chat_messages.append(
+                {
+                    "role": "assistant",
+                    "content": (
+                        "👋 Hi! I'm the **LogiIntelli Project Assistant**.\n\n"
+                        "I can collect your project requirements "
+                        "and submit them directly to our team.\n\n"
+                        "Let's get started!\n\n"
+                        "**What is your name?**"
+                    )
+                }
+            )
+
+        st.rerun()
+
+
+# ============================================================
+# CHAT WINDOW
+# ============================================================
+
+if st.session_state.chat_open:
+
+    st.markdown(
+        '<div class="section-title">🤖 LogiIntelli Project Assistant</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+<div class="chat-status">
+    ● Online • Project Support
+</div>
+
+<div class="chat-info">
+    I will ask a few questions about your project.
+    Your answers will be submitted securely to our
+    project request Google Sheet after confirmation.
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+    # --------------------------------------------------------
+    # CHAT MESSAGES
+    # --------------------------------------------------------
+
+    for msg in st.session_state.chat_messages:
+
+        with st.chat_message(
+            msg["role"]
+        ):
+
+            st.markdown(
+                msg["content"]
+            )
+
+    # --------------------------------------------------------
+    # INPUT
+    # --------------------------------------------------------
+
+    if not st.session_state.chat_submitted:
+
+        user_input = st.chat_input(
+            "Type your answer here..."
+        )
+
+        if user_input:
+
+            st.session_state.chat_messages.append(
+                {
+                    "role": "user",
+                    "content": user_input
+                }
+            )
+
+            response = chatbot_response(
+                user_input
+            )
+
+            st.session_state.chat_messages.append(
+                {
+                    "role": "assistant",
+                    "content": response
+                }
+            )
+
+            st.rerun()
+
+    # --------------------------------------------------------
+    # RESET
+    # --------------------------------------------------------
+
+    reset_col1, reset_col2, reset_col3 = st.columns(
+        [1, 2, 1]
+    )
+
+    with reset_col2:
+
+        if st.button(
+            "🔄 Start New Conversation",
+            key="start_new_chat",
+            use_container_width=True
+        ):
+
+            reset_chat()
+
+            st.session_state.chat_open = True
+
+            st.rerun()
+
+    # --------------------------------------------------------
+    # CLOSE
+    # --------------------------------------------------------
+
+    if st.button(
+        "✕ Close Assistant",
+        key="close_chat",
+        use_container_width=True
+    ):
+
+        st.session_state.chat_open = False
+
+        st.rerun()
 
 
 # ============================================================
@@ -1823,379 +1694,19 @@ github.com/Suman-SekarSagadev
 
 st.markdown(
     """
-<hr>
+<div class="footer">
 
-<div style="
-    text-align:center;
-    padding:20px;
-    color:#708398;
-    font-size:12px;
-">
+    🚚 <b>LogiIntelli</b>
 
-🚚 <b>LogiIntelli</b>
+    <br><br>
 
-<br><br>
+    Logistics Analytics • AI • BI • Automation
 
-Logistics Analytics • AI • BI • Automation
+    <br><br>
 
-<br><br>
-
-© 2026 LogiIntelli. All rights reserved.
+    © 2026 LogiIntelli. All rights reserved.
 
 </div>
 """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
-
-
-# ============================================================
-# FLOATING CHATBOT FRONTEND
-# ============================================================
-
-chat_open = st.session_state.chat_open
-
-display_style = "flex" if chat_open else "none"
-
-# Escape messages safely for HTML
-chat_html = ""
-
-for msg in st.session_state.chat_messages:
-
-    role = msg["role"]
-
-    content = msg["content"]
-
-    content = html.escape(content)
-
-    # Basic markdown-like formatting
-    content = re.sub(
-        r"\*\*(.*?)\*\*",
-        r"<strong>\1</strong>",
-        content,
-    )
-
-    content = content.replace(
-        "\n",
-        "<br>"
-    )
-
-    if role == "assistant":
-
-        chat_html += f"""
-<div class="chat-message chat-bot">
-    {content}
-</div>
-"""
-
-    else:
-
-        chat_html += f"""
-<div class="chat-message chat-user">
-    {content}
-</div>
-"""
-
-
-# ============================================================
-# CHATBOT WINDOW
-# ============================================================
-
-st.markdown(
-    f"""
-<div
-    id="logi-chat-window"
-    class="{'open' if chat_open else ''}"
->
-
-    <div class="chat-header">
-
-        <div class="chat-header-left">
-
-            <div class="chat-header-icon">
-                🤖
-            </div>
-
-            <div>
-
-                <div class="chat-header-title">
-                    LogiIntelli Assistant
-                </div>
-
-                <div class="chat-header-status">
-                    ● Online • Project Support
-                </div>
-
-            </div>
-
-        </div>
-
-        <button
-            class="chat-close"
-            onclick="closeLogiChat()"
-        >
-            ×
-        </button>
-
-    </div>
-
-
-    <div class="chat-body">
-
-        {chat_html}
-
-    </div>
-
-
-    <div class="chat-input-area">
-
-        <input
-            id="logi-chat-input"
-            class="chat-input"
-            type="text"
-            placeholder="Type your answer..."
-            onkeydown="
-                if(event.key === 'Enter') {{
-                    sendLogiMessage();
-                }}
-            "
-        >
-
-        <button
-            class="chat-send"
-            onclick="sendLogiMessage()"
-        >
-            ➤
-        </button>
-
-    </div>
-
-</div>
-
-
-<button
-    id="logi-chat-launcher"
-    onclick="toggleLogiChat()"
->
-
-    <span class="chat-icon">
-        🤖
-    </span>
-
-    <span>
-        Chat with us
-    </span>
-
-</button>
-
-
-<script>
-
-function toggleLogiChat() {{
-
-    const windowElement =
-        document.getElementById("logi-chat-window");
-
-    const launcher =
-        document.getElementById("logi-chat-launcher");
-
-    if (
-        windowElement.classList.contains("open")
-    ) {{
-
-        windowElement.classList.remove("open");
-
-    }} else {{
-
-        windowElement.classList.add("open");
-
-        setTimeout(function() {{
-
-            const input =
-                document.getElementById(
-                    "logi-chat-input"
-                );
-
-            if(input) {{
-                input.focus();
-            }}
-
-        }}, 100);
-
-    }}
-
-}}
-
-
-function closeLogiChat() {{
-
-    const windowElement =
-        document.getElementById(
-            "logi-chat-window"
-        );
-
-    windowElement.classList.remove("open");
-
-}}
-
-
-function sendLogiMessage() {{
-
-    const input =
-        document.getElementById(
-            "logi-chat-input"
-        );
-
-    const message =
-        input.value.trim();
-
-    if(!message) {{
-        return;
-    }}
-
-    /*
-       Streamlit native chat input is handled separately.
-       This function places the message into the Streamlit
-       query parameters so Python can process it.
-    */
-
-    const url =
-        new URL(
-            window.location.href
-        );
-
-    url.searchParams.set(
-        "chat_message",
-        message
-    );
-
-    window.history.replaceState(
-        {{}},
-        "",
-        url
-    );
-
-    input.value = "";
-
-    window.location.reload();
-
-}}
-
-
-window.addEventListener(
-    "load",
-    function() {{
-
-        const windowElement =
-            document.getElementById(
-                "logi-chat-window"
-            );
-
-        if(windowElement) {{
-
-            const body =
-                windowElement.querySelector(
-                    ".chat-body"
-                );
-
-            if(body) {{
-                body.scrollTop =
-                    body.scrollHeight;
-            }}
-
-        }}
-
-    }}
-);
-
-</script>
-""",
-    unsafe_allow_html=True,
-)
-
-
-# ============================================================
-# PROCESS CHAT MESSAGE FROM URL
-# ============================================================
-
-query_params = st.query_params
-
-chat_message = query_params.get(
-    "chat_message",
-    ""
-)
-
-if chat_message:
-
-    # Clear query parameter first
-    st.query_params.clear()
-
-    # Open chat
-    st.session_state.chat_open = True
-
-    # First chatbot message
-    if not st.session_state.chat_messages:
-
-        initial_message = (
-            "👋 Hi! I'm the **LogiIntelli Project Assistant**.\n\n"
-            "I can collect your project requirements and "
-            "submit them directly to our team.\n\n"
-            "Let's get started!\n\n"
-            "**What is your name?**"
-        )
-
-        st.session_state.chat_messages.append(
-            {
-                "role": "assistant",
-                "content": initial_message,
-            }
-        )
-
-    # Add user message
-    st.session_state.chat_messages.append(
-        {
-            "role": "user",
-            "content": chat_message,
-        }
-    )
-
-    # Generate response
-    response = chatbot_response(
-        chat_message
-    )
-
-    # Add bot response
-    st.session_state.chat_messages.append(
-        {
-            "role": "assistant",
-            "content": response,
-        }
-    )
-
-    st.rerun()
-
-
-# ============================================================
-# START CHAT
-# ============================================================
-
-if (
-    st.session_state.chat_open
-    and not st.session_state.chat_messages
-):
-
-    initial_message = (
-        "👋 Hi! I'm the **LogiIntelli Project Assistant**.\n\n"
-        "I can collect your project requirements and "
-        "submit them directly to our team.\n\n"
-        "Let's get started!\n\n"
-        "**What is your name?**"
-    )
-
-    st.session_state.chat_messages.append(
-        {
-            "role": "assistant",
-            "content": initial_message,
-        }
-    )
-
-    st.rerun()
