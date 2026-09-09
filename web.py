@@ -375,16 +375,19 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   CHAT HEADER & CLOSE BUTTON FIX
+   CHAT HEADER & INTEGRATED CLOSE BUTTON
 ============================================================ */
 
+div[data-testid="stHorizontalBlock"]:has(.chat-header-bar) {
+    background: linear-gradient(135deg, #0F172A, #2563EB) !important;
+    padding: 10px 12px !important;
+    border-radius: 14px 14px 0 0 !important;
+    align-items: center !important;
+    margin: 0 !important;
+}
+
 .chat-header-bar {
-    background: linear-gradient(135deg, #0F172A, #2563EB);
     color: white;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .chat-header-title {
@@ -399,21 +402,28 @@ div.stButton > button:hover {
     margin-top: 2px;
 }
 
+.st-key-chat_close_btn {
+    display: flex !important;
+    justify-content: flex-end !important;
+}
+
 .st-key-chat_close_btn button {
     min-height: 24px !important;
     height: 24px !important;
     width: 24px !important;
     padding: 0 !important;
     border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.2) !important;
     color: white !important;
     border: none !important;
     font-size: 12px !important;
     cursor: pointer !important;
+    line-height: 1 !important;
 }
 
 .st-key-chat_close_btn button:hover {
-    background: rgba(255, 255, 255, 0.45) !important;
+    background: rgba(255, 255, 255, 0.4) !important;
+    color: white !important;
 }
 
 
@@ -828,20 +838,20 @@ elif st.session_state.page == "Contact":
 if st.session_state.chat_open:
     with st.container(key="floating_chatbot"):
         
-        # Header Row with Integrated Visible Close Button
-        c_hdr, c_close = st.columns([0.82, 0.18])
+        # Combined Header Bar with Close Button inside
+        c_hdr, c_close = st.columns([0.82, 0.18], vertical_alignment="center")
+        
         with c_hdr:
             st.markdown(
                 """
                 <div class="chat-header-bar">
-                    <div>
-                        <div class="chat-header-title">🤖 LogiIntelli Assistant</div>
-                        <div class="chat-header-subtitle">Project & Analytics Consultation</div>
-                    </div>
+                    <div class="chat-header-title">🤖 LogiIntelli Assistant</div>
+                    <div class="chat-header-subtitle">Project & Analytics Consultation</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
+            
         with c_close:
             with st.container(key="chat_close_btn"):
                 if st.button("✕", key="btn_close_chat", help="Close Chat"):
@@ -927,7 +937,6 @@ if st.session_state.chat_open:
                         st.session_state.chat_data["Requirement"] = user_req.strip()
                         st.session_state.chat_messages.append({"role": "user", "text": user_req.strip()})
 
-                        # Submit payload to Google Script
                         payload = {
                             "Date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             "Company": st.session_state.chat_data.get("Contact", ""),
