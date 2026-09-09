@@ -1,7 +1,6 @@
+from datetime import datetime
 import json
 import re
-from datetime import datetime
-
 import requests
 import streamlit as st
 
@@ -36,16 +35,12 @@ GOOGLE_SCRIPT_URL = (
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-if "chat_open" not in st.session_state:
-    st.session_state.chat_open = False
-
 if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = [
         {
             "role": "assistant",
             "text": (
                 "👋 Hi! Welcome to LogiIntelli.<br><br>"
-                "I'm your AI & Project Consultation Assistant.<br><br>"
                 "How can I help you today?"
             ),
         }
@@ -56,49 +51,56 @@ if "chat_messages" not in st.session_state:
 # HTML HELPER
 # ============================================================
 
-def render_html(content):
-    st.markdown(content, unsafe_allow_html=True)
+def html(content):
+    st.html(content)
 
 
 # ============================================================
 # GLOBAL CSS
 # ============================================================
 
-render_html(
+html(
     """
 <style>
 
+@import url(
+'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap'
+);
+
+
 /* ============================================================
-   BASIC PAGE
+   GLOBAL PAGE
 ============================================================ */
 
 html,
 body,
 .stApp {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: "Inter", sans-serif !important;
 }
 
 .stApp {
-    background: #f8fafc !important;
+    background: #F8FAFC !important;
 }
 
 .block-container {
     max-width: 1380px !important;
+
     padding-top: 1rem !important;
+
     padding-bottom: 70px !important;
 }
 
 
 /* ============================================================
-   HIDE STREAMLIT DEFAULT UI
+   HIDE STREAMLIT DEFAULT
 ============================================================ */
 
 #MainMenu {
-    visibility: hidden;
+    visibility: hidden !important;
 }
 
 footer {
-    visibility: hidden;
+    visibility: hidden !important;
 }
 
 header[data-testid="stHeader"] {
@@ -111,27 +113,38 @@ header[data-testid="stHeader"] {
 ============================================================ */
 
 .logi-header {
+    width: 100%;
+
     padding: 12px 0 18px 0;
+
     margin-bottom: 18px;
-    border-bottom: 1px solid #e2e8f0;
+
+    border-bottom: 1px solid #E2E8F0;
 }
 
 .logi-brand {
-    color: #0f172a;
     font-size: 38px;
+
     font-weight: 900;
+
     line-height: 1.1;
-    letter-spacing: -1.5px;
+
+    letter-spacing: -1.8px;
+
+    color: #0F172A;
 }
 
-.logi-brand-blue {
-    color: #2563eb;
+.logi-blue {
+    color: #2563EB;
 }
 
 .logi-subtitle {
     margin-top: 7px;
-    color: #64748b;
+
+    color: #64748B;
+
     font-size: 11px;
+
     font-weight: 500;
 }
 
@@ -142,18 +155,28 @@ header[data-testid="stHeader"] {
 
 div[data-testid="stButton"] > button {
     min-height: 40px !important;
+
     border-radius: 10px !important;
-    border: 1px solid #e2e8f0 !important;
-    background: #ffffff !important;
+
+    border: 1px solid #E2E8F0 !important;
+
+    background: #FFFFFF !important;
+
     color: #334155 !important;
-    font-size: 13px !important;
+
     font-weight: 600 !important;
+
+    font-size: 13px !important;
+
+    transition: 0.2s ease !important;
 }
 
 div[data-testid="stButton"] > button:hover {
-    border-color: #2563eb !important;
-    background: #eff6ff !important;
-    color: #2563eb !important;
+    border-color: #2563EB !important;
+
+    color: #2563EB !important;
+
+    background: #EFF6FF !important;
 }
 
 
@@ -162,71 +185,101 @@ div[data-testid="stButton"] > button:hover {
 ============================================================ */
 
 .hero {
-    margin-bottom: 35px;
-    padding: 70px 20px 65px 20px;
     text-align: center;
+
+    padding: 70px 20px 65px 20px;
+
+    margin-bottom: 35px;
+
     border-radius: 25px;
+
     background:
         radial-gradient(
             circle at top center,
-            #dbeafe 0%,
-            #f8fafc 50%,
-            #f8fafc 100%
+            #DBEAFE 0%,
+            #F8FAFC 45%,
+            #F8FAFC 100%
         );
 }
 
 .hero-badge {
     display: inline-block;
-    margin-bottom: 20px;
+
     padding: 8px 16px;
-    border: 1px solid #bfdbfe;
+
+    margin-bottom: 20px;
+
     border-radius: 30px;
-    background: #eff6ff;
-    color: #2563eb;
+
+    background: #EFF6FF;
+
+    border: 1px solid #BFDBFE;
+
+    color: #2563EB;
+
     font-size: 10px;
+
     font-weight: 800;
+
     letter-spacing: 0.7px;
 }
 
 .hero-title {
     max-width: 950px;
+
     margin: auto;
-    color: #0f172a;
-    font-size: 54px;
-    line-height: 1.08;
+
+    color: #0F172A;
+
+    font-size: 56px;
+
+    line-height: 1.06;
+
     font-weight: 900;
-    letter-spacing: -2.5px;
+
+    letter-spacing: -3px;
 }
 
 .hero-blue {
-    color: #2563eb;
+    color: #2563EB;
 }
 
 .hero-description {
     max-width: 760px;
+
     margin: 22px auto 0 auto;
-    color: #64748b;
+
+    color: #64748B;
+
     font-size: 16px;
+
     line-height: 1.7;
 }
 
 
 /* ============================================================
-   SECTIONS
+   SECTION
 ============================================================ */
 
 .section-title {
     margin-top: 35px;
+
     margin-bottom: 8px;
-    color: #0f172a;
+
+    color: #0F172A;
+
     font-size: 30px;
+
     font-weight: 850;
 }
 
 .section-description {
     margin-bottom: 25px;
-    color: #64748b;
+
+    color: #64748B;
+
     font-size: 14px;
+
     line-height: 1.6;
 }
 
@@ -237,35 +290,55 @@ div[data-testid="stButton"] > button:hover {
 
 .info-card {
     min-height: 175px;
+
     margin-bottom: 18px;
+
     padding: 25px;
+
     box-sizing: border-box;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
     border-radius: 18px;
-    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+
+    box-shadow:
+        0 5px 20px rgba(15,23,42,0.04);
+
+    transition: 0.2s ease;
 }
 
 .info-card:hover {
-    border-color: #bfdbfe;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    transform: translateY(-3px);
+
+    border-color: #BFDBFE;
+
+    box-shadow:
+        0 12px 28px rgba(15,23,42,0.08);
 }
 
 .card-icon {
     margin-bottom: 13px;
+
     font-size: 30px;
 }
 
 .card-title {
     margin-bottom: 8px;
-    color: #0f172a;
+
+    color: #0F172A;
+
     font-size: 17px;
+
     font-weight: 800;
 }
 
 .card-description {
-    color: #64748b;
+    color: #64748B;
+
     font-size: 13px;
+
     line-height: 1.7;
 }
 
@@ -276,64 +349,92 @@ div[data-testid="stButton"] > button:hover {
 
 .metric-card {
     padding: 23px 10px;
+
     text-align: center;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
     border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.035);
+
+    box-shadow:
+        0 4px 15px rgba(15,23,42,0.035);
 }
 
 .metric-value {
-    color: #2563eb;
+    color: #2563EB;
+
     font-size: 31px;
+
     font-weight: 900;
 }
 
 .metric-label {
     margin-top: 5px;
-    color: #64748b;
+
+    color: #64748B;
+
     font-size: 11px;
 }
 
 
 /* ============================================================
-   PROJECT
+   PROJECT CARDS
 ============================================================ */
 
 .project-card {
-    min-height: 205px;
+    min-height: 200px;
+
     margin-bottom: 18px;
+
     padding: 25px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
     border-radius: 18px;
-    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+
+    box-shadow:
+        0 5px 20px rgba(15,23,42,0.04);
 }
 
 .project-icon {
     margin-bottom: 8px;
+
     font-size: 28px;
 }
 
 .project-category {
     margin-bottom: 8px;
-    color: #2563eb;
+
+    color: #2563EB;
+
     font-size: 10px;
+
     font-weight: 800;
+
     text-transform: uppercase;
+
     letter-spacing: 0.7px;
 }
 
 .project-title {
     margin-bottom: 8px;
-    color: #0f172a;
+
+    color: #0F172A;
+
     font-size: 18px;
+
     font-weight: 800;
 }
 
 .project-description {
-    color: #64748b;
+    color: #64748B;
+
     font-size: 13px;
+
     line-height: 1.7;
 }
 
@@ -344,46 +445,20 @@ div[data-testid="stButton"] > button:hover {
 
 .tech-card {
     padding: 15px 8px;
+
     text-align: center;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
     border-radius: 12px;
-    color: #0f172a;
+
+    color: #0F172A;
+
     font-size: 13px;
+
     font-weight: 700;
-}
-
-
-/* ============================================================
-   CONTACT
-============================================================ */
-
-.contact-card {
-    min-height: 165px;
-    padding: 28px;
-    text-align: center;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 18px;
-    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
-}
-
-.contact-icon {
-    margin-bottom: 12px;
-    font-size: 30px;
-}
-
-.contact-title {
-    margin-bottom: 7px;
-    color: #0f172a;
-    font-size: 16px;
-    font-weight: 800;
-}
-
-.contact-value {
-    color: #64748b;
-    font-size: 13px;
-    line-height: 1.6;
 }
 
 
@@ -393,26 +468,107 @@ div[data-testid="stButton"] > button:hover {
 
 .cta {
     margin-top: 45px;
-    margin-bottom: 30px;
+
+    margin-bottom: 40px;
+
     padding: 50px 25px;
+
     text-align: center;
+
     border-radius: 22px;
-    background: linear-gradient(135deg, #0f172a, #1e40af);
+
     color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0F172A,
+            #1E40AF
+        );
 }
 
 .cta-title {
     margin-bottom: 10px;
+
     font-size: 31px;
+
     font-weight: 900;
 }
 
 .cta-description {
     max-width: 650px;
+
     margin: auto;
-    color: #cbd5e1;
+
+    color: #CBD5E1;
+
     font-size: 14px;
+
     line-height: 1.7;
+}
+
+
+/* ============================================================
+   FORM
+============================================================ */
+
+.form-box {
+    padding: 30px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 7px 25px rgba(15,23,42,0.05);
+}
+
+
+/* ============================================================
+   CONTACT
+============================================================ */
+
+.contact-card {
+    min-height: 165px;
+
+    padding: 28px;
+
+    text-align: center;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(15,23,42,0.04);
+}
+
+.contact-icon {
+    margin-bottom: 12px;
+
+    font-size: 30px;
+}
+
+.contact-title {
+    margin-bottom: 7px;
+
+    color: #0F172A;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+.contact-value {
+    color: #64748B;
+
+    font-size: 13px;
+
+    line-height: 1.6;
 }
 
 
@@ -422,44 +578,49 @@ div[data-testid="stButton"] > button:hover {
 
 .site-footer {
     margin-top: 60px;
+
     padding: 25px 0;
-    border-top: 1px solid #e2e8f0;
+
+    border-top: 1px solid #E2E8F0;
+
     text-align: center;
-    color: #64748b;
+
+    color: #64748B;
+
     font-size: 11px;
 }
 
 
 /* ============================================================
-   CHATBOT
+   FLOATING CHATBOT
 ============================================================ */
 
 /*
-    IMPORTANT:
+   The chatbot is NOT inside the Streamlit layout.
 
-    The chatbot is positioned with fixed CSS.
+   It is injected as an independent fixed HTML element.
 
-    It is NOT a Streamlit container.
-
-    Therefore it does not consume page space and does not
-    collapse the Home page.
+   Therefore:
+   - It does not collapse the page.
+   - It does not change page width.
+   - It stays on the left side.
+   - It stays fixed while scrolling.
 */
 
-
-.logi-chat-area {
+.logi-chat-widget {
     position: fixed !important;
 
     left: 20px !important;
 
     bottom: 20px !important;
 
-    z-index: 999999 !important;
-
-    width: 330px !important;
+    width: 320px !important;
 
     max-width: calc(100vw - 40px) !important;
 
-    pointer-events: none !important;
+    z-index: 2147483647 !important;
+
+    font-family: "Inter", sans-serif !important;
 }
 
 
@@ -467,24 +628,19 @@ div[data-testid="stButton"] > button:hover {
    CHAT WINDOW
 ============================================================ */
 
-.logi-chat-box {
-    width: 330px;
-    max-width: 100%;
+.logi-chat-window {
+    width: 100%;
 
     overflow: hidden;
 
-    margin-bottom: 10px;
+    background: #FFFFFF;
 
-    background: #ffffff;
-
-    border: 1px solid #dbe3ec;
+    border: 1px solid #D9E2EC;
 
     border-radius: 18px;
 
     box-shadow:
-        0 18px 55px rgba(15, 23, 42, 0.25);
-
-    pointer-events: auto;
+        0 18px 50px rgba(15,23,42,0.25);
 }
 
 
@@ -501,14 +657,14 @@ div[data-testid="stButton"] > button:hover {
 
     padding: 14px 15px;
 
+    color: white;
+
     background:
         linear-gradient(
             135deg,
-            #0f172a,
-            #2563eb
+            #0F172A,
+            #2563EB
         );
-
-    color: white;
 }
 
 .logi-chat-header-left {
@@ -516,7 +672,7 @@ div[data-testid="stButton"] > button:hover {
 
     align-items: center;
 
-    gap: 10px;
+    gap: 9px;
 }
 
 .logi-chat-avatar {
@@ -526,9 +682,9 @@ div[data-testid="stButton"] > button:hover {
 
     justify-content: center;
 
-    width: 35px;
+    width: 34px;
 
-    height: 35px;
+    height: 34px;
 
     border-radius: 50%;
 
@@ -546,35 +702,39 @@ div[data-testid="stButton"] > button:hover {
 .logi-chat-status {
     margin-top: 2px;
 
-    color: #bfdbfe;
+    color: #BFDBFE;
 
     font-size: 9px;
 }
 
-.logi-chat-close-button {
-    width: 30px !important;
+.logi-chat-close {
+    display: flex;
 
-    height: 30px !important;
+    align-items: center;
 
-    min-height: 30px !important;
+    justify-content: center;
 
-    padding: 0 !important;
+    width: 28px;
 
-    border: 0 !important;
+    height: 28px;
 
-    border-radius: 50% !important;
+    border: 0;
 
-    background: rgba(255,255,255,0.15) !important;
+    border-radius: 50%;
 
-    color: white !important;
+    background: rgba(255,255,255,0.14);
 
-    font-size: 14px !important;
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.2s;
 }
 
-.logi-chat-close-button:hover {
-    background: rgba(255,255,255,0.30) !important;
-
-    color: white !important;
+.logi-chat-close:hover {
+    background: rgba(255,255,255,0.28);
 }
 
 
@@ -583,21 +743,21 @@ div[data-testid="stButton"] > button:hover {
 ============================================================ */
 
 .logi-chat-body {
-    max-height: 285px;
+    height: 250px;
 
     overflow-y: auto;
 
     padding: 13px;
 
-    background: #f8fafc;
+    background: #F8FAFC;
 }
 
 
 /* ============================================================
-   MESSAGES
+   MESSAGE
 ============================================================ */
 
-.logi-chat-message {
+.logi-message {
     max-width: 90%;
 
     margin-bottom: 9px;
@@ -611,69 +771,71 @@ div[data-testid="stButton"] > button:hover {
     line-height: 1.55;
 }
 
-.logi-chat-bot-message {
+.logi-message-bot {
     margin-right: 20px;
 
-    color: #1e3a8a;
+    color: #1E3A8A;
 
-    background: #eff6ff;
+    background: #EFF6FF;
 
-    border: 1px solid #dbeafe;
+    border: 1px solid #DBEAFE;
 }
 
-.logi-chat-user-message {
+.logi-message-user {
     margin-left: 20px;
 
     color: white;
 
-    background: #0f172a;
+    background: #0F172A;
 }
 
 
 /* ============================================================
-   QUICK OPTIONS
+   CHAT OPTIONS
 ============================================================ */
 
-.logi-chat-options-title {
-    padding: 10px 12px 5px 12px;
+.logi-chat-options {
+    display: grid;
 
-    color: #64748b;
+    grid-template-columns: 1fr 1fr;
 
-    background: #ffffff;
+    gap: 7px;
+
+    padding: 10px;
+
+    border-top: 1px solid #E2E8F0;
+
+    background: white;
+}
+
+.logi-chat-option {
+    padding: 8px 5px;
+
+    border: 1px solid #DCE5EF;
+
+    border-radius: 8px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    cursor: pointer;
+
+    font-family: "Inter", sans-serif;
 
     font-size: 9px;
 
-    font-weight: 700;
+    font-weight: 600;
+
+    transition: 0.2s;
 }
 
-.logi-chat-option-button {
-    width: 100% !important;
+.logi-chat-option:hover {
+    border-color: #2563EB;
 
-    min-height: 34px !important;
+    color: #2563EB;
 
-    margin-bottom: 5px !important;
-
-    padding: 6px 8px !important;
-
-    border-radius: 8px !important;
-
-    background: #ffffff !important;
-
-    border: 1px solid #dbe3ec !important;
-
-    color: #334155 !important;
-
-    font-size: 10px !important;
-
-    font-weight: 600 !important;
-}
-
-.logi-chat-option-button:hover {
-    background: #eff6ff !important;
-
-    border-color: #2563eb !important;
-
-    color: #2563eb !important;
+    background: #EFF6FF;
 }
 
 
@@ -681,119 +843,178 @@ div[data-testid="stButton"] > button:hover {
    CHAT INPUT
 ============================================================ */
 
-.logi-chat-input-label {
-    padding: 5px 12px;
+.logi-chat-input-area {
+    display: flex;
 
-    color: #64748b;
+    gap: 6px;
 
-    background: #ffffff;
+    padding: 9px;
 
-    font-size: 9px;
+    border-top: 1px solid #E2E8F0;
+
+    background: #FFFFFF;
+}
+
+.logi-chat-input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 8px 9px;
+
+    border: 1px solid #DCE5EF;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 10px;
+}
+
+.logi-chat-input:focus {
+    border-color: #2563EB;
+}
+
+.logi-chat-send {
+    width: 36px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #2563EB;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 13px;
 }
 
 
 /* ============================================================
-   CHAT LAUNCHER
+   FLOATING CHAT BUTTON
 ============================================================ */
 
-.logi-chat-launcher-area {
+.logi-chat-launcher {
     display: flex;
 
     align-items: center;
 
-    gap: 10px;
+    justify-content: center;
 
-    pointer-events: auto;
-}
+    width: 60px;
 
-.logi-chat-launcher-text {
-    padding: 7px 10px;
+    height: 60px;
 
-    border-radius: 10px;
+    border: none;
 
-    background: #0f172a;
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0F172A,
+            #2563EB
+        );
 
     color: white;
 
-    font-size: 10px;
+    cursor: pointer;
 
-    font-weight: 600;
-
-    box-shadow:
-        0 5px 15px rgba(15,23,42,0.15);
-}
-
-.logi-chat-open-button {
-    width: 60px !important;
-
-    height: 60px !important;
-
-    min-height: 60px !important;
-
-    padding: 0 !important;
-
-    border: 0 !important;
-
-    border-radius: 50% !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0f172a,
-            #2563eb
-        ) !important;
-
-    color: white !important;
-
-    font-size: 24px !important;
+    font-size: 23px;
 
     box-shadow:
-        0 12px 30px rgba(15,23,42,0.28) !important;
+        0 12px 30px rgba(15,23,42,0.28);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.logi-chat-open-button:hover {
-    background:
-        linear-gradient(
-            135deg,
-            #1e293b,
-            #1d4ed8
-        ) !important;
+.logi-chat-launcher:hover {
+    transform: scale(1.06);
 
-    color: white !important;
+    box-shadow:
+        0 15px 35px rgba(15,23,42,0.35);
 }
 
 
 /* ============================================================
-   MOBILE
+   CHAT NOTIFICATION
+============================================================ */
+
+.logi-chat-badge {
+    position: absolute;
+
+    top: -2px;
+
+    right: -2px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 19px;
+
+    height: 19px;
+
+    border-radius: 50%;
+
+    background: #EF4444;
+
+    color: white;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    border: 2px solid white;
+}
+
+
+/* ============================================================
+   MOBILE CHAT
 ============================================================ */
 
 @media (max-width: 600px) {
+
+    .logi-brand {
+        font-size: 30px;
+    }
 
     .hero {
         padding: 45px 15px;
     }
 
     .hero-title {
-        font-size: 38px;
-        letter-spacing: -1.5px;
+        font-size: 39px;
+
+        letter-spacing: -1.8px;
     }
 
-    .logi-chat-area {
+    .hero-description {
+        font-size: 14px;
+    }
+
+    .logi-chat-widget {
         left: 10px !important;
 
         bottom: 10px !important;
 
-        width: 300px !important;
+        width: 285px !important;
 
         max-width: calc(100vw - 20px) !important;
     }
 
-    .logi-chat-box {
-        width: 300px;
-    }
+    .logi-chat-launcher {
+        width: 56px;
 
-    .logi-chat-launcher-text {
-        display: none;
+        height: 56px;
     }
 }
 
@@ -806,12 +1027,12 @@ div[data-testid="stButton"] > button:hover {
 # HEADER
 # ============================================================
 
-render_html(
+html(
     """
 <div class="logi-header">
 
     <div class="logi-brand">
-        🚚 Logi<span class="logi-brand-blue">Intelli</span>
+        🚚 Logi<span class="logi-blue">Intelli</span>
     </div>
 
     <div class="logi-subtitle">
@@ -838,13 +1059,14 @@ nav_items = [
 
 nav_cols = st.columns(6)
 
-for index, (label, page_name) in enumerate(nav_items):
 
-    with nav_cols[index]:
+for i, (label, page_name) in enumerate(nav_items):
+
+    with nav_cols[i]:
 
         if st.button(
             label,
-            key=f"navigation_{index}",
+            key=f"nav_button_{i}",
             use_container_width=True,
         ):
 
@@ -854,360 +1076,12 @@ for index, (label, page_name) in enumerate(nav_items):
 
 
 # ============================================================
-# CHATBOT FUNCTIONS
-# ============================================================
-
-def add_chat_message(role, text):
-
-    st.session_state.chat_messages.append(
-        {
-            "role": role,
-            "text": text,
-        }
-    )
-
-
-def chatbot_reply(option):
-
-    replies = {
-
-        "Power BI Dashboard":
-            (
-                "📊 <b>Power BI</b> is a great choice.<br><br>"
-                "We can help with dashboards, KPI reporting, "
-                "DAX, Power Query, data modelling and automated "
-                "business reporting."
-            ),
-
-        "Logistics Analytics":
-            (
-                "🚚 We can help with <b>Logistics Analytics</b> "
-                "including shipment tracking, SLA, TAT, hub "
-                "performance, delivery analytics and exception reporting."
-            ),
-
-        "AI / Machine Learning":
-            (
-                "🤖 We can build <b>AI & Machine Learning</b> "
-                "solutions such as demand forecasting, shipment "
-                "delay prediction, churn prediction and predictive analytics."
-            ),
-
-        "Automation / MIS":
-            (
-                "⚙️ We can automate <b>MIS and reporting</b> "
-                "using Python, SQL, Excel, APIs and scheduled workflows."
-            ),
-
-        "SQL / Data Engineering":
-            (
-                "🗄️ We can help with <b>SQL & Data Engineering</b>, "
-                "ETL, database optimization, data transformation "
-                "and reporting datasets."
-            ),
-
-        "Project Consultation":
-            (
-                "💡 No problem. Tell us about your business problem, "
-                "current data source and expected outcome. "
-                "We can help identify the right solution."
-            ),
-    }
-
-    return replies.get(
-        option,
-        (
-            "Thanks for your message! 😊 "
-            "Please describe your requirement and "
-            "we will help you identify the right solution."
-        ),
-    )
-
-
-def select_chat_option(option):
-
-    add_chat_message(
-        "user",
-        option,
-    )
-
-    add_chat_message(
-        "assistant",
-        chatbot_reply(option),
-    )
-
-
-# ============================================================
-# CHATBOT UI
-# ============================================================
-
-def show_chatbot():
-
-    render_html(
-        '<div class="logi-chat-area">'
-    )
-
-
-    # ========================================================
-    # OPEN CHAT
-    # ========================================================
-
-    if not st.session_state.chat_open:
-
-        render_html(
-            """
-<div class="logi-chat-launcher-area">
-
-    <div class="logi-chat-launcher-text">
-        Need help? Chat with us
-    </div>
-
-</div>
-"""
-        )
-
-        if st.button(
-            "💬",
-            key="open_logi_chat",
-            help="Open LogiIntelli AI Assistant",
-        ):
-
-            st.session_state.chat_open = True
-
-            st.rerun()
-
-
-    # ========================================================
-    # CHAT OPEN
-    # ========================================================
-
-    else:
-
-        render_html(
-            """
-<div class="logi-chat-box">
-
-    <div class="logi-chat-header">
-
-        <div class="logi-chat-header-left">
-
-            <div class="logi-chat-avatar">
-                🤖
-            </div>
-
-            <div>
-
-                <div class="logi-chat-name">
-                    LogiIntelli AI Assistant
-                </div>
-
-                <div class="logi-chat-status">
-                    ● Online • AI & Project Consultation
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="logi-chat-body">
-"""
-        )
-
-
-        # ----------------------------------------------------
-        # MESSAGES
-        # ----------------------------------------------------
-
-        for message in st.session_state.chat_messages:
-
-            role = message["role"]
-
-            if role == "assistant":
-
-                render_html(
-                    f"""
-<div class="logi-chat-message logi-chat-bot-message">
-    {message["text"]}
-</div>
-"""
-                )
-
-            else:
-
-                render_html(
-                    f"""
-<div class="logi-chat-message logi-chat-user-message">
-    {message["text"]}
-</div>
-"""
-                )
-
-
-        render_html(
-            """
-    </div>
-
-</div>
-"""
-        )
-
-
-        # ----------------------------------------------------
-        # OPTIONS
-        # ----------------------------------------------------
-
-        render_html(
-            """
-<div style="
-    width:330px;
-    max-width:100%;
-    padding:8px 10px 3px 10px;
-    background:#ffffff;
-    border-left:1px solid #dbe3ec;
-    border-right:1px solid #dbe3ec;
-">
-
-    <div class="logi-chat-options-title">
-        QUICK OPTIONS
-    </div>
-
-</div>
-"""
-        )
-
-
-        option_cols = st.columns(2)
-
-
-        options = [
-            ("📊 Power BI", "Power BI Dashboard"),
-            ("🚚 Logistics", "Logistics Analytics"),
-            ("🤖 AI / ML", "AI / Machine Learning"),
-            ("⚙️ Automation", "Automation / MIS"),
-            ("🗄️ SQL", "SQL / Data Engineering"),
-            ("💡 Consultation", "Project Consultation"),
-        ]
-
-
-        for index, (
-            button_text,
-            option_value
-        ) in enumerate(options):
-
-            with option_cols[index % 2]:
-
-                if st.button(
-                    button_text,
-                    key=f"chat_option_{index}",
-                    use_container_width=True,
-                ):
-
-                    select_chat_option(
-                        option_value
-                    )
-
-                    st.rerun()
-
-
-        # ----------------------------------------------------
-        # CONTACT BUTTONS
-        # ----------------------------------------------------
-
-        render_html(
-            """
-<div style="
-    width:330px;
-    max-width:100%;
-    padding:4px 10px;
-    background:#ffffff;
-    border-left:1px solid #dbe3ec;
-    border-right:1px solid #dbe3ec;
-">
-
-    <div style="
-        padding:5px 2px;
-        color:#64748b;
-        font-size:9px;
-    ">
-        Need a detailed discussion?
-    </div>
-
-</div>
-"""
-        )
-
-
-        contact_cols = st.columns(2)
-
-
-        with contact_cols[0]:
-
-            if st.button(
-                "📝 Request Project",
-                key="chat_request_project",
-                use_container_width=True,
-            ):
-
-                st.session_state.page = "Request Project"
-
-                st.session_state.chat_open = False
-
-                st.rerun()
-
-
-        with contact_cols[1]:
-
-            if st.button(
-                "✉️ Email",
-                key="chat_email",
-                use_container_width=True,
-            ):
-
-                add_chat_message(
-                    "user",
-                    "I want to contact LogiIntelli.",
-                )
-
-                add_chat_message(
-                    "assistant",
-                    (
-                        "📧 You can contact us at "
-                        "<b>support@logiintelli.com</b>."
-                    ),
-                )
-
-                st.rerun()
-
-
-        # ----------------------------------------------------
-        # CLOSE BUTTON
-        # ----------------------------------------------------
-
-        if st.button(
-            "✕  Close Chat",
-            key="close_logi_chat",
-            use_container_width=True,
-        ):
-
-            st.session_state.chat_open = False
-
-            st.rerun()
-
-
-    render_html(
-        "</div>"
-    )
-
-
-# ============================================================
-# HOME
+# HOME PAGE
 # ============================================================
 
 def show_home():
 
-    render_html(
+    html(
         """
 <div class="hero">
 
@@ -1237,7 +1111,7 @@ def show_home():
     # METRICS
     # --------------------------------------------------------
 
-    metric_cols = st.columns(4)
+    cols = st.columns(4)
 
     metrics = [
         ("11+", "Years Analytics Experience"),
@@ -1247,14 +1121,11 @@ def show_home():
     ]
 
 
-    for col, (value, label) in zip(
-        metric_cols,
-        metrics
-    ):
+    for col, (value, label) in zip(cols, metrics):
 
         with col:
 
-            render_html(
+            html(
                 f"""
 <div class="metric-card">
 
@@ -1275,7 +1146,7 @@ def show_home():
     # SERVICES
     # --------------------------------------------------------
 
-    render_html(
+    html(
         """
 <div class="section-title">
     What We Do
@@ -1329,18 +1200,14 @@ def show_home():
     ]
 
 
-    service_cols = st.columns(3)
+    cols = st.columns(3)
 
 
-    for index, (
-        icon,
-        title,
-        description
-    ) in enumerate(services):
+    for i, (icon, title, description) in enumerate(services):
 
-        with service_cols[index % 3]:
+        with cols[i % 3]:
 
-            render_html(
+            html(
                 f"""
 <div class="info-card">
 
@@ -1365,7 +1232,7 @@ def show_home():
     # WORKFLOW
     # --------------------------------------------------------
 
-    render_html(
+    html(
         """
 <div class="section-title">
     How We Work
@@ -1380,52 +1247,32 @@ def show_home():
 
     workflow = [
 
-        (
-            "01",
-            "Understand",
-            "Understand the business problem and objectives.",
-        ),
+        ("01", "Understand", "Understand the business problem and objectives."),
 
-        (
-            "02",
-            "Analyze",
-            "Study data sources and identify opportunities.",
-        ),
+        ("02", "Analyze", "Study data sources and identify opportunities."),
 
-        (
-            "03",
-            "Build",
-            "Develop dashboards, models and automation.",
-        ),
+        ("03", "Build", "Develop dashboards, models and automation."),
 
-        (
-            "04",
-            "Deliver",
-            "Deploy the solution and provide actionable insights.",
-        ),
+        ("04", "Deliver", "Deploy the solution and provide actionable insights."),
     ]
 
 
-    workflow_cols = st.columns(4)
+    cols = st.columns(4)
 
 
-    for col, (
-        number,
-        title,
-        description
-    ) in zip(
-        workflow_cols,
+    for col, (number, title, description) in zip(
+        cols,
         workflow
     ):
 
         with col:
 
-            render_html(
+            html(
                 f"""
 <div class="info-card">
 
     <div style="
-        color:#2563eb;
+        color:#2563EB;
         font-size:12px;
         font-weight:900;
         margin-bottom:10px;
@@ -1450,7 +1297,7 @@ def show_home():
     # TECHNOLOGY
     # --------------------------------------------------------
 
-    render_html(
+    html(
         """
 <div class="section-title">
     Technology Stack
@@ -1473,17 +1320,17 @@ def show_home():
     ]
 
 
-    technology_cols = st.columns(6)
+    cols = st.columns(6)
 
 
     for col, technology in zip(
-        technology_cols,
+        cols,
         technologies
     ):
 
         with col:
 
-            render_html(
+            html(
                 f"""
 <div class="tech-card">
     {technology}
@@ -1496,7 +1343,7 @@ def show_home():
     # CTA
     # --------------------------------------------------------
 
-    render_html(
+    html(
         """
 <div class="cta">
 
@@ -1516,7 +1363,7 @@ def show_home():
 
     if st.button(
         "🚀 Start Your Project",
-        key="home_project_button",
+        key="home_start_project",
         use_container_width=True,
     ):
 
@@ -1526,12 +1373,12 @@ def show_home():
 
 
 # ============================================================
-# SERVICES
+# SERVICES PAGE
 # ============================================================
 
 def show_services():
 
-    render_html(
+    html(
         """
 <div class="hero">
 
@@ -1541,9 +1388,7 @@ def show_services():
 
     <div class="hero-title">
         Analytics & Technology
-        <span class="hero-blue">
-            Solutions
-        </span>
+        <span class="hero-blue">Solutions</span>
     </div>
 
     <div class="hero-description">
@@ -1561,67 +1406,37 @@ def show_services():
         (
             "📊",
             "Power BI & Business Intelligence",
-            "Executive dashboards<br>"
-            "Operational dashboards<br>"
-            "KPI tracking<br>"
-            "DAX<br>"
-            "Power Query<br>"
-            "Automated reporting",
+            "Executive dashboards<br>Operational dashboards<br>KPI tracking<br>DAX<br>Power Query<br>Automated reporting",
         ),
 
         (
             "🚚",
             "Logistics Analytics",
-            "Shipment tracking<br>"
-            "Hub performance<br>"
-            "SLA analytics<br>"
-            "TAT analysis<br>"
-            "Delivery performance<br>"
-            "Exception analytics",
+            "Shipment tracking<br>Hub performance<br>SLA analytics<br>TAT analysis<br>Delivery performance<br>Exception analytics",
         ),
 
         (
             "🤖",
             "AI & Machine Learning",
-            "Demand forecasting<br>"
-            "Delay prediction<br>"
-            "Customer churn<br>"
-            "Sales forecasting<br>"
-            "Classification<br>"
-            "Predictive analytics",
+            "Demand forecasting<br>Delay prediction<br>Customer churn<br>Sales forecasting<br>Classification<br>Predictive analytics",
         ),
 
         (
             "⚙️",
             "Automation & MIS",
-            "Automated MIS<br>"
-            "Excel automation<br>"
-            "Python automation<br>"
-            "Scheduled reporting<br>"
-            "Data refresh<br>"
-            "Operational workflows",
+            "Automated MIS<br>Excel automation<br>Python automation<br>Scheduled reporting<br>Data refresh<br>Operational workflows",
         ),
 
         (
             "🗄️",
             "SQL & Data Engineering",
-            "Advanced SQL<br>"
-            "Data modelling<br>"
-            "ETL pipelines<br>"
-            "Data transformation<br>"
-            "Database optimization<br>"
-            "Reporting datasets",
+            "Advanced SQL<br>Data modelling<br>ETL pipelines<br>Data transformation<br>Database optimization<br>Reporting datasets",
         ),
 
         (
             "🔗",
             "API & Data Integration",
-            "REST API integration<br>"
-            "JSON processing<br>"
-            "Database integration<br>"
-            "Multi-source analytics<br>"
-            "Automated ingestion<br>"
-            "Data pipelines",
+            "REST API integration<br>JSON processing<br>Database integration<br>Multi-source analytics<br>Automated ingestion<br>Data pipelines",
         ),
     ]
 
@@ -1629,15 +1444,11 @@ def show_services():
     cols = st.columns(2)
 
 
-    for index, (
-        icon,
-        title,
-        description
-    ) in enumerate(services):
+    for i, (icon, title, description) in enumerate(services):
 
-        with cols[index % 2]:
+        with cols[i % 2]:
 
-            render_html(
+            html(
                 f"""
 <div class="info-card">
 
@@ -1659,12 +1470,12 @@ def show_services():
 
 
 # ============================================================
-# PROJECTS
+# PROJECTS PAGE
 # ============================================================
 
 def show_projects():
 
-    render_html(
+    html(
         """
 <div class="hero">
 
@@ -1738,16 +1549,16 @@ def show_projects():
     cols = st.columns(2)
 
 
-    for index, (
+    for i, (
         icon,
         title,
         category,
         description
     ) in enumerate(projects):
 
-        with cols[index % 2]:
+        with cols[i % 2]:
 
-            render_html(
+            html(
                 f"""
 <div class="project-card">
 
@@ -1773,12 +1584,12 @@ def show_projects():
 
 
 # ============================================================
-# REQUEST PROJECT
+# REQUEST PROJECT PAGE
 # ============================================================
 
 def show_request_project():
 
-    render_html(
+    html(
         """
 <div class="hero">
 
@@ -1803,11 +1614,7 @@ def show_request_project():
     )
 
 
-    company = st.text_input(
-        "Company Name",
-        placeholder="Your company name",
-        key="project_company",
-    )
+    html('<div class="form-box">')
 
 
     col1, col2 = st.columns(2)
@@ -1815,22 +1622,28 @@ def show_request_project():
 
     with col1:
 
+        company = st.text_input(
+            "Company Name",
+            placeholder="Your company name",
+            key="company_name",
+        )
+
         contact = st.text_input(
             "Contact Person *",
             placeholder="Your name",
-            key="project_contact",
+            key="contact_person",
         )
 
         email = st.text_input(
             "Business Email *",
             placeholder="name@company.com",
-            key="project_email",
+            key="business_email",
         )
 
         phone = st.text_input(
             "Phone / WhatsApp",
             placeholder="+91 XXXXX XXXXX",
-            key="project_phone",
+            key="phone_number",
         )
 
 
@@ -1847,9 +1660,8 @@ def show_request_project():
                 "API / Data Integration",
                 "Not Sure",
             ],
-            key="project_service",
+            key="required_service",
         )
-
 
         data_source = st.selectbox(
             "Current Data Source",
@@ -1861,9 +1673,8 @@ def show_request_project():
                 "Multiple Sources",
                 "Not Sure",
             ],
-            key="project_data_source",
+            key="current_source",
         )
-
 
         timeline = st.selectbox(
             "Expected Timeline",
@@ -1874,7 +1685,7 @@ def show_request_project():
                 "1–2 Months",
                 "Flexible",
             ],
-            key="project_timeline",
+            key="expected_timeline",
         )
 
 
@@ -1884,14 +1695,17 @@ def show_request_project():
             "Describe your business problem, "
             "current process and expected solution..."
         ),
-        height=170,
+        height=150,
         key="project_requirement",
     )
 
 
+    html("</div>")
+
+
     if st.button(
         "🚀 Submit Project Request",
-        key="submit_project_request",
+        key="submit_project",
         use_container_width=True,
     ):
 
@@ -1925,6 +1739,7 @@ def show_request_project():
         else:
 
             payload = {
+
                 "Date":
                     datetime.now().strftime(
                         "%Y-%m-%d %H:%M:%S"
@@ -1963,11 +1778,14 @@ def show_request_project():
 
                 response = requests.post(
                     GOOGLE_SCRIPT_URL,
+
                     data=json.dumps(payload),
+
                     headers={
                         "Content-Type":
                         "text/plain;charset=utf-8"
                     },
+
                     timeout=20,
                 )
 
@@ -1975,8 +1793,8 @@ def show_request_project():
                 if response.status_code == 200:
 
                     st.success(
-                        "✅ Your project request has "
-                        "been submitted successfully."
+                        "✅ Your project request has been "
+                        "submitted successfully."
                     )
 
                     st.balloons()
@@ -1989,7 +1807,7 @@ def show_request_project():
                     )
 
 
-            except Exception as error:
+            except Exception:
 
                 st.error(
                     "Connection error. Please try again later."
@@ -1997,12 +1815,12 @@ def show_request_project():
 
 
 # ============================================================
-# ABOUT
+# ABOUT PAGE
 # ============================================================
 
 def show_about():
 
-    render_html(
+    html(
         """
 <div class="hero">
 
@@ -2033,7 +1851,7 @@ def show_about():
 
     with cols[0]:
 
-        render_html(
+        html(
             """
 <div class="info-card">
 
@@ -2057,7 +1875,7 @@ def show_about():
 
     with cols[1]:
 
-        render_html(
+        html(
             """
 <div class="info-card">
 
@@ -2079,7 +1897,7 @@ def show_about():
         )
 
 
-    render_html(
+    html(
         """
 <div class="section-title">
     Why Analytics Matters
@@ -2092,6 +1910,9 @@ def show_about():
 </div>
 """
     )
+
+
+    cols = st.columns(3)
 
 
     points = [
@@ -2116,21 +1937,15 @@ def show_about():
     ]
 
 
-    cols = st.columns(3)
-
-
     for col, (
         icon,
         title,
         description
-    ) in zip(
-        cols,
-        points
-    ):
+    ) in zip(cols, points):
 
         with col:
 
-            render_html(
+            html(
                 f"""
 <div class="info-card">
 
@@ -2152,12 +1967,12 @@ def show_about():
 
 
 # ============================================================
-# CONTACT
+# CONTACT PAGE
 # ============================================================
 
 def show_contact():
 
-    render_html(
+    html(
         """
 <div class="hero">
 
@@ -2187,7 +2002,7 @@ def show_contact():
 
     with cols[0]:
 
-        render_html(
+        html(
             """
 <div class="contact-card">
 
@@ -2210,7 +2025,7 @@ def show_contact():
 
     with cols[1]:
 
-        render_html(
+        html(
             """
 <div class="contact-card">
 
@@ -2233,7 +2048,7 @@ def show_contact():
 
     with cols[2]:
 
-        render_html(
+        html(
             """
 <div class="contact-card">
 
@@ -2257,7 +2072,7 @@ def show_contact():
 
     if st.button(
         "🚀 Request a Project",
-        key="contact_request_project",
+        key="contact_project",
         use_container_width=True,
     ):
 
@@ -2299,7 +2114,7 @@ elif st.session_state.page == "Contact":
 # FOOTER
 # ============================================================
 
-render_html(
+html(
     """
 <div class="site-footer">
 
@@ -2315,7 +2130,558 @@ render_html(
 
 
 # ============================================================
-# CHATBOT
+# STANDARD FLOATING CHATBOT
+#
+# This is completely independent from Streamlit widgets.
 # ============================================================
 
-show_chatbot()
+chatbot_html = r"""
+<div id="logi-chat-widget" class="logi-chat-widget">
+
+    <!-- =====================================================
+         OPEN BUTTON
+    ====================================================== -->
+
+    <div id="logi-chat-launcher-wrapper">
+
+        <button
+            id="logi-chat-launcher"
+            class="logi-chat-launcher"
+            type="button"
+            onclick="logiOpenChat()"
+            aria-label="Open LogiIntelli AI Assistant"
+        >
+            💬
+
+            <span class="logi-chat-badge">
+                1
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CHAT WINDOW
+    ====================================================== -->
+
+    <div
+        id="logi-chat-window"
+        class="logi-chat-window"
+        style="display:none;"
+    >
+
+        <!-- HEADER -->
+
+        <div class="logi-chat-header">
+
+            <div class="logi-chat-header-left">
+
+                <div class="logi-chat-avatar">
+                    🤖
+                </div>
+
+                <div>
+
+                    <div class="logi-chat-name">
+                        LogiIntelli AI
+                    </div>
+
+                    <div class="logi-chat-status">
+                        ● Online • Analytics Assistant
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="logi-chat-close"
+                onclick="logiCloseChat()"
+                aria-label="Close chatbot"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div
+            id="logi-chat-body"
+            class="logi-chat-body"
+        >
+
+            <div class="logi-message logi-message-bot">
+
+                👋 Hi! Welcome to <b>LogiIntelli</b>.
+
+                <br><br>
+
+                I can help you find the right
+                Analytics, AI, BI or Automation solution.
+
+                <br><br>
+
+                What are you looking for?
+
+            </div>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div class="logi-chat-options">
+
+            <button
+                type="button"
+                class="logi-chat-option"
+                onclick="logiSelectOption('Power BI Dashboard')"
+            >
+                📊 Power BI
+            </button>
+
+            <button
+                type="button"
+                class="logi-chat-option"
+                onclick="logiSelectOption('Logistics Analytics')"
+            >
+                🚚 Logistics
+            </button>
+
+            <button
+                type="button"
+                class="logi-chat-option"
+                onclick="logiSelectOption('AI / Machine Learning')"
+            >
+                🤖 AI / ML
+            </button>
+
+            <button
+                type="button"
+                class="logi-chat-option"
+                onclick="logiSelectOption('Automation / MIS')"
+            >
+                ⚙️ Automation
+            </button>
+
+            <button
+                type="button"
+                class="logi-chat-option"
+                onclick="logiSelectOption('SQL / Data Engineering')"
+            >
+                🗄️ SQL
+            </button>
+
+            <button
+                type="button"
+                class="logi-chat-option"
+                onclick="logiSelectOption('Project Consultation')"
+            >
+                💡 Consultation
+            </button>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div class="logi-chat-input-area">
+
+            <input
+                id="logi-chat-input"
+                class="logi-chat-input"
+                type="text"
+                placeholder="Type your requirement..."
+                onkeydown="logiHandleEnter(event)"
+            />
+
+            <button
+                type="button"
+                class="logi-chat-send"
+                onclick="logiSendMessage()"
+                aria-label="Send message"
+            >
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+(function () {
+
+    /* ========================================================
+       CHAT STORAGE
+    ======================================================== */
+
+    const STORAGE_KEY = "logiintelli_chat_open";
+
+
+
+    /* ========================================================
+       OPEN CHAT
+    ======================================================== */
+
+    window.logiOpenChat = function () {
+
+        const windowElement =
+            document.getElementById(
+                "logi-chat-window"
+            );
+
+        const launcher =
+            document.getElementById(
+                "logi-chat-launcher-wrapper"
+            );
+
+        if (windowElement) {
+
+            windowElement.style.display =
+                "block";
+        }
+
+        if (launcher) {
+
+            launcher.style.display =
+                "none";
+        }
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                "true"
+            );
+
+        } catch (e) {}
+
+    };
+
+
+
+    /* ========================================================
+       CLOSE CHAT
+    ======================================================== */
+
+    window.logiCloseChat = function () {
+
+        const windowElement =
+            document.getElementById(
+                "logi-chat-window"
+            );
+
+        const launcher =
+            document.getElementById(
+                "logi-chat-launcher-wrapper"
+            );
+
+        if (windowElement) {
+
+            windowElement.style.display =
+                "none";
+        }
+
+        if (launcher) {
+
+            launcher.style.display =
+                "block";
+        }
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                "false"
+            );
+
+        } catch (e) {}
+
+    };
+
+
+
+    /* ========================================================
+       ADD MESSAGE
+    ======================================================== */
+
+    function logiAddMessage(
+        message,
+        type
+    ) {
+
+        const body =
+            document.getElementById(
+                "logi-chat-body"
+            );
+
+        if (!body) {
+            return;
+        }
+
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.className =
+            "logi-message " +
+            (
+                type === "user"
+                ? "logi-message-user"
+                : "logi-message-bot"
+            );
+
+
+        div.innerHTML =
+            message;
+
+
+        body.appendChild(div);
+
+
+        body.scrollTop =
+            body.scrollHeight;
+    }
+
+
+
+    /* ========================================================
+       OPTION SELECTION
+    ======================================================== */
+
+    window.logiSelectOption =
+        function (option) {
+
+            logiAddMessage(
+                option,
+                "user"
+            );
+
+
+            let reply = "";
+
+
+            if (
+                option ===
+                "Power BI Dashboard"
+            ) {
+
+                reply =
+                    "📊 Great! We can help with " +
+                    "<b>Power BI dashboards</b>, " +
+                    "DAX, Power Query, KPI reporting " +
+                    "and business intelligence.";
+
+            }
+
+
+            else if (
+                option ===
+                "Logistics Analytics"
+            ) {
+
+                reply =
+                    "🚚 We can help with " +
+                    "<b>Logistics Analytics</b>, " +
+                    "shipment tracking, SLA, TAT, " +
+                    "hub performance and delivery analytics.";
+
+            }
+
+
+            else if (
+                option ===
+                "AI / Machine Learning"
+            ) {
+
+                reply =
+                    "🤖 We can help with " +
+                    "<b>AI & Machine Learning</b>, " +
+                    "forecasting, prediction, classification " +
+                    "and predictive analytics.";
+
+            }
+
+
+            else if (
+                option ===
+                "Automation / MIS"
+            ) {
+
+                reply =
+                    "⚙️ We can help automate " +
+                    "<b>MIS, Excel, Python and reporting workflows</b>.";
+
+            }
+
+
+            else if (
+                option ===
+                "SQL / Data Engineering"
+            ) {
+
+                reply =
+                    "🗄️ We can help with " +
+                    "<b>SQL, ETL, data transformation, " +
+                    "database optimization and reporting datasets</b>.";
+
+            }
+
+
+            else {
+
+                reply =
+                    "💡 Sure! Tell me about your " +
+                    "<b>business problem or project requirement</b>. " +
+                    "I'll help you identify the right solution.";
+
+            }
+
+
+            setTimeout(
+                function () {
+
+                    logiAddMessage(
+                        reply,
+                        "bot"
+                    );
+
+                },
+                350
+            );
+
+        };
+
+
+
+    /* ========================================================
+       SEND TEXT MESSAGE
+    ======================================================== */
+
+    window.logiSendMessage =
+        function () {
+
+            const input =
+                document.getElementById(
+                    "logi-chat-input"
+                );
+
+
+            if (!input) {
+                return;
+            }
+
+
+            const text =
+                input.value.trim();
+
+
+            if (!text) {
+                return;
+            }
+
+
+            logiAddMessage(
+                text,
+                "user"
+            );
+
+
+            input.value = "";
+
+
+            setTimeout(
+                function () {
+
+                    logiAddMessage(
+                        "Thank you! 😊 Please use the <b>Request Project</b> page to submit your detailed requirement, or continue chatting here to discuss your needs.",
+                        "bot"
+                    );
+
+                },
+                400
+            );
+
+        };
+
+
+
+    /* ========================================================
+       ENTER KEY
+    ======================================================== */
+
+    window.logiHandleEnter =
+        function (event) {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                event.preventDefault();
+
+                logiSendMessage();
+
+            }
+
+        };
+
+
+
+    /* ========================================================
+       INITIAL STATE
+    ======================================================== */
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+
+        if (
+            saved ===
+            "true"
+        ) {
+
+            logiOpenChat();
+
+        }
+
+        else {
+
+            logiCloseChat();
+
+        }
+
+    } catch (e) {
+
+        logiCloseChat();
+
+    }
+
+})();
+
+</script>
+"""
+
+
+# ============================================================
+# RENDER CHATBOT
+# ============================================================
+
+html(chatbot_html)
