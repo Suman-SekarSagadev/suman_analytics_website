@@ -512,27 +512,6 @@ render_html(
 <style>
 
 /* ============================================================
-   COLOR SYSTEM
-   ============================================================ */
-
-:root {
-
-    --primary-blue: #0066CC;
-
-    --heading-blue: #075EAD;
-
-    --dark-blue: #123F73;
-
-    --light-blue: #7EC8FF;
-
-    --body-text: #60758A;
-
-    --border: #D9E5F0;
-
-}
-
-
-/* ============================================================
    GLOBAL
    ============================================================ */
 
@@ -556,10 +535,12 @@ body {
         ),
         linear-gradient(
             180deg,
-            #F8FBFF 0%,
-            #FFFFFF 50%,
-            #F5F8FC 100%
+            #f8fbff 0%,
+            #ffffff 50%,
+            #f5f8fc 100%
         );
+
+    color-scheme: light;
 
 }
 
@@ -570,14 +551,11 @@ body {
 
 .block-container {
 
-    padding-top:
-        1rem !important;
+    padding-top: 1rem !important;
 
-    padding-bottom:
-        4rem !important;
+    padding-bottom: 4rem !important;
 
-    max-width:
-        1400px !important;
+    max-width: 1400px !important;
 
 }
 
@@ -588,39 +566,13 @@ body {
 
 #MainMenu {
 
-    visibility:
-        hidden !important;
+    visibility: hidden !important;
 
 }
 
 footer {
 
-    visibility:
-        hidden !important;
-
-}
-
-header[data-testid="stHeader"] {
-
-    background:
-        transparent !important;
-
-}
-
-
-/* ============================================================
-   DEFAULT HEADINGS
-   ============================================================ */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-
-    color:
-        #075EAD !important;
+    visibility: hidden !important;
 
 }
 
@@ -631,30 +583,23 @@ h6 {
 
 .logo-title {
 
-    font-size:
-        27px;
+    font-size: 27px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    color:
-        #0066CC !important;
+    color: #0B2545;
 
-    line-height:
-        1.2;
+    line-height: 1.2;
 
 }
 
 .logo-subtitle {
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    color:
-        #60758A !important;
+    color: #60758A;
 
-    margin-top:
-        4px;
+    margin-top: 4px;
 
 }
 
@@ -665,39 +610,25 @@ h6 {
 
 .stButton > button {
 
-    border-radius:
-        10px !important;
+    border-radius: 10px !important;
 
-    border:
-        1px solid #D9E3EE !important;
+    border: 1px solid #d9e3ee !important;
 
-    background:
-        white !important;
+    background: #ffffff !important;
 
-    color:
-        #123F73 !important;
+    color: #0B2545 !important;
 
-    font-weight:
-        600 !important;
+    font-weight: 600 !important;
 
-    min-height:
-        40px !important;
-
-    transition:
-        all 0.2s ease !important;
+    min-height: 40px !important;
 
 }
 
 .stButton > button:hover {
 
-    border-color:
-        #0066CC !important;
+    border-color: #0066CC !important;
 
-    color:
-        #0066CC !important;
-
-    background:
-        #F4F9FF !important;
+    color: #0066CC !important;
 
 }
 
@@ -708,34 +639,27 @@ h6 {
 
 .hero {
 
-    width:
-        100%;
+    width: 100%;
 
-    box-sizing:
-        border-box;
+    box-sizing: border-box;
 
-    padding:
-        65px 45px;
+    padding: 65px 45px;
 
-    border-radius:
-        28px;
+    border-radius: 28px;
 
     background:
         linear-gradient(
             135deg,
-            #071D35 0%,
-            #0B3C6F 45%,
-            #0066CC 100%
+            #071d35 0%,
+            #0b3c6f 45%,
+            #0066cc 100%
         );
 
-    color:
-        white;
+    color: #ffffff;
 
-    margin-top:
-        20px;
+    margin-top: 20px;
 
-    margin-bottom:
-        35px;
+    margin-bottom: 35px;
 
     box-shadow:
         0 20px 60px rgba(0, 50, 100, 0.20);
@@ -744,58 +668,43 @@ h6 {
 
 .hero-small-title {
 
-    color:
-        #7EC8FF !important;
+    color: #7ec8ff;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    letter-spacing:
-        1px;
+    letter-spacing: 1px;
 
-    margin-bottom:
-        12px;
+    margin-bottom: 12px;
 
 }
 
 .hero h1 {
 
-    color:
-        #FFFFFF !important;
+    color: #ffffff !important;
 
-    font-size:
-        50px;
+    font-size: 50px;
 
-    line-height:
-        1.1;
+    line-height: 1.1;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    margin:
-        0 0 15px 0;
+    margin: 0 0 15px 0;
 
 }
 
 .hero p {
 
-    max-width:
-        850px;
+    max-width: 850px;
 
-    color:
-        #DBEEFF !important;
+    color: #dbeeff !important;
 
-    font-size:
-        18px;
+    font-size: 18px;
 
-    line-height:
-        1.7;
+    line-height: 1.7;
 
-    margin:
-        0;
+    margin: 0;
 
 }
 
@@ -806,66 +715,23 @@ h6 {
 
 .section-title {
 
-    display:
-        block;
+    display: block;
 
-    width:
-        100%;
+    width: 100%;
 
-    color:
-        #075EAD !important;
+    color: #0B2545 !important;
 
-    font-size:
-        30px;
+    font-size: 30px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    line-height:
-        1.3;
+    line-height: 1.3;
 
-    margin-top:
-        35px;
+    margin-top: 35px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
-    padding:
-        0;
-
-}
-
-
-/* ============================================================
-   SECTION TITLE BLUE LINE
-   ============================================================ */
-
-.section-title::after {
-
-    content:
-        "";
-
-    display:
-        block;
-
-    width:
-        48px;
-
-    height:
-        4px;
-
-    margin-top:
-        8px;
-
-    border-radius:
-        10px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #0066CC,
-            #7EC8FF
-        );
+    padding: 0;
 
 }
 
@@ -879,43 +745,28 @@ h6 {
 .metric-card,
 .info-card {
 
-    background:
-        rgba(255,255,255,0.96);
+    background: rgba(255,255,255,0.96);
 
-    border:
-        1px solid #E2EAF2;
+    border: 1px solid #e2eaf2;
 
-    border-radius:
-        18px;
+    border-radius: 18px;
 
-    padding:
-        24px;
+    padding: 24px;
 
     box-shadow:
         0 8px 30px rgba(15,42,70,0.06);
 
-    height:
-        100%;
+    height: 100%;
 
-    box-sizing:
-        border-box;
-
-    transition:
-        all 0.2s ease;
+    box-sizing: border-box;
 
 }
 
 .service-card:hover,
 .project-card:hover {
 
-    transform:
-        translateY(-3px);
-
     box-shadow:
         0 15px 40px rgba(15,42,70,0.12);
-
-    border-color:
-        #C9DFF4;
 
 }
 
@@ -930,8 +781,7 @@ h6 {
 .info-card h3,
 .info-card h4 {
 
-    color:
-        #075EAD !important;
+    color: #0B2545 !important;
 
 }
 
@@ -944,8 +794,7 @@ h6 {
 .project-card p,
 .info-card p {
 
-    color:
-        #60758A !important;
+    color: #60758A !important;
 
 }
 
@@ -956,27 +805,21 @@ h6 {
 
 .metric-number {
 
-    font-size:
-        34px;
+    font-size: 34px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    color:
-        #0066CC !important;
+    color: #0066CC !important;
 
 }
 
 .metric-label {
 
-    color:
-        #60758A !important;
+    color: #60758A !important;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
-    margin-top:
-        5px;
+    margin-top: 5px;
 
 }
 
@@ -989,11 +832,9 @@ h6 {
 .stTextArea label,
 .stSelectbox label {
 
-    color:
-        #075EAD !important;
+    color: #0B2545 !important;
 
-    font-weight:
-        600 !important;
+    font-weight: 600 !important;
 
 }
 
@@ -1003,52 +844,14 @@ h6 {
    ============================================================ */
 
 .stTextInput input,
-.stTextArea textarea {
+.stTextArea textarea,
+.stSelectbox [data-baseweb="select"] {
 
-    border:
-        1px solid #D9E5F0 !important;
+    background: #ffffff !important;
 
-    border-radius:
-        10px !important;
+    color: #0B2545 !important;
 
-    color:
-        #123F73 !important;
-
-    background:
-        #FFFFFF !important;
-
-}
-
-.stTextInput input:focus,
-.stTextArea textarea:focus {
-
-    border-color:
-        #0066CC !important;
-
-    box-shadow:
-        0 0 0 1px #0066CC !important;
-
-}
-
-
-/* ============================================================
-   SELECTBOX
-   ============================================================ */
-
-.stSelectbox div[data-baseweb="select"] > div {
-
-    border-radius:
-        10px !important;
-
-    border-color:
-        #D9E5F0 !important;
-
-}
-
-.stSelectbox div[data-baseweb="select"] span {
-
-    color:
-        #123F73 !important;
+    -webkit-text-fill-color: #0B2545 !important;
 
 }
 
@@ -1062,62 +865,36 @@ h6 {
     background:
         linear-gradient(
             135deg,
-            #0B3C6F,
+            #0B2545,
             #0066CC
         ) !important;
 
-    color:
-        white !important;
+    color: #ffffff !important;
 
-    border:
-        none !important;
+    border: none !important;
 
-    border-radius:
-        10px !important;
+    border-radius: 10px !important;
 
-    font-weight:
-        800 !important;
-
-    min-height:
-        45px !important;
-
-}
-
-.stFormSubmitButton button:hover {
-
-    background:
-        linear-gradient(
-            135deg,
-            #0066CC,
-            #0085FF
-        ) !important;
+    font-weight: 800 !important;
 
 }
 
 
 /* ============================================================
-   ============================================================
-   FLOATING CHAT BUTTON
-   MOVED UP TO AVOID STREAMLIT MANAGE APP
-   ============================================================
+   CHAT LAUNCHER
    ============================================================ */
 
 .st-key-chat_launcher {
 
-    position:
-        fixed !important;
+    position: fixed !important;
 
-    right:
-        25px !important;
+    right: 25px !important;
 
-    bottom:
-        85px !important;
+    bottom: 25px !important;
 
-    width:
-        170px !important;
+    width: 170px !important;
 
-    z-index:
-        999999 !important;
+    z-index: 999999 !important;
 
 }
 
@@ -1131,98 +908,64 @@ h6 {
     background:
         linear-gradient(
             135deg,
-            #0B3C6F,
+            #0B2545,
             #0066CC
         ) !important;
 
-    color:
-        white !important;
+    color: #ffffff !important;
 
-    border:
-        none !important;
+    border: none !important;
 
-    border-radius:
-        50px !important;
+    border-radius: 50px !important;
 
-    min-height:
-        52px !important;
+    min-height: 52px !important;
 
-    font-size:
-        14px !important;
+    font-size: 14px !important;
 
-    font-weight:
-        800 !important;
+    font-weight: 800 !important;
 
     box-shadow:
         0 10px 35px rgba(0,82,160,0.35) !important;
 
 }
 
-.st-key-chat_launcher button:hover {
-
-    background:
-        linear-gradient(
-            135deg,
-            #0066CC,
-            #0085FF
-        ) !important;
-
-}
-
 
 /* ============================================================
-   ============================================================
    CHAT PANEL
-   MOVED UP ABOVE CHAT BUTTON
-   ============================================================
    ============================================================ */
 
 .st-key-chat_panel {
 
-    position:
-        fixed !important;
+    position: fixed !important;
 
-    right:
-        25px !important;
+    right: 25px !important;
 
-    bottom:
-        150px !important;
+    bottom: 90px !important;
 
-    width:
-        390px !important;
+    width: 390px !important;
 
-    max-width:
-        calc(100vw - 30px) !important;
+    max-width: calc(100vw - 30px) !important;
 
-    height:
-        610px !important;
+    height: 610px !important;
 
-    max-height:
-        calc(100vh - 180px) !important;
+    max-height: calc(100vh - 120px) !important;
 
-    z-index:
-        999998 !important;
+    z-index: 999998 !important;
 
-    background:
-        white !important;
+    background: #ffffff !important;
 
-    border-radius:
-        20px !important;
+    border-radius: 20px !important;
 
-    border:
-        1px solid #DCE5EF !important;
+    border: 1px solid #dce5ef !important;
 
     box-shadow:
         0 20px 70px rgba(0,0,0,0.25) !important;
 
-    overflow-y:
-        auto !important;
+    overflow-y: auto !important;
 
-    padding:
-        18px !important;
+    padding: 18px !important;
 
-    box-sizing:
-        border-box !important;
+    box-sizing: border-box !important;
 
 }
 
@@ -1236,47 +979,37 @@ h6 {
     background:
         linear-gradient(
             135deg,
-            #071D35,
-            #0066CC
+            #071d35,
+            #0066cc
         );
 
-    color:
-        white;
+    color: #ffffff;
 
-    padding:
-        16px;
+    padding: 16px;
 
-    border-radius:
-        15px;
+    border-radius: 15px;
 
-    margin-bottom:
-        15px;
+    margin-bottom: 15px;
 
 }
 
 .chat-header-title {
 
-    font-size:
-        17px;
+    font-size: 17px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    color:
-        white !important;
+    color: #ffffff !important;
 
 }
 
 .chat-header-status {
 
-    font-size:
-        11px;
+    font-size: 11px;
 
-    margin-top:
-        4px;
+    margin-top: 4px;
 
-    color:
-        #CCE8FF !important;
+    color: #cce8ff !important;
 
 }
 
@@ -1287,26 +1020,19 @@ h6 {
 
 .chat-info {
 
-    background:
-        #F2F7FC;
+    background: #f2f7fc;
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
-    padding:
-        12px;
+    padding: 12px;
 
-    color:
-        #536A80 !important;
+    color: #536a80 !important;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    line-height:
-        1.6;
+    line-height: 1.6;
 
-    margin-bottom:
-        15px;
+    margin-bottom: 15px;
 
 }
 
@@ -1317,48 +1043,174 @@ h6 {
 
 [data-testid="stChatMessage"] {
 
-    background:
-        transparent !important;
+    background: transparent !important;
 
 }
 
+
+/* User message text */
+
 [data-testid="stChatMessage"] p {
 
-    color:
-        #123F73 !important;
+    color: #0B2545 !important;
+
+}
+
+
+/* Assistant message text */
+
+[data-testid="stChatMessage"] {
+
+    color: #0B2545 !important;
+
+}
+
+
+/* Markdown inside chat */
+
+[data-testid="stChatMessage"] strong {
+
+    color: #0B2545 !important;
 
 }
 
 
 /* ============================================================
-   CHAT INPUT
+   CHAT INPUT - TEXT VISIBILITY FIX
    ============================================================ */
 
 [data-testid="stChatInput"] {
 
-    position:
-        sticky !important;
+    position: sticky !important;
 
-    bottom:
-        0 !important;
+    bottom: 0 !important;
 
-    background:
-        white !important;
+    background: #ffffff !important;
 
-    z-index:
-        10 !important;
+    z-index: 100 !important;
+
+    color: #0B2545 !important;
+
+    color-scheme: light !important;
+
+}
+
+
+/* Input wrapper */
+
+[data-testid="stChatInput"] > div {
+
+    background: #ffffff !important;
+
+    border: 1px solid #d5dfeb !important;
+
+    border-radius: 12px !important;
+
+}
+
+
+/* Actual textarea */
+
+[data-testid="stChatInput"] textarea {
+
+    background: #ffffff !important;
+
+    color: #0B2545 !important;
+
+    -webkit-text-fill-color: #0B2545 !important;
+
+    caret-color: #0066CC !important;
+
+    font-size: 15px !important;
+
+    font-weight: 500 !important;
+
+    color-scheme: light !important;
+
+}
+
+
+/* Placeholder */
+
+[data-testid="stChatInput"] textarea::placeholder {
+
+    color: #60758A !important;
+
+    -webkit-text-fill-color: #60758A !important;
+
+    opacity: 1 !important;
+
+}
+
+
+/* Focus */
+
+[data-testid="stChatInput"] textarea:focus {
+
+    background: #ffffff !important;
+
+    color: #0B2545 !important;
+
+    -webkit-text-fill-color: #0B2545 !important;
+
+    outline: none !important;
+
+}
+
+
+/* Focus border */
+
+[data-testid="stChatInput"] > div:focus-within {
+
+    border-color: #0066CC !important;
+
+    box-shadow:
+        0 0 0 2px rgba(0,102,204,0.12) !important;
 
 }
 
 
 /* ============================================================
-   CHAT INPUT TEXT
+   CHAT SEND BUTTON
    ============================================================ */
 
-[data-testid="stChatInput"] textarea {
+[data-testid="stChatInput"] button {
 
-    color:
-        #123F73 !important;
+    background: #ff4b4b !important;
+
+    color: #ffffff !important;
+
+    border: none !important;
+
+}
+
+
+/* Send icon */
+
+[data-testid="stChatInput"] button svg {
+
+    color: #ffffff !important;
+
+    fill: #ffffff !important;
+
+    stroke: #ffffff !important;
+
+}
+
+
+/* ============================================================
+   CHAT CONTROLS
+   ============================================================ */
+
+.st-key-chat_panel .stButton > button {
+
+    background: #ffffff !important;
+
+    color: #0B2545 !important;
+
+    border: 1px solid #d9e3ee !important;
+
+    font-weight: 600 !important;
 
 }
 
@@ -1369,29 +1221,13 @@ h6 {
 
 .footer {
 
-    text-align:
-        center;
+    text-align: center;
 
-    color:
-        #718297 !important;
+    color: #718297 !important;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    padding:
-        35px 10px;
-
-}
-
-
-/* ============================================================
-   ALERTS
-   ============================================================ */
-
-[data-testid="stAlert"] {
-
-    border-radius:
-        12px !important;
+    padding: 35px 10px;
 
 }
 
@@ -1404,84 +1240,57 @@ h6 {
 
     .block-container {
 
-        padding-left:
-            15px !important;
+        padding-left: 15px !important;
 
-        padding-right:
-            15px !important;
+        padding-right: 15px !important;
 
     }
-
 
     .hero {
 
-        padding:
-            40px 25px;
+        padding: 40px 25px;
 
-        border-radius:
-            20px;
+        border-radius: 20px;
 
     }
-
 
     .hero h1 {
 
-        font-size:
-            36px;
+        font-size: 36px;
 
     }
-
 
     .hero p {
 
-        font-size:
-            15px;
+        font-size: 15px;
 
     }
-
 
     .section-title {
 
-        font-size:
-            25px;
+        font-size: 25px;
 
     }
-
-
-    /* Mobile chat button */
 
     .st-key-chat_launcher {
 
-        right:
-            15px !important;
+        right: 15px !important;
 
-        bottom:
-            75px !important;
+        bottom: 15px !important;
 
-        width:
-            155px !important;
+        width: 155px !important;
 
     }
 
-
-    /* Mobile chat panel */
-
     .st-key-chat_panel {
 
-        right:
-            10px !important;
+        right: 10px !important;
 
-        bottom:
-            140px !important;
+        bottom: 80px !important;
 
-        width:
-            calc(100vw - 20px) !important;
+        width: calc(100vw - 20px) !important;
 
-        height:
-            70vh !important;
-
-        max-height:
-            calc(100vh - 160px) !important;
+        height: 70vh !important;
 
     }
 
@@ -1730,7 +1539,7 @@ if page == "Home":
     <div style="
         font-size:18px;
         font-weight:800;
-        color:#075EAD;
+        color:#0B2545;
         margin-bottom:10px;
     ">
         {title}
@@ -1812,7 +1621,7 @@ if page == "Home":
     </div>
 
     <h3 style="
-        color:#075EAD !important;
+        color:#0B2545;
         margin:8px 0;
     ">
         {title}
@@ -1908,7 +1717,7 @@ elif page == "Services":
     </div>
 
     <h3 style="
-        color:#075EAD !important;
+        color:#0B2545;
         margin-bottom:10px;
     ">
         {title}
@@ -2004,7 +1813,7 @@ elif page == "Projects":
     </div>
 
     <h3 style="
-        color:#075EAD !important;
+        color:#0B2545;
         margin-bottom:10px;
     ">
         {title}
@@ -2261,7 +2070,7 @@ elif page == "About":
 
 <div class="info-card">
 
-    <h2 style="color:#075EAD !important;">
+    <h2 style="color:#0B2545;">
         Logistics Intelligence Through Data
     </h2>
 
@@ -2334,7 +2143,7 @@ style="
     padding:16px;
 ">
 
-    <b style="color:#075EAD !important;">
+    <b style="color:#0B2545;">
         {technology}
     </b>
 
@@ -2378,7 +2187,7 @@ elif page == "Contact":
         📧
     </div>
 
-    <h4 style="color:#075EAD !important;">
+    <h4 style="color:#0B2545;">
         Email
     </h4>
 
@@ -2401,7 +2210,7 @@ elif page == "Contact":
         📱
     </div>
 
-    <h4 style="color:#075EAD !important;">
+    <h4 style="color:#0B2545;">
         WhatsApp
     </h4>
 
@@ -2424,7 +2233,7 @@ elif page == "Contact":
         💼
     </div>
 
-    <h4 style="color:#075EAD !important;">
+    <h4 style="color:#0B2545;">
         LinkedIn
     </h4>
 
@@ -2447,7 +2256,7 @@ elif page == "Contact":
         💻
     </div>
 
-    <h4 style="color:#075EAD !important;">
+    <h4 style="color:#0B2545;">
         GitHub
     </h4>
 
@@ -2468,9 +2277,7 @@ render_html(
     """
 <div class="footer">
 
-    🚚 <b style="color:#075EAD;">
-        LogiIntelli
-    </b>
+    🚚 <b>LogiIntelli</b>
 
     <br><br>
 
@@ -2511,6 +2318,10 @@ with st.container(key="chat_launcher"):
 if st.session_state.chat_open:
 
     with st.container(key="chat_panel"):
+
+        # ====================================================
+        # CHAT HEADER
+        # ====================================================
 
         render_html(
             """
