@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 import re
-
 import requests
 import streamlit as st
 
@@ -11,7 +10,7 @@ import streamlit as st
 # ============================================================
 
 st.set_page_config(
-    page_title="LogiIntelli | Logistics AI, Data Analytics & BI",
+    page_title="LogiIntelli | Logistics Analytics, AI & BI",
     page_icon="🚚",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -19,13 +18,13 @@ st.set_page_config(
 
 
 # ============================================================
-# GOOGLE APPS SCRIPT WEB APP
+# GOOGLE APPS SCRIPT
 # ============================================================
 
-GOOGLE_SHEET_WEB_APP_URL = (
+GOOGLE_SCRIPT_URL = (
     "https://script.google.com/macros/s/"
-    "AKfycbyate5bFtUmuT6TB1YqYhSGq0ED09kuMSXHdkYfj86avev7GZqnSlpyhlgXOfaorycl"
-    "/exec"
+    "AKfycbyate5bFtUmuT6TB1YqYhSGq0ED09kuMSXHdkYfj86avev7GZqnSlpyhlgXOfaorycl/"
+    "exec"
 )
 
 
@@ -52,75 +51,88 @@ if "submitted" not in st.session_state:
 # CUSTOM CSS
 # ============================================================
 
-html("""
+st.markdown(
+    """
 <style>
-
-/* ============================================================
-   GLOBAL
-============================================================ */
 
 html {
     scroll-behavior: smooth;
 }
 
-body {
-    background: #F6F8FC;
+/* ============================================================
+   REMOVE STREAMLIT DEFAULT TOP WHITE HEADER
+   ============================================================ */
+
+[data-testid="stHeader"],
+header,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
 }
+
+/* Remove Streamlit top decoration */
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+/* ============================================================
+   MAIN APP BACKGROUND
+   ============================================================ */
 
 [data-testid="stAppViewContainer"] {
     background:
         radial-gradient(
             circle at 10% 0%,
-            rgba(37, 99, 235, 0.04),
+            rgba(37, 99, 235, 0.045),
             transparent 30%
         ),
         radial-gradient(
             circle at 90% 10%,
-            rgba(14, 165, 233, 0.04),
+            rgba(14, 165, 233, 0.045),
             transparent 30%
         ),
-        #F6F8FC;
+        #F6F8FC !important;
 }
 
-[data-testid="stHeader"] {
-    background: rgba(255,255,255,0.75);
+/* Main content */
+[data-testid="stMain"] {
+    background: transparent !important;
 }
 
+/* Hide sidebar */
 [data-testid="stSidebar"] {
-    display: none;
+    display: none !important;
 }
 
+/* Remove default block spacing */
 .block-container {
-    max-width: 1450px;
-    padding-top: 1rem;
-    padding-bottom: 4rem;
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1250px !important;
 }
 
 
 /* ============================================================
-   REMOVE DEFAULT STREAMLIT SPACE
-============================================================ */
-
-div[data-testid="stVerticalBlock"] > div {
-    gap: 0.5rem;
-}
-
-
-/* ============================================================
-   BRAND
-============================================================ */
+   BRAND / LOGO
+   ============================================================ */
 
 .brand-wrapper {
     text-align: center;
-    padding: 15px 0 8px 0;
+    padding: 10px 0 14px 0;
+    background: transparent !important;
 }
 
 .brand-title {
-    font-size: 48px;
-    line-height: 1;
-    font-weight: 950;
-    letter-spacing: -2px;
-    color: #0B1F3A;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    color: #0F172A;
+    line-height: 1.15;
+    background: transparent !important;
+    margin: 0;
 }
 
 .brand-title span {
@@ -128,116 +140,106 @@ div[data-testid="stVerticalBlock"] > div {
 }
 
 .brand-subtitle {
-    margin-top: 10px;
-    color: #64748B;
+    margin-top: 7px;
     font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1.1px;
-    text-transform: uppercase;
+    color: #64748B;
+    letter-spacing: 0.2px;
 }
 
 
 /* ============================================================
    NAVIGATION
-============================================================ */
+   ============================================================ */
 
 .nav-wrapper {
-    background: rgba(255,255,255,0.88);
+    background: rgba(255, 255, 255, 0.96);
     border: 1px solid #E2E8F0;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 7px;
-    margin: 15px 0 28px 0;
-    box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+    margin: 4px 0 25px 0;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
 }
 
+/* Streamlit buttons */
 .stButton > button {
     width: 100%;
-    min-height: 43px;
-    border-radius: 11px;
+    min-height: 42px;
+    border-radius: 10px;
     border: 1px solid transparent;
     background: transparent;
     color: #475569;
-    font-weight: 750;
     font-size: 14px;
-    transition: all .2s ease;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
     background: #EFF6FF;
     color: #2563EB;
     border-color: #DBEAFE;
-    transform: translateY(-1px);
+}
+
+.stButton > button:focus {
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 
 /* ============================================================
    HERO
-============================================================ */
+   ============================================================ */
 
 .hero {
     position: relative;
     overflow: hidden;
-    padding: 65px 58px;
-    border-radius: 28px;
-
+    padding: 62px 55px;
+    border-radius: 24px;
     background:
         radial-gradient(
-            circle at 85% 15%,
-            rgba(96,165,250,0.30),
-            transparent 28%
+            circle at 90% 10%,
+            rgba(59, 130, 246, 0.25),
+            transparent 35%
         ),
         radial-gradient(
-            circle at 15% 100%,
-            rgba(14,165,233,0.18),
-            transparent 32%
+            circle at 10% 90%,
+            rgba(14, 165, 233, 0.16),
+            transparent 35%
         ),
         linear-gradient(
             135deg,
-            #071A33 0%,
-            #0B2A52 48%,
-            #0758B5 100%
+            #0F172A 0%,
+            #172554 55%,
+            #1E3A8A 100%
         );
-
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow:
-        0 25px 60px rgba(7,26,51,0.22);
-
-    margin-bottom: 30px;
+    color: white;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+    margin-bottom: 35px;
 }
 
-.hero::after {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    right: -120px;
-    bottom: -150px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.10);
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 820px;
 }
 
-.hero-eyebrow {
+.hero-badge {
     display: inline-block;
     padding: 7px 13px;
-    border-radius: 30px;
+    border-radius: 999px;
     background: rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #BFDBFE;
+    border: 1px solid rgba(255,255,255,0.18);
     font-size: 12px;
-    font-weight: 850;
-    letter-spacing: .8px;
-    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     margin-bottom: 18px;
 }
 
 .hero h1 {
-    max-width: 850px;
-    color: #FFFFFF;
-    font-size: 46px;
-    line-height: 1.12;
-    font-weight: 950;
+    font-size: 48px;
+    line-height: 1.08;
+    margin: 0 0 18px 0;
+    font-weight: 800;
     letter-spacing: -1.5px;
-    margin: 0 0 20px 0;
 }
 
 .hero h1 span {
@@ -245,644 +247,540 @@ div[data-testid="stVerticalBlock"] > div {
 }
 
 .hero p {
-    max-width: 900px;
-    color: #D9E6F5;
     font-size: 17px;
     line-height: 1.75;
-    margin: 0 0 12px 0;
-}
-
-.hero strong {
-    color: #FFFFFF;
-}
-
-.hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 9px;
-    margin-top: 27px;
-}
-
-.hero-tag {
-    padding: 8px 13px;
-    border-radius: 30px;
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.14);
-    color: #E0F2FE;
-    font-size: 12px;
-    font-weight: 750;
+    color: #CBD5E1;
+    margin: 0;
+    max-width: 760px;
 }
 
 
 /* ============================================================
-   SECTION HEADERS
-============================================================ */
+   SECTION HEADINGS
+   ============================================================ */
 
 .section-heading {
-    margin-top: 48px;
-    margin-bottom: 22px;
+    margin: 42px 0 22px 0;
 }
 
 .section-kicker {
     color: #2563EB;
     font-size: 12px;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: 1.2px;
     text-transform: uppercase;
     margin-bottom: 7px;
 }
 
 .section-title {
-    color: #0B1F3A;
-    font-size: 32px;
-    font-weight: 950;
+    font-size: 30px;
+    line-height: 1.2;
+    color: #0F172A;
+    font-weight: 800;
     letter-spacing: -0.8px;
     margin: 0;
 }
 
 .section-subtitle {
-    max-width: 850px;
     color: #64748B;
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.65;
     margin-top: 8px;
+    max-width: 760px;
 }
 
 
 /* ============================================================
-   METRICS
-============================================================ */
+   METRIC CARDS
+   ============================================================ */
 
 .metric-card {
-    background: rgba(255,255,255,0.92);
+    background: white;
     border: 1px solid #E2E8F0;
-    border-radius: 18px;
-    padding: 24px 15px;
-    text-align: center;
-    box-shadow: 0 8px 22px rgba(15,23,42,0.045);
-    transition: all .25s ease;
-}
-
-.metric-card:hover {
-    transform: translateY(-4px);
-    border-color: #BFDBFE;
-    box-shadow: 0 15px 30px rgba(37,99,235,0.10);
+    border-radius: 16px;
+    padding: 23px;
+    min-height: 125px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.045);
 }
 
 .metric-icon {
     font-size: 22px;
-    margin-bottom: 7px;
+    margin-bottom: 9px;
 }
 
 .metric-value {
-    color: #2563EB;
-    font-size: 34px;
-    font-weight: 950;
-    letter-spacing: -1px;
+    font-size: 23px;
+    font-weight: 800;
+    color: #0F172A;
 }
 
 .metric-label {
+    margin-top: 5px;
+    font-size: 13px;
     color: #64748B;
-    font-size: 12px;
-    font-weight: 800;
-    margin-top: 4px;
+    line-height: 1.45;
 }
 
 
 /* ============================================================
    CARDS
-============================================================ */
+   ============================================================ */
 
 .card {
-    height: 100%;
-    background: rgba(255,255,255,0.95);
+    background: white;
     border: 1px solid #E2E8F0;
-    border-radius: 19px;
-    padding: 26px;
-    margin-bottom: 18px;
-    box-shadow: 0 7px 20px rgba(15,23,42,0.045);
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        border-color .25s ease;
+    border-radius: 17px;
+    padding: 25px;
+    min-height: 205px;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.045);
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    border-color: #BFDBFE;
-    box-shadow: 0 17px 35px rgba(37,99,235,0.10);
-}
-
-.card h3 {
-    color: #0B1F3A;
-    font-size: 19px;
-    font-weight: 900;
-    margin: 8px 0 10px 0;
-}
-
-.card p,
-.card li {
-    color: #475569;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.card ul {
-    padding-left: 19px;
-    margin-bottom: 0;
-}
-
-.card li {
-    margin-bottom: 7px;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+    border-color: #CBD5E1;
 }
 
 .card-icon {
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #EFF6FF;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 15px;
-    background: #EFF6FF;
-    border: 1px solid #DBEAFE;
-    font-size: 25px;
+    font-size: 21px;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    color: #0F172A;
+    font-size: 18px;
+    margin: 0 0 10px 0;
+}
+
+.card p {
+    color: #64748B;
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0;
+}
+
+
+/* ============================================================
+   SERVICE LIST
+   ============================================================ */
+
+.service-list {
+    margin-top: 12px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.service-list li {
+    color: #475569;
+    font-size: 13px;
+    padding: 5px 0;
+    line-height: 1.5;
+}
+
+.service-list li::before {
+    content: "✓";
+    color: #2563EB;
+    font-weight: 800;
+    margin-right: 8px;
 }
 
 
 /* ============================================================
    WHY LOGIINTELLI
-============================================================ */
+   ============================================================ */
 
 .why-card {
-    background: linear-gradient(
-        145deg,
-        #FFFFFF,
-        #F8FBFF
-    );
+    background: white;
     border: 1px solid #E2E8F0;
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 18px;
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 165px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
 }
 
-.why-number {
+.why-card h3 {
+    font-size: 17px;
+    color: #0F172A;
+    margin: 0 0 8px 0;
+}
+
+.why-card p {
     font-size: 13px;
-    color: #2563EB;
-    font-weight: 900;
-    margin-bottom: 10px;
-}
-
-.why-title {
-    color: #0B1F3A;
-    font-size: 18px;
-    font-weight: 900;
-    margin-bottom: 8px;
-}
-
-.why-text {
+    line-height: 1.65;
     color: #64748B;
-    font-size: 14px;
-    line-height: 1.7;
+    margin: 0;
 }
 
 
 /* ============================================================
    TECHNOLOGY STRIP
-============================================================ */
+   ============================================================ */
 
 .tech-strip {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    padding: 22px;
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
+    background: #0F172A;
     border-radius: 18px;
-    box-shadow: 0 7px 20px rgba(15,23,42,0.04);
+    padding: 25px;
+    margin: 28px 0;
 }
 
-.tech-pill {
-    padding: 9px 15px;
-    border-radius: 30px;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    color: #334155;
+.tech-title {
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.tech-item {
+    border: 1px solid rgba(255,255,255,0.13);
+    background: rgba(255,255,255,0.06);
+    color: #E2E8F0;
+    border-radius: 999px;
+    padding: 7px 12px;
     font-size: 12px;
-    font-weight: 800;
 }
 
 
 /* ============================================================
    WORKFLOW
-============================================================ */
+   ============================================================ */
 
 .workflow {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 22px;
-    padding: 30px 18px;
-    box-shadow: 0 8px 25px rgba(15,23,42,0.04);
-    overflow-x: auto;
-}
-
-.workflow-container {
-    min-width: 1100px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
 }
 
 .workflow-step {
-    min-width: 120px;
-    text-align: center;
-}
-
-.workflow-icon {
-    width: 55px;
-    height: 55px;
-    margin: auto auto 9px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
-    background: #EFF6FF;
-    border: 1px solid #DBEAFE;
-    font-size: 25px;
-}
-
-.workflow-name {
-    color: #0B1F3A;
-    font-size: 13px;
-    font-weight: 900;
-}
-
-.workflow-desc {
-    color: #94A3B8;
-    font-size: 11px;
-    margin-top: 4px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    color: #334155;
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .workflow-arrow {
-    color: #2563EB;
-    font-size: 23px;
-    font-weight: 900;
+    color: #94A3B8;
+    font-weight: 800;
 }
 
 
 /* ============================================================
-   PROJECT CARD
-============================================================ */
+   PROJECT CARDS
+   ============================================================ */
 
 .project-card {
-    height: 100%;
-    background: #FFFFFF;
+    background: white;
     border: 1px solid #E2E8F0;
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 20px;
-    box-shadow: 0 7px 22px rgba(15,23,42,0.045);
-    transition: all .25s ease;
-}
-
-.project-card:hover {
-    transform: translateY(-5px);
-    border-color: #93C5FD;
-    box-shadow: 0 18px 35px rgba(37,99,235,0.10);
+    border-radius: 17px;
+    padding: 25px;
+    min-height: 220px;
+    margin-bottom: 16px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
 }
 
 .project-number {
     color: #2563EB;
     font-size: 12px;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: 1px;
+    margin-bottom: 10px;
 }
 
 .project-card h3 {
-    color: #0B1F3A;
-    font-size: 20px;
-    font-weight: 900;
-    margin: 9px 0 10px 0;
+    color: #0F172A;
+    font-size: 18px;
+    margin: 0 0 10px 0;
 }
 
 .project-card p {
     color: #64748B;
-    font-size: 14px;
-    line-height: 1.7;
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 15px;
 }
 
-.project-tech {
+.project-tag {
     display: inline-block;
-    margin-top: 5px;
-    padding: 6px 11px;
-    border-radius: 20px;
-    background: #F1F5F9;
-    color: #334155;
-    font-size: 11px;
-    font-weight: 800;
-}
-
-.project-category {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 6px 11px;
-    border-radius: 20px;
+    padding: 6px 9px;
+    border-radius: 7px;
     background: #EFF6FF;
-    color: #2563EB;
+    color: #1D4ED8;
     font-size: 11px;
-    font-weight: 850;
+    font-weight: 700;
+    margin: 3px;
 }
 
 
 /* ============================================================
    CTA
-============================================================ */
+   ============================================================ */
 
 .cta {
-    position: relative;
-    overflow: hidden;
-    margin-top: 45px;
-    padding: 45px 40px;
-    border-radius: 24px;
-    text-align: center;
     background:
         radial-gradient(
-            circle at 50% -50%,
-            rgba(96,165,250,0.30),
-            transparent 50%
+            circle at 90% 20%,
+            rgba(59, 130, 246, 0.18),
+            transparent 35%
         ),
-        linear-gradient(
-            135deg,
-            #0B1F3A,
-            #0B4F91
-        );
-    box-shadow: 0 20px 45px rgba(11,31,58,0.18);
+        #172554;
+    border-radius: 22px;
+    padding: 38px;
+    color: white;
+    margin: 38px 0;
 }
 
 .cta h2 {
-    color: #FFFFFF;
-    font-size: 29px;
-    font-weight: 950;
-    margin-bottom: 10px;
+    font-size: 28px;
+    margin: 0 0 10px 0;
 }
 
 .cta p {
-    max-width: 750px;
-    margin: auto;
-    color: #DCEBFA;
-    font-size: 15px;
-    line-height: 1.7;
+    color: #CBD5E1;
+    line-height: 1.65;
+    margin: 0;
 }
 
 
 /* ============================================================
-   CONTACT
-============================================================ */
+   CONTACT CARDS
+   ============================================================ */
 
 .contact-card {
-    background: #FFFFFF;
+    background: white;
     border: 1px solid #E2E8F0;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+    border-radius: 16px;
+    padding: 23px;
+    min-height: 145px;
+    margin-bottom: 16px;
 }
 
-.contact-item {
-    padding: 15px 0;
-    border-bottom: 1px solid #F1F5F9;
+.contact-card h3 {
+    color: #0F172A;
+    font-size: 16px;
+    margin: 0 0 8px 0;
 }
 
-.contact-item:last-child {
-    border-bottom: none;
+.contact-card p {
+    color: #64748B;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
 }
 
-.contact-label {
-    color: #94A3B8;
-    font-size: 11px;
-    font-weight: 850;
-    text-transform: uppercase;
-    letter-spacing: .8px;
-}
-
-.contact-value {
-    margin-top: 4px;
-    color: #0B1F3A;
-    font-size: 15px;
-    font-weight: 750;
-}
-
-.contact-link {
+.contact-card a {
     color: #2563EB;
     text-decoration: none;
-}
-
-.contact-link:hover {
-    text-decoration: underline;
+    font-weight: 600;
 }
 
 
 /* ============================================================
    FORM
-============================================================ */
+   ============================================================ */
 
 div[data-testid="stForm"] {
-    background: #FFFFFF;
+    background: white;
     border: 1px solid #E2E8F0;
-    border-radius: 21px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(15,23,42,0.06);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
 }
 
-div[data-testid="stWidgetLabel"] label {
-    color: #0B1F3A !important;
-    font-weight: 800 !important;
+label {
+    color: #334155 !important;
+    font-weight: 600 !important;
 }
 
-div[data-testid="stForm"] input,
-div[data-testid="stForm"] textarea,
-div[data-testid="stForm"] select {
-    background: #FFFFFF !important;
-    color: #0F172A !important;
-    border: 1px solid #CBD5E1 !important;
+input,
+textarea,
+select {
+    border-radius: 9px !important;
+}
+
+.stTextInput input,
+.stTextArea textarea,
+.stSelectbox div[data-baseweb="select"] {
+    border-color: #CBD5E1 !important;
+}
+
+.stFormSubmitButton button {
+    background: #2563EB !important;
+    color: white !important;
+    border: none !important;
     border-radius: 10px !important;
+    font-weight: 700 !important;
+    min-height: 45px !important;
 }
 
-div[data-testid="stForm"] input:focus,
-div[data-testid="stForm"] textarea:focus {
-    border-color: #2563EB !important;
-    box-shadow: 0 0 0 2px rgba(37,99,235,0.10) !important;
+.stFormSubmitButton button:hover {
+    background: #1D4ED8 !important;
 }
 
 
 /* ============================================================
-   FORM SUBMIT
-============================================================ */
+   SUCCESS MESSAGE
+   ============================================================ */
 
-div[data-testid="stFormSubmitButton"] button {
-    background: linear-gradient(
-        135deg,
-        #0B1F3A,
-        #2563EB
-    ) !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    border-radius: 11px !important;
-    font-weight: 850 !important;
-    min-height: 48px !important;
-    box-shadow: 0 8px 18px rgba(37,99,235,0.20);
-    transition: all .2s ease;
-}
-
-div[data-testid="stFormSubmitButton"] button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(37,99,235,0.28);
+.success-box {
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    color: #065F46;
+    padding: 15px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 
 /* ============================================================
    FOOTER
-============================================================ */
+   ============================================================ */
 
 .footer {
-    margin-top: 60px;
-    padding: 35px 20px 10px 20px;
-    border-top: 1px solid #E2E8F0;
     text-align: center;
-}
-
-.footer-brand {
-    color: #0B1F3A;
-    font-size: 21px;
-    font-weight: 950;
-}
-
-.footer-text {
-    color: #64748B;
-    font-size: 13px;
-    margin-top: 7px;
-}
-
-.footer-copy {
+    padding: 30px 0 10px 0;
+    margin-top: 45px;
+    border-top: 1px solid #E2E8F0;
     color: #94A3B8;
-    font-size: 11px;
-    margin-top: 14px;
+    font-size: 12px;
+}
+
+.footer strong {
+    color: #475569;
 }
 
 
 /* ============================================================
    MOBILE
-============================================================ */
+   ============================================================ */
 
 @media (max-width: 768px) {
 
     .block-container {
-        padding-left: 15px;
-        padding-right: 15px;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-top: 0.5rem !important;
     }
 
     .brand-title {
-        font-size: 34px;
-        letter-spacing: -1px;
+        font-size: 30px;
     }
 
     .brand-subtitle {
-        font-size: 10px;
-        letter-spacing: .6px;
+        font-size: 12px;
     }
 
     .hero {
-        padding: 35px 23px;
-        border-radius: 20px;
+        padding: 38px 25px;
+        border-radius: 18px;
     }
 
     .hero h1 {
-        font-size: 31px;
-        letter-spacing: -1px;
+        font-size: 34px;
     }
 
     .hero p {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .section-title {
-        font-size: 26px;
-    }
-
-    .metric-value {
-        font-size: 28px;
-    }
-
-    .card,
-    .project-card {
-        padding: 22px;
-    }
-
-    .cta {
-        padding: 35px 22px;
-        border-radius: 20px;
-    }
-
-    .cta h2 {
         font-size: 25px;
+    }
+
+    .metric-card,
+    .card,
+    .why-card,
+    .project-card,
+    .contact-card {
+        min-height: auto;
+    }
+
+    .workflow {
+        justify-content: flex-start;
+    }
+
+    .workflow-arrow {
+        display: none;
+    }
+
+    .tech-list {
+        gap: 6px;
     }
 }
 
 </style>
-""")
+""",
+    unsafe_allow_html=True,
+)
 
 
 # ============================================================
-# HEADER
+# BRAND
 # ============================================================
 
-html("""
-<div class="brand-wrapper">
-    <div class="brand-title">
-        🚚 Logi<span>Intelli</span>
+html(
+    """
+    <div class="brand-wrapper">
+        <div class="brand-title">🚚 <span>LogiIntelli</span></div>
+        <div class="brand-subtitle">
+            Logistics Analytics • AI & Predictive Intelligence • BI Automation
+        </div>
     </div>
-
-    <div class="brand-subtitle">
-        Logistics Analytics • AI • Business Intelligence • Automation
-    </div>
-</div>
-""")
+    """
+)
 
 
 # ============================================================
 # NAVIGATION
 # ============================================================
 
-html('<div class="nav-wrapper">')
-
-pages = [
-    "Home",
-    "Services",
-    "Projects",
-    "Request Project",
-    "About",
-    "Contact",
+nav_pages = [
+    ("🏠", "Home"),
+    ("📊", "Services"),
+    ("🚀", "Projects"),
+    ("📝", "Request Project"),
+    ("👤", "About"),
+    ("📞", "Contact"),
 ]
+
+html('<div class="nav-wrapper">')
 
 nav_cols = st.columns(6)
 
-for idx, page_name in enumerate(pages):
+for i, (icon, page_name) in enumerate(nav_pages):
 
-    with nav_cols[idx]:
-
-        selected = st.session_state.page == page_name
-
-        label = (
-            f"● {page_name}"
-            if selected
-            else page_name
-        )
+    with nav_cols[i]:
 
         if st.button(
-            label,
-            key=f"nav_{idx}",
+            f"{icon} {page_name}",
+            key=f"nav_{page_name}",
             use_container_width=True,
         ):
-
             st.session_state.page = page_name
             st.session_state.submitted = False
             st.rerun()
@@ -890,938 +788,665 @@ for idx, page_name in enumerate(pages):
 html("</div>")
 
 
-page = st.session_state.page
-
-
 # ============================================================
 # HOME PAGE
 # ============================================================
 
-if page == "Home":
+if st.session_state.page == "Home":
 
-    # --------------------------------------------------------
-    # HERO
-    # --------------------------------------------------------
+    html(
+        """
+        <div class="hero">
+            <div class="hero-content">
 
-    html("""
-    <div class="hero">
+                <div class="hero-badge">
+                    LOGISTICS • DATA • AI • BUSINESS INTELLIGENCE
+                </div>
 
-        <div class="hero-eyebrow">
-            🚀 Logistics Intelligence Platform
+                <h1>
+                    Turn Logistics Data Into
+                    <span>Business Intelligence</span>
+                </h1>
+
+                <p>
+                    LogiIntelli helps logistics and operations teams transform
+                    complex shipment data into actionable dashboards,
+                    predictive analytics, AI solutions and automated reporting
+                    systems.
+                </p>
+
+            </div>
         </div>
+        """
+    )
 
-        <h1>
-            Turn Logistics Data Into
-            <span>Business Intelligence.</span>
-        </h1>
-
-        <p>
-            <strong>LogiIntelli</strong> helps courier, logistics,
-            supply-chain, and e-commerce businesses transform
-            operational data into actionable insights.
-        </p>
-
-        <p>
-            From shipment tracking and TAT analytics to Power BI,
-            SQL engineering, automation, predictive AI, and
-            machine learning — we build solutions around
-            real-world logistics operations.
-        </p>
-
-        <div class="hero-tags">
-            <div class="hero-tag">📊 Power BI</div>
-            <div class="hero-tag">🧠 Predictive AI</div>
-            <div class="hero-tag">🗄️ SQL Analytics</div>
-            <div class="hero-tag">⚙️ MIS Automation</div>
-            <div class="hero-tag">🔗 API Integration</div>
-            <div class="hero-tag">🚚 Logistics Intelligence</div>
-        </div>
-
-    </div>
-    """)
-
-
-    # --------------------------------------------------------
-    # METRICS
-    # --------------------------------------------------------
-
-    c1, c2, c3, c4 = st.columns(4)
+    # Metrics
+    metric_cols = st.columns(4)
 
     metrics = [
-        ("🎯", "10+", "Years Experience"),
-        ("📊", "50+", "Analytics Pipelines"),
-        ("⚡", "24/7", "Automated Systems"),
-        ("🧠", "BI + AI", "Technology Stack"),
+        ("🎯", "10+ Years", "Analytics & Industry Experience"),
+        ("📊", "50+ Pipelines", "Analytics & AI Solutions"),
+        ("⚡", "24/7", "Automated Data Systems"),
+        ("🤖", "AI + BI", "Modern Technology Architecture"),
     ]
 
-    for col, (icon, value, label) in zip(
-        [c1, c2, c3, c4],
-        metrics
-    ):
+    for col, (icon, value, label) in zip(metric_cols, metrics):
 
         with col:
-
-            html(f"""
-            <div class="metric-card">
-
-                <div class="metric-icon">
-                    {icon}
+            html(
+                f"""
+                <div class="metric-card">
+                    <div class="metric-icon">{icon}</div>
+                    <div class="metric-value">{value}</div>
+                    <div class="metric-label">{label}</div>
                 </div>
+                """
+            )
 
-                <div class="metric-value">
-                    {value}
-                </div>
-
-                <div class="metric-label">
-                    {label}
-                </div>
-
+    # Services
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">What We Do</div>
+            <div class="section-title">Data, AI & Logistics Intelligence</div>
+            <div class="section-subtitle">
+                Practical analytics solutions designed around real operational
+                problems and measurable business outcomes.
             </div>
-            """)
-
-
-    # --------------------------------------------------------
-    # WHAT WE BUILD
-    # --------------------------------------------------------
-
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Our Capabilities
         </div>
-
-        <div class="section-title">
-            What We Build
-        </div>
-
-        <div class="section-subtitle">
-            Practical analytics and AI solutions designed around
-            logistics operations, business intelligence, and
-            enterprise data.
-        </div>
-
-    </div>
-    """)
-
+        """
+    )
 
     services = [
-
         (
             "📊",
-            "Logistics BI",
-            "Power BI dashboards for booking, delivery, pending shipments, RTO, hub performance, SLA monitoring, and executive KPIs."
+            "Business Intelligence",
+            "Interactive dashboards and KPI systems for management and operations.",
         ),
-
         (
-            "⏱️",
-            "TAT & Ageing",
-            "Shipment ageing, transit TAT, SLA monitoring, bottleneck identification, and delayed shipment analysis."
+            "🚚",
+            "Logistics Analytics",
+            "Shipment, hub, delivery, SLA, ageing and operational performance analytics.",
         ),
-
-        (
-            "⚙️",
-            "MIS Automation",
-            "Automate daily reports using SQL, Python, APIs, Excel, ERP systems, and scheduled data pipelines."
-        ),
-
-        (
-            "🏢",
-            "Hub Analytics",
-            "Analyze hub throughput, productivity, pending ageing, delivery performance, RTO, and operational efficiency."
-        ),
-
-        (
-            "🔗",
-            "API & ERP Integration",
-            "Connect ERP systems, REST APIs, databases, Python pipelines, and BI platforms into a unified reporting flow."
-        ),
-
         (
             "🤖",
-            "Predictive AI",
-            "Machine learning solutions for shipment delay prediction, RTO risk, forecasting, anomaly detection, and operational intelligence."
+            "AI & Predictive Analytics",
+            "Machine learning models for delay prediction, forecasting and risk analysis.",
         ),
-
+        (
+            "⚙️",
+            "Data Automation",
+            "Automated MIS, ETL pipelines, API integrations and scheduled reporting.",
+        ),
+        (
+            "🗄️",
+            "SQL & Data Engineering",
+            "High-performance SQL queries, data transformation and analytics-ready datasets.",
+        ),
+        (
+            "📈",
+            "Advanced Analytics",
+            "Customer, seller, demand, productivity and business performance analytics.",
+        ),
     ]
 
+    service_cols = st.columns(3)
 
-    for i in range(0, len(services), 3):
+    for i, (icon, title, description) in enumerate(services):
 
-        cols = st.columns(3)
+        with service_cols[i % 3]:
 
-        for j in range(3):
-
-            if i + j >= len(services):
-                continue
-
-            icon, title, description = services[i + j]
-
-            with cols[j]:
-
-                html(f"""
+            html(
+                f"""
                 <div class="card">
-
-                    <div class="card-icon">
-                        {icon}
-                    </div>
-
-                    <h3>
-                        {title}
-                    </h3>
-
-                    <p>
-                        {description}
-                    </p>
-
+                    <div class="card-icon">{icon}</div>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
                 </div>
-                """)
+                """
+            )
 
-
-    # --------------------------------------------------------
-    # WHY LOGIINTELLI
-    # --------------------------------------------------------
-
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Why LogiIntelli
+    # Workflow
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Logistics Intelligence</div>
+            <div class="section-title">From Shipment Event to Decision</div>
+            <div class="section-subtitle">
+                Connect operational events across the complete shipment lifecycle.
+            </div>
         </div>
 
-        <div class="section-title">
-            Built for Real Logistics Operations
+        <div class="workflow">
+
+            <div class="workflow-step">Booking</div>
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">Pickup</div>
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">Inbound</div>
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">Processing</div>
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">Transit</div>
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">Out for Delivery</div>
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">Delivery</div>
+
         </div>
+        """
+    )
 
-        <div class="section-subtitle">
-            We focus on the operational problems behind the data,
-            not just creating attractive dashboards.
+    # Technologies
+    html(
+        """
+        <div class="tech-strip">
+
+            <div class="tech-title">
+                Technology & Analytics Stack
+            </div>
+
+            <div class="tech-list">
+                <div class="tech-item">Power BI</div>
+                <div class="tech-item">SQL</div>
+                <div class="tech-item">Python</div>
+                <div class="tech-item">Pandas</div>
+                <div class="tech-item">NumPy</div>
+                <div class="tech-item">XGBoost</div>
+                <div class="tech-item">Machine Learning</div>
+                <div class="tech-item">REST APIs</div>
+                <div class="tech-item">ETL</div>
+                <div class="tech-item">DAX</div>
+                <div class="tech-item">Excel</div>
+                <div class="tech-item">Streamlit</div>
+            </div>
+
         </div>
+        """
+    )
 
-    </div>
-    """)
-
+    # Why LogiIntelli
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Why LogiIntelli</div>
+            <div class="section-title">Built for Real Business Problems</div>
+        </div>
+        """
+    )
 
     why_items = [
-
         (
-            "01",
-            "Domain-focused analytics",
-            "Solutions designed around courier, CEP, supply-chain, hub, shipment, TAT, ageing, delivery, and RTO operations."
+            "🎯",
+            "Business Focused",
+            "Analytics are designed around operational KPIs and business decisions.",
         ),
-
         (
-            "02",
-            "From data to decision",
-            "We connect raw operational data to KPIs, dashboards, alerts, predictive models, and management decisions."
+            "🚚",
+            "Logistics Expertise",
+            "Deep understanding of shipment lifecycle, hubs, SLA and delivery operations.",
         ),
-
         (
-            "03",
-            "Automation first",
-            "Reduce manual Excel work through SQL, Python, APIs, ETL pipelines, scheduled reporting, and automated MIS."
+            "⚡",
+            "Automation First",
+            "Reduce repetitive reporting through APIs, ETL and automated data pipelines.",
         ),
-
         (
-            "04",
-            "Scalable architecture",
-            "Solutions can evolve from simple reporting into automated analytics platforms and AI-powered operational systems."
+            "🤖",
+            "AI Ready",
+            "Use machine learning where prediction can improve operational decisions.",
         ),
-
     ]
 
+    why_cols = st.columns(4)
 
-    for i in range(0, len(why_items), 2):
+    for i, (icon, title, description) in enumerate(why_items):
 
-        cols = st.columns(2)
+        with why_cols[i]:
 
-        for j in range(2):
-
-            if i + j >= len(why_items):
-                continue
-
-            number, title, description = why_items[i + j]
-
-            with cols[j]:
-
-                html(f"""
+            html(
+                f"""
                 <div class="why-card">
-
-                    <div class="why-number">
-                        {number}
-                    </div>
-
-                    <div class="why-title">
-                        {title}
-                    </div>
-
-                    <div class="why-text">
-                        {description}
-                    </div>
-
+                    <div class="card-icon">{icon}</div>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
                 </div>
-                """)
+                """
+            )
 
-
-    # --------------------------------------------------------
-    # TECHNOLOGY
-    # --------------------------------------------------------
-
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Technology
-        </div>
-
-        <div class="section-title">
-            Technology Stack
-        </div>
-
-    </div>
-
-    <div class="tech-strip">
-
-        <div class="tech-pill">Power BI</div>
-        <div class="tech-pill">SQL</div>
-        <div class="tech-pill">Python</div>
-        <div class="tech-pill">Pandas</div>
-        <div class="tech-pill">NumPy</div>
-        <div class="tech-pill">XGBoost</div>
-        <div class="tech-pill">Machine Learning</div>
-        <div class="tech-pill">REST APIs</div>
-        <div class="tech-pill">ETL</div>
-        <div class="tech-pill">DAX</div>
-        <div class="tech-pill">Excel</div>
-        <div class="tech-pill">Streamlit</div>
-
-    </div>
-    """)
-
-
-    # --------------------------------------------------------
-    # DATA FLOW
-    # --------------------------------------------------------
-
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Operational Intelligence
-        </div>
-
-        <div class="section-title">
-            Logistics Data Flow
-        </div>
-
-        <div class="section-subtitle">
-            Transform shipment events into operational visibility
-            and predictive intelligence.
-        </div>
-
-    </div>
-    """)
-
-
-    html("""
-    <div class="workflow">
-
-        <div class="workflow-container">
-
-            <div class="workflow-step">
-                <div class="workflow-icon">📦</div>
-                <div class="workflow-name">Booking</div>
-                <div class="workflow-desc">Shipment Created</div>
-            </div>
-
-            <div class="workflow-arrow">→</div>
-
-            <div class="workflow-step">
-                <div class="workflow-icon">🚛</div>
-                <div class="workflow-name">Pickup</div>
-                <div class="workflow-desc">Shipment Picked</div>
-            </div>
-
-            <div class="workflow-arrow">→</div>
-
-            <div class="workflow-step">
-                <div class="workflow-icon">🏢</div>
-                <div class="workflow-name">Inbound</div>
-                <div class="workflow-desc">Hub Received</div>
-            </div>
-
-            <div class="workflow-arrow">→</div>
-
-            <div class="workflow-step">
-                <div class="workflow-icon">🔄</div>
-                <div class="workflow-name">Processing</div>
-                <div class="workflow-desc">Hub Processing</div>
-            </div>
-
-            <div class="workflow-arrow">→</div>
-
-            <div class="workflow-step">
-                <div class="workflow-icon">🚚</div>
-                <div class="workflow-name">Transit</div>
-                <div class="workflow-desc">Shipment Moving</div>
-            </div>
-
-            <div class="workflow-arrow">→</div>
-
-            <div class="workflow-step">
-                <div class="workflow-icon">📍</div>
-                <div class="workflow-name">Last Mile</div>
-                <div class="workflow-desc">Out for Delivery</div>
-            </div>
-
-            <div class="workflow-arrow">→</div>
-
-            <div class="workflow-step">
-                <div class="workflow-icon">✅</div>
-                <div class="workflow-name">Delivery</div>
-                <div class="workflow-desc">Completed</div>
-            </div>
-
-        </div>
-
-    </div>
-    """)
-
-
-    # --------------------------------------------------------
     # CTA
-    # --------------------------------------------------------
+    html(
+        """
+        <div class="cta">
 
-    html("""
-    <div class="cta">
+            <h2>Have a Data or Logistics Challenge?</h2>
 
-        <h2>
-            Have a Logistics Data Problem?
-        </h2>
+            <p>
+                Let's convert your operational data into dashboards,
+                automation and intelligent decision-support systems.
+            </p>
 
-        <p>
-            Let's turn your operational data into dashboards,
-            automation, predictive analytics, and actionable
-            business intelligence.
-        </p>
+        </div>
+        """
+    )
 
-    </div>
-    """)
+    if st.button(
+        "📝 Discuss Your Project",
+        key="home_project",
+        use_container_width=True,
+    ):
+        st.session_state.page = "Request Project"
+        st.rerun()
 
 
 # ============================================================
 # SERVICES PAGE
 # ============================================================
 
-elif page == "Services":
+elif st.session_state.page == "Services":
 
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Services
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Our Services</div>
+            <div class="section-title">Analytics & Technology Solutions</div>
+            <div class="section-subtitle">
+                End-to-end solutions covering business intelligence,
+                logistics analytics, AI, automation and data engineering.
+            </div>
         </div>
-
-        <div class="section-title">
-            Logistics & AI Solutions
-        </div>
-
-        <div class="section-subtitle">
-            Project-based analytics, business intelligence,
-            automation, and machine learning solutions engineered
-            around logistics operations.
-        </div>
-
-    </div>
-    """)
-
+        """
+    )
 
     service_details = [
-
         (
             "📊",
-            "Courier Operations Dashboard",
+            "Power BI & Business Intelligence",
             [
-                "Booking volume tracking",
-                "Delivery performance metrics",
-                "Pending shipment monitoring",
-                "RTO root-cause analysis",
-                "State & hub breakdown",
-                "Operational trend monitoring",
+                "Management dashboards",
+                "Operational KPI dashboards",
+                "Real-time / near-real-time reporting",
+                "DAX & Power Query",
+                "Drill-down analytics",
+                "Automated refresh architecture",
             ],
         ),
-
         (
-            "⏱️",
-            "TAT & Ageing Analytics",
+            "🚚",
+            "Courier & Logistics Analytics",
             [
-                "Shipment ageing alerts",
-                "Transit TAT monitoring",
-                "Last-mile SLA performance",
-                "Ageing bucket analysis",
-                "Route bottleneck identification",
-                "Delay classification",
+                "Shipment tracking analytics",
+                "SLA performance",
+                "TAT analytics",
+                "Shipment ageing",
+                "Hub performance",
+                "Delivery productivity",
             ],
         ),
-
-        (
-            "🏢",
-            "Hub Performance Analytics",
-            [
-                "Hub productivity scoring",
-                "Booking vs delivery velocity",
-                "Pending ageing control",
-                "RTO minimization metrics",
-                "First-attempt delivery rate",
-                "Hub SLA rankings",
-            ],
-        ),
-
-        (
-            "🔄",
-            "Inbound / Outbound Analytics",
-            [
-                "State-to-state movement",
-                "Hub inbound optimization",
-                "Hub outbound monitoring",
-                "Processing time analysis",
-                "Inter-hub transit ageing",
-                "Network lane performance",
-            ],
-        ),
-
-        (
-            "⚙️",
-            "MIS Automation",
-            [
-                "ERP automated extraction",
-                "REST API pipelines",
-                "Python ETL scripting",
-                "Excel report generation",
-                "Scheduled automation",
-                "Automated alerts",
-            ],
-        ),
-
         (
             "🤖",
-            "Predictive AI",
+            "Machine Learning & AI",
             [
                 "Shipment delay prediction",
-                "RTO probability scoring",
                 "Demand forecasting",
-                "Hub workload prediction",
-                "Anomaly detection",
-                "Custom ML models",
+                "Customer churn prediction",
+                "Risk prediction",
+                "Classification models",
+                "Predictive analytics",
             ],
         ),
-
+        (
+            "⚙️",
+            "Data Automation",
+            [
+                "Daily MIS automation",
+                "API integration",
+                "Automated Excel reporting",
+                "Scheduled data pipelines",
+                "Email reporting",
+                "Data validation",
+            ],
+        ),
+        (
+            "🗄️",
+            "SQL & Data Engineering",
+            [
+                "Advanced SQL",
+                "MySQL optimization",
+                "Data transformation",
+                "ETL pipelines",
+                "Data modelling",
+                "Analytics-ready datasets",
+            ],
+        ),
+        (
+            "📈",
+            "Advanced Business Analytics",
+            [
+                "Customer analytics",
+                "Seller analytics",
+                "Demand analytics",
+                "Productivity analytics",
+                "Revenue analytics",
+                "Performance analytics",
+            ],
+        ),
     ]
 
+    cols = st.columns(3)
 
-    for i in range(0, len(service_details), 3):
+    for i, (icon, title, items) in enumerate(service_details):
 
-        cols = st.columns(3)
+        with cols[i % 3]:
 
-        for j in range(3):
-
-            if i + j >= len(service_details):
-                continue
-
-            icon, title, items = service_details[i + j]
-
-            item_html = "".join(
+            list_html = "".join(
                 f"<li>{item}</li>"
                 for item in items
             )
 
-            with cols[j]:
-
-                html(f"""
+            html(
+                f"""
                 <div class="card">
 
-                    <div class="card-icon">
-                        {icon}
-                    </div>
+                    <div class="card-icon">{icon}</div>
 
-                    <h3>
-                        {title}
-                    </h3>
+                    <h3>{title}</h3>
 
-                    <ul>
-                        {item_html}
+                    <ul class="service-list">
+                        {list_html}
                     </ul>
 
                 </div>
-                """)
+                """
+            )
 
 
 # ============================================================
 # PROJECTS PAGE
 # ============================================================
 
-elif page == "Projects":
+elif st.session_state.page == "Projects":
 
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Portfolio
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Selected Projects</div>
+            <div class="section-title">Analytics & AI Solutions</div>
+            <div class="section-subtitle">
+                Examples of practical analytics systems for logistics,
+                operations and business intelligence.
+            </div>
         </div>
-
-        <div class="section-title">
-            Logistics & AI Projects
-        </div>
-
-        <div class="section-subtitle">
-            Examples of analytics, automation, business intelligence,
-            and machine learning solutions.
-        </div>
-
-    </div>
-    """)
-
+        """
+    )
 
     projects = [
-
         (
             "01",
             "Courier Operations Dashboard",
-            "Complete operational dashboard covering booking, delivery, pending shipments, RTO, ageing, hub performance, and management KPIs.",
-            "Power BI • SQL • DAX",
-            "Operations Analytics",
+            "End-to-end Power BI dashboard covering shipments, deliveries, SLA, productivity and operational KPIs.",
+            ["Power BI", "SQL", "DAX", "ETL"],
         ),
-
         (
             "02",
             "Shipment TAT & Ageing Analytics",
-            "Identify delayed shipments, ageing buckets, route-level delays, transit performance, and SLA bottlenecks.",
-            "SQL • Python • Power BI",
-            "TAT Analytics",
+            "Analyse shipment lifecycle, ageing buckets, TAT performance and delayed shipment patterns.",
+            ["SQL", "Power BI", "Analytics"],
         ),
-
         (
             "03",
             "Hub Performance Analytics",
-            "Compare hubs using booking, delivery, pending shipments, RTO, shipment weight, productivity, and operational SLA metrics.",
-            "SQL • Power BI • DAX",
-            "Hub Analytics",
+            "Hub-level performance analysis covering inbound, outbound, processing, SLA and productivity.",
+            ["Power BI", "SQL", "KPI"],
         ),
-
         (
             "04",
             "Inbound / Outbound Analytics",
-            "Analyze shipment movement from origin states and hubs to destination hubs across logistics corridors.",
-            "SQL • Python • Power BI",
-            "Network Analytics",
+            "Monitor operational flow and identify bottlenecks across courier hubs and service centres.",
+            ["SQL", "Power BI", "Operations"],
         ),
-
         (
             "05",
             "Shipment Delay Prediction AI",
-            "XGBoost-based machine learning solution designed to identify shipments with high probability of delay before SLA breaches.",
-            "Python • XGBoost • ML",
-            "Predictive AI",
+            "XGBoost machine learning model to predict shipment delays and identify high-risk shipments.",
+            ["Python", "XGBoost", "ML", "Streamlit"],
         ),
-
         (
             "06",
             "Automated Daily MIS Engine",
-            "Automated ERP/API extraction, transformation, validation, reporting, and scheduled operational distribution.",
-            "Python • SQL • REST API",
-            "Automation",
+            "Automated data extraction, transformation and reporting system for recurring business MIS.",
+            ["Python", "SQL", "API", "Automation"],
         ),
-
     ]
 
+    cols = st.columns(3)
 
-    for i in range(0, len(projects), 2):
+    for i, (number, title, description, tags) in enumerate(projects):
 
-        cols = st.columns(2)
+        with cols[i % 3]:
 
-        for j in range(2):
+            tag_html = "".join(
+                f'<span class="project-tag">{tag}</span>'
+                for tag in tags
+            )
 
-            if i + j >= len(projects):
-                continue
-
-            number, title, description, tech, category = projects[i + j]
-
-            with cols[j]:
-
-                html(f"""
+            html(
+                f"""
                 <div class="project-card">
 
                     <div class="project-number">
                         PROJECT {number}
                     </div>
 
-                    <h3>
-                        {title}
-                    </h3>
+                    <h3>{title}</h3>
 
-                    <p>
-                        {description}
-                    </p>
+                    <p>{description}</p>
 
-                    <div class="project-tech">
-                        {tech}
-                    </div>
-
-                    <br>
-
-                    <div class="project-category">
-                        {category}
+                    <div>
+                        {tag_html}
                     </div>
 
                 </div>
-                """)
+                """
+            )
 
 
 # ============================================================
 # REQUEST PROJECT PAGE
 # ============================================================
 
-elif page == "Request Project":
+elif st.session_state.page == "Request Project":
 
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Start a Project
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Let's Work Together</div>
+            <div class="section-title">Request a Project</div>
+            <div class="section-subtitle">
+                Tell us about your requirement. We will review your
+                requirement and get back to you.
+            </div>
         </div>
+        """
+    )
 
-        <div class="section-title">
-            Request a Project
-        </div>
+    if st.session_state.submitted:
 
-        <div class="section-subtitle">
-            Tell us about your logistics analytics, BI,
-            automation, or machine learning requirement.
-        </div>
-
-    </div>
-    """)
-
-
-    with st.form(
-        "project_request_form",
-        clear_on_submit=False
-    ):
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-
-            company_name = st.text_input(
-                "Company Name"
-            )
-
-            contact_name = st.text_input(
-                "Contact Person *"
-            )
-
-            email = st.text_input(
-                "Business Email *"
-            )
-
-            phone = st.text_input(
-                "Phone / WhatsApp"
-            )
-
-        with col2:
-
-            service = st.selectbox(
-                "Required Solution",
-                [
-                    "Power BI Dashboard",
-                    "SQL Analytics",
-                    "Predictive AI / Machine Learning",
-                    "TAT & Ageing Analytics",
-                    "Hub Performance Analytics",
-                    "Route Analytics",
-                    "Automated MIS",
-                    "API / ERP Integration",
-                    "Other",
-                ],
-            )
-
-            data_source = st.selectbox(
-                "Current Data Source",
-                [
-                    "Excel",
-                    "CSV",
-                    "MySQL",
-                    "SQL Server",
-                    "PostgreSQL",
-                    "ERP",
-                    "REST API",
-                    "Multiple Sources",
-                    "Other",
-                ],
-            )
-
-            timeline = st.selectbox(
-                "Expected Timeline",
-                [
-                    "Less than 1 week",
-                    "1-2 weeks",
-                    "2-4 weeks",
-                    "1-2 months",
-                    "Not decided",
-                ],
-            )
-
-        requirement = st.text_area(
-            "Describe Your Requirement *",
-            height=160,
-            placeholder=(
-                "Example: We need an automated daily courier "
-                "performance dashboard and an AI model for "
-                "predicting shipment delay risk."
-            ),
+        html(
+            """
+            <div class="success-box">
+                ✅ Your project request has been submitted successfully.
+                Thank you for contacting LogiIntelli.
+            </div>
+            """
         )
 
-        submitted = st.form_submit_button(
-            "🚀 Submit Project Request",
-            use_container_width=True,
-        )
+        if st.button(
+            "Submit Another Request",
+            key="new_request",
+        ):
+            st.session_state.submitted = False
+            st.rerun()
 
+    else:
+
+        with st.form("project_request_form"):
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+
+                company = st.text_input(
+                    "Company Name",
+                    placeholder="Your company name",
+                )
+
+                contact = st.text_input(
+                    "Contact Person *",
+                    placeholder="Your name",
+                )
+
+                email = st.text_input(
+                    "Business Email *",
+                    placeholder="name@company.com",
+                )
+
+                phone = st.text_input(
+                    "Phone / WhatsApp",
+                    placeholder="+91 XXXXX XXXXX",
+                )
+
+            with col2:
+
+                service = st.selectbox(
+                    "Required Solution",
+                    [
+                        "Power BI Dashboard",
+                        "Logistics Analytics",
+                        "SQL / Data Engineering",
+                        "Python Automation",
+                        "Machine Learning / AI",
+                        "API Integration",
+                        "MIS Automation",
+                        "Other",
+                    ],
+                )
+
+                data_source = st.selectbox(
+                    "Current Data Source",
+                    [
+                        "MySQL / SQL Database",
+                        "Excel / CSV",
+                        "API / JSON",
+                        "Power BI",
+                        "Multiple Sources",
+                        "Other",
+                    ],
+                )
+
+                timeline = st.selectbox(
+                    "Expected Timeline",
+                    [
+                        "Within 1 Week",
+                        "1–2 Weeks",
+                        "2–4 Weeks",
+                        "1–2 Months",
+                        "Flexible",
+                    ],
+                )
+
+            requirement = st.text_area(
+                "Requirement",
+                placeholder=(
+                    "Please describe your business problem, "
+                    "current process and expected solution..."
+                ),
+                height=180,
+            )
+
+            submitted = st.form_submit_button(
+                "🚀 Submit Project Request",
+                use_container_width=True,
+            )
 
         if submitted:
 
-            contact_name_clean = contact_name.strip()
-            email_clean = email.strip()
-            requirement_clean = requirement.strip()
+            errors = []
 
-            if not contact_name_clean:
+            if not contact.strip():
+                errors.append("Contact Person is required.")
 
-                st.warning(
-                    "Please enter the Contact Person name."
-                )
+            if not email.strip():
+                errors.append("Business Email is required.")
 
-            elif not email_clean:
+            email_pattern = r"^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
 
-                st.warning(
-                    "Please enter your Business Email."
-                )
-
-            elif not re.match(
-                r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                email_clean
+            if email.strip() and not re.match(
+                email_pattern,
+                email.strip(),
             ):
+                errors.append("Please enter a valid email address.")
 
-                st.warning(
-                    "Please enter a valid email address."
-                )
+            if not requirement.strip():
+                errors.append("Requirement details are required.")
 
-            elif not requirement_clean:
+            if errors:
 
-                st.warning(
-                    "Please describe your project requirement."
-                )
+                for error in errors:
+                    st.error(error)
 
             else:
 
                 payload = {
-
-                    "Date":
-                        datetime.now().strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-
-                    "Company":
-                        company_name.strip(),
-
-                    "Contact":
-                        contact_name_clean,
-
-                    "Email":
-                        email_clean,
-
-                    "Phone":
-                        phone.strip(),
-
-                    "Service":
-                        service,
-
-                    "Data_Source":
-                        data_source,
-
-                    "Timeline":
-                        timeline,
-
-                    "Requirement":
-                        requirement_clean,
-
+                    "Date": datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+                    "Company": company.strip(),
+                    "Contact": contact.strip(),
+                    "Email": email.strip(),
+                    "Phone": phone.strip(),
+                    "Service": service,
+                    "Data_Source": data_source,
+                    "Timeline": timeline,
+                    "Requirement": requirement.strip(),
                 }
-
 
                 try:
 
-                    with st.spinner(
-                        "Submitting your project request..."
-                    ):
+                    response = requests.post(
+                        GOOGLE_SCRIPT_URL,
+                        data=json.dumps(payload),
+                        headers={
+                            "Content-Type":
+                            "text/plain;charset=utf-8"
+                        },
+                        timeout=20,
+                        allow_redirects=True,
+                    )
 
-                        response = requests.post(
-                            GOOGLE_SHEET_WEB_APP_URL,
-                            data=json.dumps(payload),
-                            headers={
-                                "Content-Type":
-                                    "text/plain;charset=utf-8"
-                            },
-                            timeout=20,
-                            allow_redirects=True,
-                        )
-
-
-                    if response.status_code == 200:
+                    if response.status_code in [200, 201]:
 
                         st.session_state.submitted = True
-
-                        st.success(
-                            "🎉 Thank you! Your project request "
-                            "has been submitted successfully."
-                        )
-
-                        st.info(
-                            "Our team will review your requirement "
-                            "and contact you shortly."
-                        )
+                        st.rerun()
 
                     else:
 
                         st.error(
-                            "Submission failed. "
-                            f"Server returned status "
-                            f"{response.status_code}."
+                            "Unable to submit the request. "
+                            "Please try again."
                         )
 
-                        st.code(
-                            response.text[:500]
-                        )
-
-
-                except requests.exceptions.Timeout:
+                except requests.exceptions.RequestException:
 
                     st.error(
-                        "⏱️ The request timed out. "
-                        "Please try again."
-                    )
-
-
-                except requests.exceptions.ConnectionError:
-
-                    st.error(
-                        "🌐 Unable to connect to the project "
-                        "request server. Please check your "
-                        "internet connection and try again."
-                    )
-
-
-                except Exception as e:
-
-                    st.error(
-                        f"⚠️ An unexpected error occurred: {str(e)}"
+                        "Unable to connect to the submission service. "
+                        "Please try again later."
                     )
 
 
@@ -1829,322 +1454,243 @@ elif page == "Request Project":
 # ABOUT PAGE
 # ============================================================
 
-elif page == "About":
+elif st.session_state.page == "About":
 
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            About
-        </div>
-
-        <div class="section-title">
-            About LogiIntelli
-        </div>
-
-        <div class="section-subtitle">
-            Bridging the gap between complex operational data
-            and actionable business decisions.
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-icon">
-            🚚
-        </div>
-
-        <h3>
-            Our Mission
-        </h3>
-
-        <p>
-            LogiIntelli focuses on solving practical logistics
-            challenges by transforming raw operational tracking
-            data into clean, structured, and actionable
-            intelligence.
-        </p>
-
-        <p>
-            We specialize in end-to-end data pipelines,
-            custom BI reporting systems, automated MIS,
-            operational analytics, and predictive machine
-            learning solutions tailored for courier,
-            express, parcel, supply-chain, and e-commerce
-            environments.
-        </p>
-
-    </div>
-    """)
-
-
-    c1, c2 = st.columns(2)
-
-
-    with c1:
-
-        html("""
-        <div class="card">
-
-            <div class="card-icon">
-                🧠
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">About LogiIntelli</div>
+            <div class="section-title">
+                Turning Operational Data Into Intelligence
             </div>
-
-            <h3>
-                Core Expertise
-            </h3>
-
-            <ul>
-
-                <li>
-                    Power BI & Interactive Dashboard Engineering
-                </li>
-
-                <li>
-                    SQL Data Warehousing & ETL Pipelines
-                </li>
-
-                <li>
-                    Predictive Machine Learning
-                </li>
-
-                <li>
-                    Automated MIS & Enterprise Reporting
-                </li>
-
-                <li>
-                    REST API Integrations
-                </li>
-
-            </ul>
-
-        </div>
-        """)
-
-
-    with c2:
-
-        html("""
-        <div class="card">
-
-            <div class="card-icon">
-                🌐
+            <div class="section-subtitle">
+                LogiIntelli focuses on practical data analytics,
+                business intelligence, AI and automation solutions
+                for logistics and operations.
             </div>
-
-            <h3>
-                Domain Knowledge
-            </h3>
-
-            <ul>
-
-                <li>
-                    First-Mile, Mid-Mile & Last-Mile Tracking
-                </li>
-
-                <li>
-                    TAT & Ageing Optimization
-                </li>
-
-                <li>
-                    Hub Throughput & Load Balancing
-                </li>
-
-                <li>
-                    RTO Minimization
-                </li>
-
-                <li>
-                    Carrier Performance & SLA Benchmarking
-                </li>
-
-            </ul>
-
         </div>
-        """)
+        """
+    )
+
+    cols = st.columns(2)
+
+    with cols[0]:
+
+        html(
+            """
+            <div class="card">
+
+                <div class="card-icon">🎯</div>
+
+                <h3>Our Mission</h3>
+
+                <p>
+                    Help businesses make faster and better decisions
+                    by converting complex operational data into
+                    simple, actionable intelligence.
+                </p>
+
+            </div>
+            """
+        )
+
+    with cols[1]:
+
+        html(
+            """
+            <div class="card">
+
+                <div class="card-icon">💡</div>
+
+                <h3>Our Approach</h3>
+
+                <p>
+                    Combine domain knowledge, analytics, automation
+                    and AI to build solutions that solve real-world
+                    business problems.
+                </p>
+
+            </div>
+            """
+        )
+
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Core Expertise</div>
+            <div class="section-title">Technology Meets Domain Knowledge</div>
+        </div>
+        """
+    )
+
+    expertise = [
+        (
+            "📊",
+            "Business Intelligence",
+            "Power BI, DAX, Power Query and management reporting.",
+        ),
+        (
+            "🗄️",
+            "Data",
+            "SQL, MySQL, ETL, APIs and analytics-ready datasets.",
+        ),
+        (
+            "🤖",
+            "Artificial Intelligence",
+            "Machine learning, forecasting and predictive analytics.",
+        ),
+        (
+            "🚚",
+            "Logistics",
+            "Shipment, hub, SLA, TAT and delivery analytics.",
+        ),
+    ]
+
+    cols = st.columns(4)
+
+    for i, (icon, title, description) in enumerate(expertise):
+
+        with cols[i]:
+
+            html(
+                f"""
+                <div class="why-card">
+
+                    <div class="card-icon">{icon}</div>
+
+                    <h3>{title}</h3>
+
+                    <p>{description}</p>
+
+                </div>
+                """
+            )
 
 
 # ============================================================
 # CONTACT PAGE
 # ============================================================
 
-elif page == "Contact":
+elif st.session_state.page == "Contact":
 
-    html("""
-    <div class="section-heading">
-
-        <div class="section-kicker">
-            Contact
-        </div>
-
-        <div class="section-title">
-            Let's Talk
-        </div>
-
-        <div class="section-subtitle">
-            Have a logistics data challenge or want to discuss
-            a custom analytics solution?
-        </div>
-
-    </div>
-    """)
-
-
-    c1, c2 = st.columns(2)
-
-
-    with c1:
-
-        html("""
-        <div class="contact-card">
-
-            <div class="card-icon">
-                📩
+    html(
+        """
+        <div class="section-heading">
+            <div class="section-kicker">Get In Touch</div>
+            <div class="section-title">Contact LogiIntelli</div>
+            <div class="section-subtitle">
+                Have a dashboard, analytics, automation or AI requirement?
+                Let's discuss it.
             </div>
+        </div>
+        """
+    )
 
-            <h3 style="color:#0B1F3A; margin-top:12px;">
-                Contact Information
-            </h3>
+    cols = st.columns(3)
 
-            <div class="contact-item">
+    with cols[0]:
 
-                <div class="contact-label">
-                    Email
-                </div>
+        html(
+            """
+            <div class="contact-card">
 
-                <div class="contact-value">
+                <h3>📧 Email</h3>
 
-                    <a
-                        class="contact-link"
-                        href="mailto:support@logiintelli.com"
-                    >
+                <p>
+                    <a href="mailto:support@logiintelli.com">
                         support@logiintelli.com
                     </a>
+                </p>
 
-                    <br>
-
-                    <a
-                        class="contact-link"
-                        href="mailto:sumansekar1205@gmail.com"
-                    >
+                <p style="margin-top:6px;">
+                    <a href="mailto:sumansekar1205@gmail.com">
                         sumansekar1205@gmail.com
                     </a>
-
-                </div>
+                </p>
 
             </div>
+            """
+        )
 
+    with cols[1]:
 
-            <div class="contact-item">
+        html(
+            """
+            <div class="contact-card">
 
-                <div class="contact-label">
-                    WhatsApp
-                </div>
+                <h3>💬 WhatsApp</h3>
 
-                <div class="contact-value">
-
+                <p>
                     <a
-                        class="contact-link"
                         href="https://wa.me/918825674102"
                         target="_blank"
                     >
                         +91 8825674102
                     </a>
+                </p>
 
-                </div>
+                <p style="margin-top:6px;">
+                    Available for project discussions.
+                </p>
 
             </div>
+            """
+        )
 
+    with cols[2]:
 
-            <div class="contact-item">
+        html(
+            """
+            <div class="contact-card">
 
-                <div class="contact-label">
-                    Business Hours
-                </div>
+                <h3>🕐 Business Hours</h3>
 
-                <div class="contact-value">
+                <p>
                     Monday – Friday<br>
                     9:00 AM – 6:00 PM IST
-                </div>
+                </p>
 
-            </div>
-
-
-            <div class="contact-item">
-
-                <div class="contact-label">
-                    Location
-                </div>
-
-                <div class="contact-value">
+                <p style="margin-top:6px;">
                     India
-                </div>
+                </p>
 
             </div>
+            """
+        )
 
-        </div>
-        """)
+    html(
+        """
+        <div class="cta">
 
+            <h2>Ready to Transform Your Data?</h2>
 
-    with c2:
-
-        html("""
-        <div class="contact-card">
-
-            <div class="card-icon">
-                🚀
-            </div>
-
-            <h3 style="color:#0B1F3A; margin-top:12px;">
-                Start a Project
-            </h3>
-
-            <p style="
-                color:#64748B;
-                font-size:14px;
-                line-height:1.7;
-                margin-top:12px;
-            ">
-                Need a Power BI dashboard, SQL analytics,
-                automated MIS, API integration, shipment
-                prediction model, or logistics intelligence
-                platform?
-            </p>
-
-            <p style="
-                color:#64748B;
-                font-size:14px;
-                line-height:1.7;
-            ">
-                Submit your requirement through the
-                <strong>Request Project</strong> section
-                and provide a few details about your
-                business problem.
+            <p>
+                Start with your business problem and we'll work
+                backwards to the right analytics or technology solution.
             </p>
 
         </div>
-        """)
+        """
+    )
+
+    if st.button(
+        "📝 Request a Project",
+        key="contact_project",
+        use_container_width=True,
+    ):
+        st.session_state.page = "Request Project"
+        st.rerun()
 
 
 # ============================================================
 # FOOTER
 # ============================================================
 
-html("""
-<div class="footer">
-
-    <div class="footer-brand">
-        🚚 LogiIntelli
+html(
+    """
+    <div class="footer">
+        © 2026 <strong>LogiIntelli</strong> ·
+        Logistics Analytics · AI · Business Intelligence · Automation
     </div>
-
-    <div class="footer-text">
-        Logistics AI • Data Analytics • Business Intelligence • Automation
-    </div>
-
-    <div class="footer-copy">
-        © 2026 LogiIntelli. All rights reserved.
-    </div>
-
-</div>
-""")
+    """
+)
