@@ -2190,415 +2190,170 @@ def select_chat_option(option):
     st.rerun()
 
 
-# ============================================================
-# FLOATING CHATBOT CONTAINER
-# ============================================================
-
-with st.container(key="floating_chatbot"):
-
-    # ========================================================
-    # MINIMIZED VERSION
-    # ========================================================
-
-    if not st.session_state.chat_open:
+/* ============================================================
+   SMALL FLOATING CHATBOT - LEFT SIDE
+   ============================================================ */
 
-        st.markdown(
-            """
-            <div style="
-                background:#2563EB;
-                color:white;
-                border-radius:999px;
-                padding:4px;
-                box-shadow:0 10px 30px rgba(37,99,235,0.35);
-            ">
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        if st.button(
-            "💬 Chat with LogiIntelli",
-            key="chat_open_button",
-            use_container_width=True,
-        ):
-
-            st.session_state.chat_open = True
-            st.rerun()
-
-
-    # ========================================================
-    # OPEN CHATBOT
-    # ========================================================
-
-    else:
-
-        # ----------------------------------------------------
-        # HEADER
-        # ----------------------------------------------------
-
-        st.markdown(
-            """
-            <div class="chat-header">
-
-                <div class="chat-header-title">
-                    🤖 LogiIntelli Assistant
-                </div>
-
-                <div class="chat-header-subtitle">
-                    Project & Analytics Consultation
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-
-        # ----------------------------------------------------
-        # CLOSE / MINIMIZE
-        # ----------------------------------------------------
-
-        if st.button(
-            "− Minimize Chat",
-            key="chat_minimize",
-            use_container_width=True,
-        ):
-
-            st.session_state.chat_open = False
-            st.rerun()
-
-
-        # ----------------------------------------------------
-        # MESSAGES
-        # ----------------------------------------------------
-
-        for message in st.session_state.chat_messages:
-
-            if message["role"] == "assistant":
-
-                st.markdown(
-                    f"""
-                    <div class="chat-message chat-assistant">
-                        🤖 {message["text"]}
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-            else:
-
-                st.markdown(
-                    f"""
-                    <div class="chat-message chat-user">
-                        {message["text"]}
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-
-        # ----------------------------------------------------
-        # QUESTION FLOW
-        # ----------------------------------------------------
-
-        questions = [
-            {
-                "key": "Service",
-                "question": "What solution are you looking for?",
-                "options": [
-                    "📊 Power BI Dashboard",
-                    "🚚 Logistics Analytics",
-                    "🤖 AI / Machine Learning",
-                    "⚙️ Automation / MIS",
-                    "🗄️ SQL / Data Engineering",
-                    "💡 Not Sure",
-                ],
-            },
-            {
-                "key": "Data_Source",
-                "question": "What type of data do you currently have?",
-                "options": [
-                    "🗄️ MySQL / SQL Database",
-                    "📗 Excel / CSV",
-                    "🔗 API / JSON",
-                    "📊 Power BI",
-                    "🔀 Multiple Sources",
-                    "❓ Not Sure",
-                ],
-            },
-            {
-                "key": "Problem",
-                "question": "What is the main business problem?",
-                "options": [
-                    "📊 Reporting / Dashboard",
-                    "⏱️ SLA / TAT Problems",
-                    "🚚 Shipment / Hub Performance",
-                    "🤖 Prediction / Forecasting",
-                    "⚡ Manual Process / Automation",
-                    "💬 Other",
-                ],
-            },
-            {
-                "key": "Timeline",
-                "question": "When would you like the solution?",
-                "options": [
-                    "🚀 Within 1 Week",
-                    "📅 1–2 Weeks",
-                    "📅 2–4 Weeks",
-                    "🗓️ 1–2 Months",
-                    "🔄 Flexible",
-                ],
-            },
-        ]
-
-
-        # ----------------------------------------------------
-        # OPTIONS
-        # ----------------------------------------------------
-
-        if st.session_state.chat_step < len(questions):
-
-            current_question = questions[
-                st.session_state.chat_step
-            ]
-
-            # Question buttons
-
-            for i, option in enumerate(
-                current_question["options"]
-            ):
-
-                if st.button(
-                    option,
-                    key=(
-                        f"chat_answer_"
-                        f"{st.session_state.chat_step}_"
-                        f"{i}"
-                    ),
-                    use_container_width=True,
-                ):
-
-                    select_chat_option(option)
-
-
-        # ----------------------------------------------------
-        # CONTACT FORM
-        # ----------------------------------------------------
-
-        else:
-
-            st.markdown(
-                """
-                <div style="
-                    font-size:12px;
-                    color:#64748B;
-                    margin:8px 0;
-                ">
-                    Please enter your details below.
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            chat_name = st.text_input(
-                "Name *",
-                key="floating_chat_name",
-                placeholder="Your name",
-            )
-
-            chat_email = st.text_input(
-                "Business Email *",
-                key="floating_chat_email",
-                placeholder="name@company.com",
-            )
-
-            chat_phone = st.text_input(
-                "Phone / WhatsApp",
-                key="floating_chat_phone",
-                placeholder="+91 XXXXX XXXXX",
-            )
-
-            chat_company = st.text_input(
-                "Company",
-                key="floating_chat_company",
-                placeholder="Company name",
-            )
-
-            chat_requirement = st.text_area(
-                "Additional Requirement",
-                key="floating_chat_requirement",
-                placeholder=(
-                    "Tell us anything else about your project..."
-                ),
-                height=80,
-            )
-
-
-            # ------------------------------------------------
-            # SUBMIT
-            # ------------------------------------------------
-
-            if st.button(
-                "🚀 Send Project Requirement",
-                key="floating_chat_submit",
-                type="primary",
-                use_container_width=True,
-            ):
-
-                errors = []
-
-                if not chat_name.strip():
-
-                    errors.append(
-                        "Please enter your name."
-                    )
-
-                if not chat_email.strip():
-
-                    errors.append(
-                        "Please enter your email."
-                    )
-
-                email_pattern = (
-                    r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
-                )
-
-                if (
-                    chat_email.strip()
-                    and not re.match(
-                        email_pattern,
-                        chat_email.strip(),
-                    )
-                ):
-
-                    errors.append(
-                        "Please enter a valid email address."
-                    )
-
-
-                if errors:
-
-                    for error in errors:
-                        st.error(error)
-
-                else:
-
-                    payload = {
-                        "Date": datetime.now().strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-                        "Company": chat_company.strip(),
-                        "Contact": chat_name.strip(),
-                        "Email": chat_email.strip(),
-                        "Phone": chat_phone.strip(),
-
-                        "Service":
-                            st.session_state.chat_data.get(
-                                "Service",
-                                "",
-                            ),
-
-                        "Data_Source":
-                            st.session_state.chat_data.get(
-                                "Data_Source",
-                                "",
-                            ),
-
-                        "Problem":
-                            st.session_state.chat_data.get(
-                                "Problem",
-                                "",
-                            ),
-
-                        "Timeline":
-                            st.session_state.chat_data.get(
-                                "Timeline",
-                                "",
-                            ),
-
-                        "Requirement":
-                            chat_requirement.strip(),
-
-                        "Source":
-                            "Website Chatbot",
-                    }
-
-
-                    try:
-
-                        response = requests.post(
-                            GOOGLE_SCRIPT_URL,
-                            data=json.dumps(payload),
-                            headers={
-                                "Content-Type":
-                                "text/plain;charset=utf-8"
-                            },
-                            timeout=20,
-                            allow_redirects=True,
-                        )
-
-
-                        if response.status_code in [
-                            200,
-                            201,
-                        ]:
-
-                            add_chat_message(
-                                "user",
-                                "Contact details submitted.",
-                            )
-
-                            add_chat_message(
-                                "assistant",
-                                (
-                                    "✅ Thank you! Your project "
-                                    "requirement has been received. "
-                                    "Our LogiIntelli team will review "
-                                    "it and contact you soon."
-                                ),
-                            )
-
-                            st.session_state.chat_data[
-                                "submitted"
-                            ] = True
-
-                            st.rerun()
-
-
-                        else:
-
-                            st.error(
-                                "Unable to submit your requirement. "
-                                "Please try again."
-                            )
-
-
-                    except requests.exceptions.RequestException:
-
-                        st.error(
-                            "Unable to connect to the submission "
-                            "service. Please try again later."
-                        )
-
-
-            # ------------------------------------------------
-            # NEW CHAT
-            # ------------------------------------------------
-
-            if st.session_state.chat_data.get(
-                "submitted",
-                False,
-            ):
-
-                if st.button(
-                    "🔄 Start New Conversation",
-                    key="floating_chat_restart",
-                    use_container_width=True,
-                ):
-
-                    reset_chatbot()
-                    st.rerun()
+.st-key-floating_chatbot {
 
+    position: fixed !important;
+
+    left: 20px !important;
+    bottom: 20px !important;
+
+    width: 270px !important;
+    max-width: calc(100vw - 40px) !important;
+
+    z-index: 999999 !important;
+
+    background: white !important;
+
+    border: 1px solid #D9E2EC !important;
+
+    border-radius: 14px !important;
+
+    box-shadow:
+        0 8px 25px rgba(15, 23, 42, 0.16) !important;
+
+    overflow: hidden !important;
+
+}
+
+
+/* ============================================================
+   SMALL CHAT HEADER
+   ============================================================ */
+
+.chat-header {
+
+    background: linear-gradient(
+        135deg,
+        #0F172A,
+        #2563EB
+    );
+
+    color: white;
+
+    padding: 11px 13px;
+
+    border-radius: 14px 14px 0 0;
+
+}
+
+
+.chat-header-title {
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+}
+
+
+.chat-header-subtitle {
+
+    font-size: 9px;
+
+    color: #CBD5E1;
+
+    margin-top: 3px;
+
+}
+
+
+/* ============================================================
+   CHAT MESSAGES
+   ============================================================ */
+
+.chat-message {
+
+    padding: 7px 9px;
+
+    border-radius: 9px;
+
+    margin: 5px 0;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+
+}
+
+
+.chat-assistant {
+
+    background: #EFF6FF;
+
+    color: #1E3A8A;
+
+    border: 1px solid #DBEAFE;
+
+}
+
+
+.chat-user {
+
+    background: #0F172A;
+
+    color: white;
+
+    margin-left: 20px;
+
+}
+
+
+/* ============================================================
+   CHAT BUTTONS
+   ============================================================ */
+
+.st-key-floating_chatbot button {
+
+    min-height: 30px !important;
+
+    padding: 4px 8px !important;
+
+    font-size: 10px !important;
+
+    border-radius: 7px !important;
+
+}
+
+
+/* ============================================================
+   INPUT BOX
+   ============================================================ */
+
+.st-key-floating_chatbot input,
+.st-key-floating_chatbot textarea {
+
+    font-size: 10px !important;
+
+    min-height: 30px !important;
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .st-key-floating_chatbot {
+
+        left: 10px !important;
+
+        bottom: 10px !important;
+
+        width: 250px !important;
+
+        max-width: calc(100vw - 20px) !important;
+
+    }
+
+}
 
 # ============================================================
 # END
