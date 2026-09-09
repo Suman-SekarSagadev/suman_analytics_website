@@ -46,6 +46,27 @@ if "page" not in st.session_state:
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = True
+
+if "chat_step" not in st.session_state:
+    st.session_state.chat_step = 0
+
+if "chat_data" not in st.session_state:
+    st.session_state.chat_data = {}
+
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = [
+        {
+            "role": "assistant",
+            "text": (
+                "👋 Hi! Welcome to LogiIntelli. "
+                "I can help you identify the right Analytics, "
+                "AI, BI or Automation solution for your business."
+            ),
+        }
+    ]
+
 
 # ============================================================
 # CUSTOM CSS
@@ -55,32 +76,17 @@ st.markdown(
     """
 <style>
 
+/* ============================================================
+   GENERAL
+   ============================================================ */
+
 html {
     scroll-behavior: smooth;
 }
 
-/* ============================================================
-   REMOVE STREAMLIT DEFAULT TOP WHITE HEADER
-   ============================================================ */
-
-[data-testid="stHeader"],
-header,
-[data-testid="stToolbar"],
-[data-testid="stDecoration"] {
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
+body {
+    background: #F6F8FC;
 }
-
-/* Remove Streamlit top decoration */
-[data-testid="stDecoration"] {
-    display: none !important;
-}
-
-/* ============================================================
-   MAIN APP BACKGROUND
-   ============================================================ */
 
 [data-testid="stAppViewContainer"] {
     background:
@@ -97,45 +103,64 @@ header,
         #F6F8FC !important;
 }
 
-/* Main content */
 [data-testid="stMain"] {
     background: transparent !important;
 }
 
-/* Hide sidebar */
-[data-testid="stSidebar"] {
-    display: none !important;
-}
-
-/* Remove default block spacing */
 .block-container {
-    padding-top: 1rem !important;
-    padding-bottom: 2rem !important;
     max-width: 1250px !important;
+    padding-top: 1rem !important;
+    padding-bottom: 3rem !important;
 }
 
 
 /* ============================================================
-   BRAND / LOGO
+   REMOVE STREAMLIT WHITE TOP HEADER
+   ============================================================ */
+
+[data-testid="stHeader"],
+header,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+[data-testid="stSidebar"] {
+    display: none !important;
+}
+
+
+/* ============================================================
+   BRAND
    ============================================================ */
 
 .brand-wrapper {
     text-align: center;
-    padding: 10px 0 14px 0;
+    padding: 8px 0 15px 0;
     background: transparent !important;
 }
 
 .brand-title {
-    font-size: 38px;
-    font-weight: 800;
-    letter-spacing: -1.2px;
-    color: #0F172A;
+    font-size: 40px;
+    font-weight: 850;
+    letter-spacing: -1.5px;
     line-height: 1.15;
-    background: transparent !important;
     margin: 0;
+    background: transparent !important;
 }
 
-.brand-title span {
+.logi-text {
+    color: #0F172A;
+}
+
+.intelli-text {
     color: #2563EB;
 }
 
@@ -152,15 +177,14 @@ header,
    ============================================================ */
 
 .nav-wrapper {
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.97);
     border: 1px solid #E2E8F0;
     border-radius: 14px;
     padding: 7px;
-    margin: 4px 0 25px 0;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    margin: 4px 0 28px 0;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
 }
 
-/* Streamlit buttons */
 .stButton > button {
     width: 100%;
     min-height: 42px;
@@ -192,8 +216,9 @@ header,
 .hero {
     position: relative;
     overflow: hidden;
-    padding: 62px 55px;
+    padding: 65px 55px;
     border-radius: 24px;
+
     background:
         radial-gradient(
             circle at 90% 10%,
@@ -211,14 +236,16 @@ header,
             #172554 55%,
             #1E3A8A 100%
         );
+
     color: white;
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.16);
+
     margin-bottom: 35px;
 }
 
 .hero-content {
-    position: relative;
-    z-index: 2;
     max-width: 820px;
 }
 
@@ -291,7 +318,7 @@ header,
 
 
 /* ============================================================
-   METRIC CARDS
+   METRICS
    ============================================================ */
 
 .metric-card {
@@ -340,7 +367,6 @@ header,
 .card:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
-    border-color: #CBD5E1;
 }
 
 .card-icon {
@@ -395,7 +421,7 @@ header,
 
 
 /* ============================================================
-   WHY LOGIINTELLI
+   WHY
    ============================================================ */
 
 .why-card {
@@ -422,7 +448,7 @@ header,
 
 
 /* ============================================================
-   TECHNOLOGY STRIP
+   TECHNOLOGY
    ============================================================ */
 
 .tech-strip {
@@ -489,7 +515,7 @@ header,
 
 
 /* ============================================================
-   PROJECT CARDS
+   PROJECT
    ============================================================ */
 
 .project-card {
@@ -547,6 +573,7 @@ header,
             transparent 35%
         ),
         #172554;
+
     border-radius: 22px;
     padding: 38px;
     color: white;
@@ -566,7 +593,7 @@ header,
 
 
 /* ============================================================
-   CONTACT CARDS
+   CONTACT
    ============================================================ */
 
 .contact-card {
@@ -615,12 +642,6 @@ label {
     font-weight: 600 !important;
 }
 
-input,
-textarea,
-select {
-    border-radius: 9px !important;
-}
-
 .stTextInput input,
 .stTextArea textarea,
 .stSelectbox div[data-baseweb="select"] {
@@ -636,24 +657,87 @@ select {
     min-height: 45px !important;
 }
 
-.stFormSubmitButton button:hover {
-    background: #1D4ED8 !important;
+
+/* ============================================================
+   CHATBOT
+   ============================================================ */
+
+.chat-title {
+    background:
+        linear-gradient(
+            135deg,
+            #0F172A,
+            #1E3A8A
+        );
+
+    color: white;
+    border-radius: 15px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+}
+
+.chat-title-main {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.chat-title-sub {
+    font-size: 11px;
+    color: #CBD5E1;
+    margin-top: 3px;
 }
 
 
-/* ============================================================
-   SUCCESS MESSAGE
-   ============================================================ */
+/* Chat message */
 
-.success-box {
-    background: #ECFDF5;
-    border: 1px solid #A7F3D0;
-    color: #065F46;
-    padding: 15px 18px;
+.chat-message {
+    padding: 11px 13px;
     border-radius: 12px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    font-weight: 600;
+    margin: 7px 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.chat-assistant {
+    background: #EFF6FF;
+    color: #1E3A8A;
+    border: 1px solid #DBEAFE;
+}
+
+.chat-user {
+    background: #0F172A;
+    color: white;
+    margin-left: 25px;
+}
+
+
+/* Chat buttons */
+
+.chat-option button {
+    text-align: left !important;
+    background: white !important;
+    border: 1px solid #DBEAFE !important;
+    color: #1E40AF !important;
+    font-size: 12px !important;
+    min-height: 38px !important;
+    margin-bottom: 3px !important;
+}
+
+.chat-option button:hover {
+    background: #EFF6FF !important;
+    border-color: #93C5FD !important;
+}
+
+
+/* Floating chatbot button */
+
+.chat-float button {
+    background: #2563EB !important;
+    color: white !important;
+    border-radius: 999px !important;
+    font-weight: 800 !important;
+    border: none !important;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.30) !important;
 }
 
 
@@ -688,11 +772,11 @@ select {
     }
 
     .brand-title {
-        font-size: 30px;
+        font-size: 31px;
     }
 
     .brand-subtitle {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .hero {
@@ -746,10 +830,16 @@ select {
 html(
     """
     <div class="brand-wrapper">
-        <div class="brand-title">🚚 <span>LogiIntelli</span></div>
+
+        <div class="brand-title">
+            🚚
+            <span class="logi-text">Logi</span><span class="intelli-text">Intelli</span>
+        </div>
+
         <div class="brand-subtitle">
             Logistics Analytics • AI & Predictive Intelligence • BI Automation
         </div>
+
     </div>
     """
 )
@@ -782,14 +872,13 @@ for i, (icon, page_name) in enumerate(nav_pages):
             use_container_width=True,
         ):
             st.session_state.page = page_name
-            st.session_state.submitted = False
             st.rerun()
 
 html("</div>")
 
 
 # ============================================================
-# HOME PAGE
+# HOME
 # ============================================================
 
 if st.session_state.page == "Home":
@@ -797,6 +886,7 @@ if st.session_state.page == "Home":
     html(
         """
         <div class="hero">
+
             <div class="hero-content">
 
                 <div class="hero-badge">
@@ -816,11 +906,13 @@ if st.session_state.page == "Home":
                 </p>
 
             </div>
+
         </div>
         """
     )
 
     # Metrics
+
     metric_cols = st.columns(4)
 
     metrics = [
@@ -833,26 +925,47 @@ if st.session_state.page == "Home":
     for col, (icon, value, label) in zip(metric_cols, metrics):
 
         with col:
+
             html(
                 f"""
                 <div class="metric-card">
-                    <div class="metric-icon">{icon}</div>
-                    <div class="metric-value">{value}</div>
-                    <div class="metric-label">{label}</div>
+
+                    <div class="metric-icon">
+                        {icon}
+                    </div>
+
+                    <div class="metric-value">
+                        {value}
+                    </div>
+
+                    <div class="metric-label">
+                        {label}
+                    </div>
+
                 </div>
                 """
             )
 
+
     # Services
+
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">What We Do</div>
-            <div class="section-title">Data, AI & Logistics Intelligence</div>
-            <div class="section-subtitle">
-                Practical analytics solutions designed around real operational
-                problems and measurable business outcomes.
+
+            <div class="section-kicker">
+                What We Do
             </div>
+
+            <div class="section-title">
+                Data, AI & Logistics Intelligence
+            </div>
+
+            <div class="section-subtitle">
+                Practical analytics solutions designed around real
+                operational problems and measurable business outcomes.
+            </div>
+
         </div>
         """
     )
@@ -899,22 +1012,43 @@ if st.session_state.page == "Home":
             html(
                 f"""
                 <div class="card">
-                    <div class="card-icon">{icon}</div>
-                    <h3>{title}</h3>
-                    <p>{description}</p>
+
+                    <div class="card-icon">
+                        {icon}
+                    </div>
+
+                    <h3>
+                        {title}
+                    </h3>
+
+                    <p>
+                        {description}
+                    </p>
+
                 </div>
                 """
             )
 
+
     # Workflow
+
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Logistics Intelligence</div>
-            <div class="section-title">From Shipment Event to Decision</div>
-            <div class="section-subtitle">
-                Connect operational events across the complete shipment lifecycle.
+
+            <div class="section-kicker">
+                Logistics Intelligence
             </div>
+
+            <div class="section-title">
+                From Shipment Event to Decision
+            </div>
+
+            <div class="section-subtitle">
+                Connect operational events across the complete
+                shipment lifecycle.
+            </div>
+
         </div>
 
         <div class="workflow">
@@ -943,7 +1077,9 @@ if st.session_state.page == "Home":
         """
     )
 
-    # Technologies
+
+    # Technology
+
     html(
         """
         <div class="tech-strip">
@@ -953,6 +1089,7 @@ if st.session_state.page == "Home":
             </div>
 
             <div class="tech-list">
+
                 <div class="tech-item">Power BI</div>
                 <div class="tech-item">SQL</div>
                 <div class="tech-item">Python</div>
@@ -965,18 +1102,28 @@ if st.session_state.page == "Home":
                 <div class="tech-item">DAX</div>
                 <div class="tech-item">Excel</div>
                 <div class="tech-item">Streamlit</div>
+
             </div>
 
         </div>
         """
     )
 
-    # Why LogiIntelli
+
+    # Why
+
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Why LogiIntelli</div>
-            <div class="section-title">Built for Real Business Problems</div>
+
+            <div class="section-kicker">
+                Why LogiIntelli
+            </div>
+
+            <div class="section-title">
+                Built for Real Business Problems
+            </div>
+
         </div>
         """
     )
@@ -1013,19 +1160,33 @@ if st.session_state.page == "Home":
             html(
                 f"""
                 <div class="why-card">
-                    <div class="card-icon">{icon}</div>
-                    <h3>{title}</h3>
-                    <p>{description}</p>
+
+                    <div class="card-icon">
+                        {icon}
+                    </div>
+
+                    <h3>
+                        {title}
+                    </h3>
+
+                    <p>
+                        {description}
+                    </p>
+
                 </div>
                 """
             )
 
+
     # CTA
+
     html(
         """
         <div class="cta">
 
-            <h2>Have a Data or Logistics Challenge?</h2>
+            <h2>
+                Have a Data or Logistics Challenge?
+            </h2>
 
             <p>
                 Let's convert your operational data into dashboards,
@@ -1041,12 +1202,13 @@ if st.session_state.page == "Home":
         key="home_project",
         use_container_width=True,
     ):
+
         st.session_state.page = "Request Project"
         st.rerun()
 
 
 # ============================================================
-# SERVICES PAGE
+# SERVICES
 # ============================================================
 
 elif st.session_state.page == "Services":
@@ -1054,12 +1216,20 @@ elif st.session_state.page == "Services":
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Our Services</div>
-            <div class="section-title">Analytics & Technology Solutions</div>
+
+            <div class="section-kicker">
+                Our Services
+            </div>
+
+            <div class="section-title">
+                Analytics & Technology Solutions
+            </div>
+
             <div class="section-subtitle">
                 End-to-end solutions covering business intelligence,
                 logistics analytics, AI, automation and data engineering.
             </div>
+
         </div>
         """
     )
@@ -1154,9 +1324,13 @@ elif st.session_state.page == "Services":
                 f"""
                 <div class="card">
 
-                    <div class="card-icon">{icon}</div>
+                    <div class="card-icon">
+                        {icon}
+                    </div>
 
-                    <h3>{title}</h3>
+                    <h3>
+                        {title}
+                    </h3>
 
                     <ul class="service-list">
                         {list_html}
@@ -1168,7 +1342,7 @@ elif st.session_state.page == "Services":
 
 
 # ============================================================
-# PROJECTS PAGE
+# PROJECTS
 # ============================================================
 
 elif st.session_state.page == "Projects":
@@ -1176,12 +1350,20 @@ elif st.session_state.page == "Projects":
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Selected Projects</div>
-            <div class="section-title">Analytics & AI Solutions</div>
+
+            <div class="section-kicker">
+                Selected Projects
+            </div>
+
+            <div class="section-title">
+                Analytics & AI Solutions
+            </div>
+
             <div class="section-subtitle">
                 Examples of practical analytics systems for logistics,
                 operations and business intelligence.
             </div>
+
         </div>
         """
     )
@@ -1244,9 +1426,13 @@ elif st.session_state.page == "Projects":
                         PROJECT {number}
                     </div>
 
-                    <h3>{title}</h3>
+                    <h3>
+                        {title}
+                    </h3>
 
-                    <p>{description}</p>
+                    <p>
+                        {description}
+                    </p>
 
                     <div>
                         {tag_html}
@@ -1258,7 +1444,7 @@ elif st.session_state.page == "Projects":
 
 
 # ============================================================
-# REQUEST PROJECT PAGE
+# REQUEST PROJECT
 # ============================================================
 
 elif st.session_state.page == "Request Project":
@@ -1266,12 +1452,20 @@ elif st.session_state.page == "Request Project":
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Let's Work Together</div>
-            <div class="section-title">Request a Project</div>
+
+            <div class="section-kicker">
+                Let's Work Together
+            </div>
+
+            <div class="section-title">
+                Request a Project
+            </div>
+
             <div class="section-subtitle">
                 Tell us about your requirement. We will review your
                 requirement and get back to you.
             </div>
+
         </div>
         """
     )
@@ -1291,6 +1485,7 @@ elif st.session_state.page == "Request Project":
             "Submit Another Request",
             key="new_request",
         ):
+
             st.session_state.submitted = False
             st.rerun()
 
@@ -1380,21 +1575,29 @@ elif st.session_state.page == "Request Project":
             errors = []
 
             if not contact.strip():
-                errors.append("Contact Person is required.")
+                errors.append(
+                    "Contact Person is required."
+                )
 
             if not email.strip():
-                errors.append("Business Email is required.")
+                errors.append(
+                    "Business Email is required."
+                )
 
-            email_pattern = r"^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+            email_pattern = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
 
             if email.strip() and not re.match(
                 email_pattern,
                 email.strip(),
             ):
-                errors.append("Please enter a valid email address.")
+                errors.append(
+                    "Please enter a valid email address."
+                )
 
             if not requirement.strip():
-                errors.append("Requirement details are required.")
+                errors.append(
+                    "Requirement details are required."
+                )
 
             if errors:
 
@@ -1451,7 +1654,7 @@ elif st.session_state.page == "Request Project":
 
 
 # ============================================================
-# ABOUT PAGE
+# ABOUT
 # ============================================================
 
 elif st.session_state.page == "About":
@@ -1459,15 +1662,21 @@ elif st.session_state.page == "About":
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">About LogiIntelli</div>
+
+            <div class="section-kicker">
+                About LogiIntelli
+            </div>
+
             <div class="section-title">
                 Turning Operational Data Into Intelligence
             </div>
+
             <div class="section-subtitle">
                 LogiIntelli focuses on practical data analytics,
                 business intelligence, AI and automation solutions
                 for logistics and operations.
             </div>
+
         </div>
         """
     )
@@ -1480,9 +1689,13 @@ elif st.session_state.page == "About":
             """
             <div class="card">
 
-                <div class="card-icon">🎯</div>
+                <div class="card-icon">
+                    🎯
+                </div>
 
-                <h3>Our Mission</h3>
+                <h3>
+                    Our Mission
+                </h3>
 
                 <p>
                     Help businesses make faster and better decisions
@@ -1500,9 +1713,13 @@ elif st.session_state.page == "About":
             """
             <div class="card">
 
-                <div class="card-icon">💡</div>
+                <div class="card-icon">
+                    💡
+                </div>
 
-                <h3>Our Approach</h3>
+                <h3>
+                    Our Approach
+                </h3>
 
                 <p>
                     Combine domain knowledge, analytics, automation
@@ -1517,8 +1734,15 @@ elif st.session_state.page == "About":
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Core Expertise</div>
-            <div class="section-title">Technology Meets Domain Knowledge</div>
+
+            <div class="section-kicker">
+                Core Expertise
+            </div>
+
+            <div class="section-title">
+                Technology Meets Domain Knowledge
+            </div>
+
         </div>
         """
     )
@@ -1556,11 +1780,17 @@ elif st.session_state.page == "About":
                 f"""
                 <div class="why-card">
 
-                    <div class="card-icon">{icon}</div>
+                    <div class="card-icon">
+                        {icon}
+                    </div>
 
-                    <h3>{title}</h3>
+                    <h3>
+                        {title}
+                    </h3>
 
-                    <p>{description}</p>
+                    <p>
+                        {description}
+                    </p>
 
                 </div>
                 """
@@ -1568,7 +1798,7 @@ elif st.session_state.page == "About":
 
 
 # ============================================================
-# CONTACT PAGE
+# CONTACT
 # ============================================================
 
 elif st.session_state.page == "Contact":
@@ -1576,12 +1806,20 @@ elif st.session_state.page == "Contact":
     html(
         """
         <div class="section-heading">
-            <div class="section-kicker">Get In Touch</div>
-            <div class="section-title">Contact LogiIntelli</div>
+
+            <div class="section-kicker">
+                Get In Touch
+            </div>
+
+            <div class="section-title">
+                Contact LogiIntelli
+            </div>
+
             <div class="section-subtitle">
                 Have a dashboard, analytics, automation or AI requirement?
                 Let's discuss it.
             </div>
+
         </div>
         """
     )
@@ -1594,7 +1832,9 @@ elif st.session_state.page == "Contact":
             """
             <div class="contact-card">
 
-                <h3>📧 Email</h3>
+                <h3>
+                    📧 Email
+                </h3>
 
                 <p>
                     <a href="mailto:support@logiintelli.com">
@@ -1618,7 +1858,9 @@ elif st.session_state.page == "Contact":
             """
             <div class="contact-card">
 
-                <h3>💬 WhatsApp</h3>
+                <h3>
+                    💬 WhatsApp
+                </h3>
 
                 <p>
                     <a
@@ -1643,7 +1885,9 @@ elif st.session_state.page == "Contact":
             """
             <div class="contact-card">
 
-                <h3>🕐 Business Hours</h3>
+                <h3>
+                    🕐 Business Hours
+                </h3>
 
                 <p>
                     Monday – Friday<br>
@@ -1662,7 +1906,9 @@ elif st.session_state.page == "Contact":
         """
         <div class="cta">
 
-            <h2>Ready to Transform Your Data?</h2>
+            <h2>
+                Ready to Transform Your Data?
+            </h2>
 
             <p>
                 Start with your business problem and we'll work
@@ -1678,6 +1924,7 @@ elif st.session_state.page == "Contact":
         key="contact_project",
         use_container_width=True,
     ):
+
         st.session_state.page = "Request Project"
         st.rerun()
 
@@ -1689,8 +1936,424 @@ elif st.session_state.page == "Contact":
 html(
     """
     <div class="footer">
+
         © 2026 <strong>LogiIntelli</strong> ·
         Logistics Analytics · AI · Business Intelligence · Automation
+
     </div>
     """
 )
+
+
+# ============================================================
+# FLOATING CHATBOT
+# ============================================================
+
+# ------------------------------------------------------------
+# CHATBOT QUESTION FLOW
+# ------------------------------------------------------------
+
+chat_questions = [
+    {
+        "question": (
+            "What solution are you looking for?"
+        ),
+        "options": [
+            "📊 Power BI Dashboard",
+            "🚚 Logistics Analytics",
+            "🤖 AI / Machine Learning",
+            "⚙️ Automation / MIS",
+            "🗄️ SQL / Data Engineering",
+            "💡 Not Sure",
+        ],
+        "key": "Service",
+    },
+    {
+        "question": (
+            "What type of data do you currently have?"
+        ),
+        "options": [
+            "🗄️ MySQL / SQL Database",
+            "📗 Excel / CSV",
+            "🔗 API / JSON",
+            "📊 Power BI",
+            "🔀 Multiple Sources",
+            "❓ Not Sure",
+        ],
+        "key": "Data_Source",
+    },
+    {
+        "question": (
+            "What is the main business problem you want to solve?"
+        ),
+        "options": [
+            "📊 Reporting / Dashboard",
+            "⏱️ SLA / TAT Problems",
+            "🚚 Shipment / Hub Performance",
+            "🤖 Prediction / Forecasting",
+            "⚡ Manual Process / Automation",
+            "💬 Other",
+        ],
+        "key": "Problem",
+    },
+    {
+        "question": (
+            "When would you like the solution?"
+        ),
+        "options": [
+            "🚀 Within 1 Week",
+            "📅 1–2 Weeks",
+            "📅 2–4 Weeks",
+            "🗓️ 1–2 Months",
+            "🔄 Flexible",
+        ],
+        "key": "Timeline",
+    },
+]
+
+
+# ------------------------------------------------------------
+# CHATBOT PROCESS
+# ------------------------------------------------------------
+
+def chatbot_add_message(role, text):
+
+    st.session_state.chat_messages.append(
+        {
+            "role": role,
+            "text": text,
+        }
+    )
+
+
+def chatbot_select_option(option):
+
+    step = st.session_state.chat_step
+
+    if step < len(chat_questions):
+
+        question = chat_questions[step]
+
+        chatbot_add_message(
+            "user",
+            option,
+        )
+
+        st.session_state.chat_data[
+            question["key"]
+        ] = option
+
+        st.session_state.chat_step += 1
+
+        if st.session_state.chat_step < len(chat_questions):
+
+            next_question = chat_questions[
+                st.session_state.chat_step
+            ]["question"]
+
+            chatbot_add_message(
+                "assistant",
+                next_question,
+            )
+
+        else:
+
+            chatbot_add_message(
+                "assistant",
+                (
+                    "Great! I have a better understanding of your "
+                    "project. Just a couple of contact details and "
+                    "we can send your requirement to the LogiIntelli team."
+                ),
+            )
+
+    st.rerun()
+
+
+# ------------------------------------------------------------
+# CHATBOT PANEL
+# ------------------------------------------------------------
+
+if st.session_state.chat_open:
+
+    html(
+        """
+        <div class="chat-title">
+
+            <div class="chat-title-main">
+                🤖 LogiIntelli Assistant
+            </div>
+
+            <div class="chat-title-sub">
+                Project & Analytics Consultation
+            </div>
+
+        </div>
+        """
+    )
+
+    # Messages
+
+    for message in st.session_state.chat_messages:
+
+        if message["role"] == "assistant":
+
+            html(
+                f"""
+                <div class="chat-message chat-assistant">
+                    🤖 {message["text"]}
+                </div>
+                """
+            )
+
+        else:
+
+            html(
+                f"""
+                <div class="chat-message chat-user">
+                    {message["text"]}
+                </div>
+                """
+            )
+
+
+    # --------------------------------------------------------
+    # QUESTION OPTIONS
+    # --------------------------------------------------------
+
+    if st.session_state.chat_step < len(chat_questions):
+
+        current_question = chat_questions[
+            st.session_state.chat_step
+        ]
+
+        # If first question has not been shown
+        if not any(
+            current_question["question"]
+            in message["text"]
+            for message in st.session_state.chat_messages
+            if message["role"] == "assistant"
+        ):
+
+            chatbot_add_message(
+                "assistant",
+                current_question["question"],
+            )
+
+            st.rerun()
+
+        for i, option in enumerate(
+            current_question["options"]
+        ):
+
+            if st.button(
+                option,
+                key=f"chat_option_{st.session_state.chat_step}_{i}",
+                use_container_width=True,
+            ):
+
+                chatbot_select_option(option)
+
+
+    # --------------------------------------------------------
+    # CONTACT DETAILS
+    # --------------------------------------------------------
+
+    else:
+
+        if not st.session_state.chat_data.get(
+            "contact_form_completed",
+            False,
+        ):
+
+            chat_name = st.text_input(
+                "Your Name",
+                key="chat_name",
+                placeholder="Your name",
+            )
+
+            chat_email = st.text_input(
+                "Business Email",
+                key="chat_email",
+                placeholder="name@company.com",
+            )
+
+            chat_phone = st.text_input(
+                "Phone / WhatsApp",
+                key="chat_phone",
+                placeholder="+91 XXXXX XXXXX",
+            )
+
+            chat_company = st.text_input(
+                "Company Name",
+                key="chat_company",
+                placeholder="Company name",
+            )
+
+            chat_requirement = st.text_area(
+                "Additional Requirement",
+                key="chat_requirement",
+                placeholder=(
+                    "Anything else you want us to know?"
+                ),
+                height=100,
+            )
+
+            if st.button(
+                "🚀 Send Project Requirement",
+                key="chat_submit",
+                use_container_width=True,
+            ):
+
+                errors = []
+
+                if not chat_name.strip():
+
+                    errors.append(
+                        "Please enter your name."
+                    )
+
+                if not chat_email.strip():
+
+                    errors.append(
+                        "Please enter your email."
+                    )
+
+                email_pattern = (
+                    r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                )
+
+                if (
+                    chat_email.strip()
+                    and not re.match(
+                        email_pattern,
+                        chat_email.strip(),
+                    )
+                ):
+
+                    errors.append(
+                        "Please enter a valid email address."
+                    )
+
+                if errors:
+
+                    for error in errors:
+                        st.error(error)
+
+                else:
+
+                    payload = {
+                        "Date": datetime.now().strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        ),
+                        "Company": chat_company.strip(),
+                        "Contact": chat_name.strip(),
+                        "Email": chat_email.strip(),
+                        "Phone": chat_phone.strip(),
+                        "Service": st.session_state.chat_data.get(
+                            "Service",
+                            "",
+                        ),
+                        "Data_Source": st.session_state.chat_data.get(
+                            "Data_Source",
+                            "",
+                        ),
+                        "Problem": st.session_state.chat_data.get(
+                            "Problem",
+                            "",
+                        ),
+                        "Timeline": st.session_state.chat_data.get(
+                            "Timeline",
+                            "",
+                        ),
+                        "Requirement": chat_requirement.strip(),
+                        "Source": "Website Chatbot",
+                    }
+
+                    try:
+
+                        response = requests.post(
+                            GOOGLE_SCRIPT_URL,
+                            data=json.dumps(payload),
+                            headers={
+                                "Content-Type":
+                                "text/plain;charset=utf-8"
+                            },
+                            timeout=20,
+                            allow_redirects=True,
+                        )
+
+                        if response.status_code in [200, 201]:
+
+                            st.session_state.chat_data[
+                                "contact_form_completed"
+                            ] = True
+
+                            chatbot_add_message(
+                                "user",
+                                "Contact details submitted.",
+                            )
+
+                            chatbot_add_message(
+                                "assistant",
+                                (
+                                    "✅ Thank you! Your project "
+                                    "requirement has been received. "
+                                    "The LogiIntelli team will review "
+                                    "it and contact you soon."
+                                ),
+                            )
+
+                            st.rerun()
+
+                        else:
+
+                            st.error(
+                                "Unable to submit your requirement. "
+                                "Please try again."
+                            )
+
+                    except requests.exceptions.RequestException:
+
+                        st.error(
+                            "Unable to connect to the submission "
+                            "service. Please try again later."
+                        )
+
+
+        else:
+
+            html(
+                """
+                <div class="chat-message chat-assistant">
+
+                    ✅ Your requirement has been submitted.
+
+                    <br><br>
+
+                    Thank you for contacting LogiIntelli!
+
+                </div>
+                """
+            )
+
+            if st.button(
+                "🔄 Start New Conversation",
+                key="chat_restart",
+                use_container_width=True,
+            ):
+
+                st.session_state.chat_step = 0
+                st.session_state.chat_data = {}
+
+                st.session_state.chat_messages = [
+                    {
+                        "role": "assistant",
+                        "text": (
+                            "👋 Hi! Welcome to LogiIntelli. "
+                            "How can I help with your project?"
+                        ),
+                    }
+                ]
+
+                st.rerun()
