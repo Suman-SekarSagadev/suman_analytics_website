@@ -72,7 +72,7 @@ if "chat_messages" not in st.session_state:
     reset_chat_state()
 
 # ============================================================
-# GLOBAL STYLES & HEADER FIXES
+# GLOBAL STYLES & FLOATING WIDGET CSS
 # ============================================================
 
 html(
@@ -240,70 +240,102 @@ div.stButton > button:hover {
     line-height: 1.6;
 }
 
-/* CHATBOT FLOATING OVERLAY UI */
-.chat-launcher {
+/* HIGH-VISIBILITY FLOATING CHAT LAUNCHER & WIDGET */
+div[data-testid="stColumn"]:has(button[key="btn_open_chat"]) button,
+button[key="btn_open_chat"] {
+    background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #3B82F6 !important;
+    border-radius: 30px !important;
+    padding: 10px 22px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.40) !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+button[key="btn_open_chat"]:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.55) !important;
+}
+
+.chat-launcher-wrapper {
     position: fixed;
-    bottom: 25px;
-    left: 25px;
+    bottom: 30px;
+    left: 30px;
     z-index: 999999;
 }
 
 .chat-box-container {
     position: fixed;
-    bottom: 25px;
-    left: 25px;
-    width: 300px;
+    bottom: 30px;
+    left: 30px;
+    width: 320px;
     background: #FFFFFF;
-    border-radius: 16px;
-    box-shadow: 0 12px 35px rgba(15,23,42,0.20);
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.22);
     border: 1px solid #E2E8F0;
     z-index: 999999;
     overflow: hidden;
 }
 
 .chat-box-header {
-    background: linear-gradient(135deg, #0F172A, #2563EB);
+    background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%);
     color: white;
-    padding: 12px 16px;
+    padding: 14px 18px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 10px;
+}
+
+.chat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
 }
 
 .chat-box-title {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
 }
 
 .chat-box-subtitle {
-    font-size: 10px;
-    opacity: 0.8;
+    font-size: 11px;
+    color: #BFDBFE;
 }
 
 .chat-box-body {
-    padding: 12px;
-    max-height: 220px;
+    padding: 14px;
+    max-height: 240px;
     overflow-y: auto;
+    background: #FAFAFA;
 }
 
 .chat-msg {
-    padding: 8px 10px;
-    border-radius: 8px;
-    font-size: 11px;
-    line-height: 1.4;
-    margin-bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.45;
+    margin-bottom: 10px;
 }
 
 .chat-msg-assistant {
-    background: #EFF6FF;
-    color: #1E3A8A;
-    border: 1px solid #DBEAFE;
+    background: #FFFFFF;
+    color: #1E293B;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .chat-msg-user {
-    background: #0F172A;
-    color: white;
-    margin-left: 15px;
+    background: #2563EB;
+    color: #FFFFFF;
+    margin-left: 20px;
 }
 
 .footer {
@@ -441,39 +473,40 @@ current_page_func = pages.get(st.session_state.page, home_page)
 current_page_func()
 
 # ============================================================
-# LEFT SIDE SMALL FLOATING CHATBOT WIDGET
+# LEFT SIDE FLOATING CHATBOT WIDGET
 # ============================================================
 
 def render_floating_chatbot():
-    # Closed State Launcher
+    # Closed State Launcher Button
     if not st.session_state.chat_open:
-        st.markdown('<div class="chat-launcher">', unsafe_allow_html=True)
-        if st.button("💬 Chat", key="btn_open_chat"):
+        st.markdown('<div class="chat-launcher-wrapper">', unsafe_allow_html=True)
+        if st.button("💬 Chat with AI", key="btn_open_chat"):
             st.session_state.chat_open = True
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
         return
 
-    # Open State Small Container
+    # Open State Small Box Window
     st.markdown('<div class="chat-box-container">', unsafe_allow_html=True)
     
     html(
         """
     <div class="chat-box-header">
+        <div class="chat-avatar">🤖</div>
         <div>
-            <div class="chat-box-title">JYORA AI Assistant</div>
-            <div class="chat-box-subtitle">Online</div>
+            <div class="chat-box-title">JYORA Assistant</div>
+            <div class="chat-box-subtitle">● Online • Ask us anything</div>
         </div>
     </div>
     """
     )
 
-    if st.button("✕ Close & New Chat", key="btn_close_chat", use_container_width=True):
+    if st.button("✕ Close & Start New Chat", key="btn_close_chat", use_container_width=True):
         st.session_state.chat_open = False
         reset_chat_state()
         st.rerun()
 
-    # Message View
+    # Message Display
     chat_html = '<div class="chat-box-body">'
     for msg in st.session_state.chat_messages:
         cls = "chat-msg-assistant" if msg["role"] == "assistant" else "chat-msg-user"
@@ -481,7 +514,7 @@ def render_floating_chatbot():
     chat_html += '</div>'
     html(chat_html)
 
-    # Multi-step Flow
+    # Multi-step Flow Controls
     step = st.session_state.chat_step
 
     if step == 0:
@@ -490,7 +523,7 @@ def render_floating_chatbot():
             if name.strip():
                 st.session_state.chat_data["name"] = name.strip()
                 st.session_state.chat_messages.append({"role": "user", "text": name.strip()})
-                st.session_state.chat_messages.append({"role": "assistant", "text": "What service do you need?"})
+                st.session_state.chat_messages.append({"role": "assistant", "text": "What service are you looking for?"})
                 st.session_state.chat_step = 1
                 st.rerun()
 
@@ -500,7 +533,7 @@ def render_floating_chatbot():
             if st.button(opt, key=f"chat_opt_{opt}"):
                 st.session_state.chat_data["service"] = opt
                 st.session_state.chat_messages.append({"role": "user", "text": opt})
-                st.session_state.chat_messages.append({"role": "assistant", "text": "Please enter your email."})
+                st.session_state.chat_messages.append({"role": "assistant", "text": "Great! Please share your email address."})
                 st.session_state.chat_step = 2
                 st.rerun()
 
@@ -520,11 +553,11 @@ def render_floating_chatbot():
                 }
                 submit_to_google(payload)
 
-                st.session_state.chat_messages.append({"role": "assistant", "text": "Thanks! We'll reach out soon."})
+                st.session_state.chat_messages.append({"role": "assistant", "text": "Thank you! Our team will reach out shortly."})
                 st.session_state.chat_step = 3
                 st.rerun()
             else:
-                st.error("Invalid Email")
+                st.error("Please enter a valid email.")
 
     elif step == 3:
         if st.button("Start New Session", key="chat_btn_reset"):
