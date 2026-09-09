@@ -832,7 +832,7 @@ elif st.session_state.page == "Contact":
 
 
 # ============================================================
-# FLOATING CHATBOT ENGINE (STEP-BY-STEP LEAD CAPTURE)
+# FLOATING CHATBOT ENGINE (AUTO-RESET ON CLOSE)
 # ============================================================
 
 if st.session_state.chat_open:
@@ -855,7 +855,18 @@ if st.session_state.chat_open:
         with c_close:
             with st.container(key="chat_close_btn"):
                 if st.button("✕", key="btn_close_chat", help="Close Chat"):
+                    # Hide chat window
                     st.session_state.chat_open = False
+                    
+                    # Reset chat history to initial state
+                    st.session_state.chat_step = 0
+                    st.session_state.chat_data = {}
+                    st.session_state.chat_messages = [
+                        {
+                            "role": "assistant",
+                            "text": "👋 Hi! Welcome to LogiIntelli.\nWhat is your name?",
+                        }
+                    ]
                     st.rerun()
 
         # Chat Message Log
