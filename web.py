@@ -1,456 +1,889 @@
 from datetime import datetime
 import json
-import pandas as pd
-import requests
 import streamlit as st
+import requests
+
 
 # ============================================================
 # PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
-    page_title="LogiIntelli  | AI, Data & Logistics",
+    page_title="LogiIntelli | Logistics AI, Data Analytics & Business Intelligence",
     page_icon="🚚",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
+
 # ============================================================
-# CUSTOM CSS (FORCED LIGHT MODE - GLOTTIS THEME)
+# HTML HELPER
 # ============================================================
 
-st.markdown(
+def html(content):
     """
+    Render HTML directly using Streamlit's native HTML renderer.
+    This prevents HTML from appearing as plain text/code.
+    """
+    st.html(content)
+
+
+# ============================================================
+# CUSTOM CSS
+# ============================================================
+
+html("""
 <style>
-/* 1. GLOBAL APP BACKGROUND */
-html, body, [data-testid="stAppViewContainer"], .stApp, [data-testid="stHeader"] {
-    background-color: #F8FAFC !important;
-    color: #1E293B !important;
+
+html, body {
+    background-color: #F8FAFC;
 }
 
-/* HIDE DEFAULT SIDEBAR */
-[data-testid="stSidebar"] {
-    display: none !important;
+[data-testid="stAppViewContainer"] {
+    background-color: #F8FAFC;
 }
 
-/* HEADER BAR */
 [data-testid="stHeader"] {
-    background-color: transparent !important;
+    background: transparent;
+}
+
+[data-testid="stSidebar"] {
+    display: none;
 }
 
 .block-container {
-    padding-top: 1rem;
-    padding-bottom: 3rem;
     max-width: 1400px;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
 }
 
-/* MAIN TITLE & SUBTITLE */
+
+/* ============================================================
+   BRAND
+============================================================ */
+
 .main-title {
-    font-size: 42px;
+    text-align: center;
+    font-size: 44px;
     font-weight: 900;
-    margin-bottom: 0px;
-    color: #0B2545 !important;
-    letter-spacing: -0.5px;
+    color: #0B2545;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
 }
 
 .sub-title {
+    text-align: center;
     font-size: 16px;
-    color: #0066CC !important;
     font-weight: 600;
-    margin-top: 4px;
-    margin-bottom: 20px;
-    letter-spacing: 0.5px;
-}
-
-/* TOP NAVIGATION BAR */
-div[data-testid="stHorizontalBlock"] {
-    background: #FFFFFF !important;
-    padding: 8px 12px;
-    border-radius: 12px;
-    border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+    color: #0066CC;
+    letter-spacing: .4px;
     margin-bottom: 25px;
 }
 
-div[data-testid="stHorizontalBlock"] button {
-    background-color: transparent !important;
-    color: #475569 !important;
-    border: none !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
-    transition: all 0.3s ease !important;
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+.nav-button {
+    width: 100%;
 }
 
-div[data-testid="stHorizontalBlock"] button:hover {
-    color: #0066CC !important;
-    background: #EFF6FF !important;
-}
 
-/* HERO CONTAINER (FORCED BRIGHT WHITE TEXT ON DARK BLUE BACKGROUND) */
+/* ============================================================
+   HERO
+============================================================ */
+
 .hero {
-    padding: 40px 35px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #0B2545 0%, #134074 100%) !important;
-    border: 1px solid #0B2545 !important;
-    box-shadow: 0 10px 25px rgba(11, 37, 69, 0.15) !important;
-    margin-top: 10px;
+    padding: 50px 45px;
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0B2545 0%,
+            #134074 55%,
+            #0066CC 100%
+        );
+
+    border: 1px solid #0B2545;
+
+    box-shadow:
+        0 15px 35px rgba(11, 37, 69, 0.18);
+
+    margin-top: 15px;
     margin-bottom: 35px;
 }
 
-.hero h1, .hero h2 {
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-    margin-bottom: 12px !important;
+.hero h1 {
+    color: #FFFFFF;
+    font-size: 34px;
+    font-weight: 850;
+    margin-bottom: 20px;
+}
+
+.hero h2 {
+    color: #FFFFFF;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 15px;
 }
 
 .hero p {
-    color: #E2E8F0 !important;
-    font-size: 17px !important;
-    line-height: 1.7 !important;
+    color: #E2E8F0;
+    font-size: 17px;
+    line-height: 1.75;
+    margin-bottom: 16px;
 }
 
-/* SECTIONS */
+.hero strong {
+    color: #FFFFFF;
+}
+
+
+/* ============================================================
+   SECTION TITLES
+============================================================ */
+
 .section-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #0B2545 !important;
-    margin-top: 35px;
+    font-size: 30px;
+    font-weight: 850;
+    color: #0B2545;
+    margin-top: 40px;
     margin-bottom: 6px;
 }
 
 .section-subtitle {
-    color: #64748B !important;
+    color: #64748B;
     font-size: 15px;
+    line-height: 1.6;
     margin-bottom: 25px;
 }
 
-/* LIGHT CARDS & METRIC CONTAINERS */
-.card, .project-card, .metric-card {
-    background: #FFFFFF !important;
-    padding: 24px;
-    border-radius: 14px;
-    border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
-    transition: all 0.3s ease;
+
+/* ============================================================
+   CARDS
+============================================================ */
+
+.card,
+.project-card,
+.metric-card {
+
+    background: #FFFFFF;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    border: 1px solid #E2E8F0;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.05);
+
     margin-bottom: 20px;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
 }
 
-.card:hover, .project-card:hover, .metric-card:hover {
-    border-color: #0066CC !important;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.12) !important;
+.card:hover,
+.project-card:hover,
+.metric-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: #0066CC;
+
+    box-shadow:
+        0 12px 28px rgba(0, 102, 204, 0.12);
 }
 
-.card h3, .project-card h3 {
-    color: #0B2545 !important;
-    font-weight: 700 !important;
-    margin-bottom: 10px !important;
+.card h2,
+.card h3,
+.project-card h3 {
+
+    color: #0B2545;
+
+    font-weight: 800;
+
+    margin-bottom: 12px;
 }
 
-.card p, .card li, .project-card p, .project-card b {
-    color: #334155 !important;
-    line-height: 1.6;
+.card p,
+.card li,
+.project-card p {
+
+    color: #334155;
+
+    line-height: 1.65;
 }
+
+.card li {
+    margin-bottom: 7px;
+}
+
+
+/* ============================================================
+   METRIC CARDS
+============================================================ */
 
 .metric-card {
+
     text-align: center;
-    padding: 20px;
+
+    padding: 25px 15px;
 }
 
 .metric-value {
-    font-size: 32px;
-    font-weight: 800;
-    color: #0066CC !important;
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    color: #0066CC;
+
+    margin-bottom: 5px;
 }
 
 .metric-label {
-    color: #64748B !important;
+
+    color: #64748B;
+
     font-size: 14px;
-    margin-top: 4px;
-    font-weight: 600;
+
+    font-weight: 650;
 }
 
-/* WORKFLOW SECTION */
+
+/* ============================================================
+   SERVICE ICON
+============================================================ */
+
+.service-icon {
+
+    font-size: 40px;
+
+    margin-bottom: 8px;
+}
+
+
+/* ============================================================
+   WORKFLOW
+============================================================ */
+
 .workflow {
-    background: #FFFFFF !important;
-    border-radius: 16px;
+
+    background: #FFFFFF;
+
+    border-radius: 18px;
+
     padding: 30px 20px;
-    border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+
+    border: 1px solid #E2E8F0;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.04);
+
     margin-top: 20px;
+
     margin-bottom: 30px;
+
     overflow-x: auto;
 }
 
 .workflow-container {
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
-    min-width: 1100px;
+
+    min-width: 1050px;
 }
 
 .workflow-step {
+
     text-align: center;
+
     min-width: 115px;
 }
 
 .workflow-icon {
+
     font-size: 38px;
+
     margin-bottom: 8px;
 }
 
 .workflow-name {
+
     font-size: 15px;
-    font-weight: 700;
-    color: #0B2545 !important;
+
+    font-weight: 750;
+
+    color: #0B2545;
 }
 
 .workflow-desc {
+
     font-size: 12px;
-    color: #64748B !important;
+
+    color: #64748B;
+
     margin-top: 4px;
 }
 
 .workflow-arrow {
+
     font-size: 22px;
-    color: #0066CC !important;
+
+    color: #0066CC;
+
+    font-weight: 700;
 }
 
-/* FORM ELEMENTS FIX */
+
+/* ============================================================
+   FORM
+============================================================ */
+
 div[data-testid="stForm"] {
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04) !important;
-    border-radius: 16px;
-    padding: 25px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 18px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 8px 25px rgba(15, 23, 42, 0.06);
 }
 
-div[data-testid="stForm"] label,
-div[data-testid="stWidgetLabel"] label,
-div[data-testid="stWidgetLabel"] p {
+div[data-testid="stWidgetLabel"] label {
+
     color: #0B2545 !important;
+
     font-weight: 700 !important;
 }
 
-div[data-testid="stForm"] input, 
+div[data-testid="stForm"] input,
 div[data-testid="stForm"] textarea {
-    background-color: #FFFFFF !important;
+
+    background: #FFFFFF !important;
+
     color: #0F172A !important;
+
     border: 1px solid #CBD5E1 !important;
-    border-radius: 8px !important;
+
+    border-radius: 9px !important;
 }
 
-div[data-testid="stForm"] div[role="combobox"] {
-    background-color: #FFFFFF !important;
-    color: #0F172A !important;
-    border: 1px solid #CBD5E1 !important;
-    border-radius: 8px !important;
+div[data-testid="stForm"] input:focus,
+div[data-testid="stForm"] textarea:focus {
+
+    border-color: #0066CC !important;
 }
 
-div[data-testid="stForm"] div[role="combobox"] * {
-    color: #0F172A !important;
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+
+.stButton > button {
+
+    border-radius: 9px;
+
+    border: 1px solid #E2E8F0;
+
+    background: #FFFFFF;
+
+    color: #0B2545;
+
+    font-weight: 700;
+
+    min-height: 42px;
+
+    transition: all .2s ease;
 }
 
-div[data-testid="stForm"] button[type="submit"] {
+.stButton > button:hover {
+
+    background: #0B2545;
+
+    color: #FFFFFF;
+
+    border-color: #0B2545;
+}
+
+
+/* ============================================================
+   SUBMIT BUTTON
+============================================================ */
+
+div[data-testid="stFormSubmitButton"] button {
+
     background: #0B2545 !important;
+
     color: #FFFFFF !important;
+
     border: none !important;
-    font-weight: 700 !important;
-    border-radius: 8px !important;
-    padding: 10px 24px !important;
+
+    border-radius: 9px !important;
+
+    font-weight: 750 !important;
+
+    padding: 10px 25px !important;
 }
 
-div[data-testid="stForm"] button[type="submit"]:hover {
+div[data-testid="stFormSubmitButton"] button:hover {
+
     background: #0066CC !important;
 }
+
+
+/* ============================================================
+   CONTACT LINKS
+============================================================ */
+
+.contact-link {
+
+    color: #0066CC;
+
+    text-decoration: none;
+
+    font-weight: 650;
+}
+
+.contact-link:hover {
+
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   FOOTER
+============================================================ */
+
+.footer {
+
+    text-align: center;
+
+    padding: 35px 20px;
+
+    margin-top: 50px;
+
+    color: #64748B;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+.footer-title {
+
+    color: #0B2545;
+
+    font-size: 19px;
+
+    font-weight: 850;
+
+    margin-bottom: 10px;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 768px) {
+
+    .main-title {
+        font-size: 32px;
+    }
+
+    .sub-title {
+        font-size: 13px;
+    }
+
+    .hero {
+        padding: 30px 22px;
+    }
+
+    .hero h1 {
+        font-size: 26px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .section-title {
+        font-size: 25px;
+    }
+
+}
+
 </style>
-""",
-    unsafe_allow_html=True,
-)
+""")
+
 
 # ============================================================
 # HEADER
 # ============================================================
 
-st.markdown(
-    """
-<div style="text-align:center;">
-    <div class="main-title">🚚 LogiIntelli</div>
-    <div class="sub-title">Logistics Analytics • AI & Predictive Intelligence • BI Automation</div>
+html("""
+<div>
+    <div class="main-title">
+        🚚 LogiIntelli
+    </div>
+
+    <div class="sub-title">
+        Logistics Analytics • AI & Predictive Intelligence • BI Automation
+    </div>
 </div>
-""",
-    unsafe_allow_html=True,
-)
+""")
+
 
 # ============================================================
-# TOP NAVIGATION BAR (Horizontal Pill-Buttons)
+# SESSION STATE
 # ============================================================
 
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
+
+# ============================================================
+# NAVIGATION
+# ============================================================
+
+pages = [
+    "Home",
+    "Services",
+    "Projects",
+    "Request Project",
+    "About",
+    "Contact",
+]
+
 nav_cols = st.columns(6)
-pages = ["Home", "Services", "Projects", "Request Project", "About", "Contact"]
 
 for idx, page_name in enumerate(pages):
+
     with nav_cols[idx]:
-        is_selected = st.session_state.page == page_name
-        btn_label = f"• {page_name} •" if is_selected else page_name
-        if st.button(btn_label, key=f"nav_{page_name}", use_container_width=True):
+
+        selected = st.session_state.page == page_name
+
+        label = (
+            f"● {page_name}"
+            if selected
+            else page_name
+        )
+
+        if st.button(
+            label,
+            key=f"nav_{idx}",
+            use_container_width=True,
+        ):
+
             st.session_state.page = page_name
             st.rerun()
 
+
 page = st.session_state.page
 
+
 # ============================================================
-# HOME
+# HOME PAGE
 # ============================================================
 
 if page == "Home":
-    st.markdown(
-        """
-<div class="hero">
-<h1>Logistics Analytics & Artificial Intelligence</h1>
-<p>I build practical data analytics, machine learning, business intelligence, and process automation solutions tailored specifically for courier, logistics, and supply chain enterprises.</p>
-<p>From ERP/API data pipeline extraction to predictive machine learning models, SQL data engineering, and real-time Power BI dashboards — I turn raw operational logs into high-impact strategic decisions.</p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
+
+    html("""
+    <div class="hero">
+
+        <h1>
+            Logistics AI, Data Analytics & Business Intelligence
+        </h1>
+
+        <p>
+            <strong>LogiIntelli</strong> is a Logistics AI,
+            Data Analytics, and Business Intelligence platform focused
+            on helping courier, logistics, supply chain, and e-commerce
+            businesses transform operational data into actionable intelligence.
+        </p>
+
+        <p>
+            We build AI-powered logistics analytics, Power BI dashboards,
+            SQL data engineering solutions, machine learning models,
+            predictive analytics, automated MIS systems, API integrations,
+            and real-time operational intelligence platforms.
+        </p>
+
+        <p>
+            Our expertise includes shipment tracking analytics,
+            delivery performance, TAT and ageing analysis,
+            hub performance, route analytics,
+            shipment delay prediction, demand forecasting,
+            ERP automation, and AI-powered supply chain intelligence.
+        </p>
+
+    </div>
+    """)
+
+
+    # ========================================================
+    # METRICS
+    # ========================================================
 
     c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown(
-            '<div class="metric-card"><div class="metric-value">10+</div><div class="metric-label">Years Experience</div></div>',
-            unsafe_allow_html=True,
-        )
-    with c2:
-        st.markdown(
-            '<div class="metric-card"><div class="metric-value">50+</div><div class="metric-label">Analytics & AI Pipelines</div></div>',
-            unsafe_allow_html=True,
-        )
-    with c3:
-        st.markdown(
-            '<div class="metric-card"><div class="metric-value">24/7</div><div class="metric-label">Automated Systems</div></div>',
-            unsafe_allow_html=True,
-        )
-    with c4:
-        st.markdown(
-            '<div class="metric-card"><div class="metric-value">BI + AI</div><div class="metric-label">Tech Architecture</div></div>',
-            unsafe_allow_html=True,
-        )
 
-    st.markdown(
-        '<div class="section-title">What I Build</div>', unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="section-subtitle">Solutions engineered specifically around logistics operations and predictive analytics.</div>',
-        unsafe_allow_html=True,
-    )
+    metrics = [
+        ("10+", "Years Experience"),
+        ("50+", "Analytics & AI Pipelines"),
+        ("24/7", "Automated Systems"),
+        ("BI + AI", "Technology Architecture"),
+    ]
 
-    col1, col2, col3 = st.columns(3)
+    for col, (value, label) in zip(
+        [c1, c2, c3, c4],
+        metrics
+    ):
+
+        with col:
+
+            html(f"""
+            <div class="metric-card">
+
+                <div class="metric-value">
+                    {value}
+                </div>
+
+                <div class="metric-label">
+                    {label}
+                </div>
+
+            </div>
+            """)
+
+
+    # ========================================================
+    # WHAT WE BUILD
+    # ========================================================
+
+    html("""
+    <div class="section-title">
+        What We Build
+    </div>
+
+    <div class="section-subtitle">
+        Solutions engineered specifically around logistics operations,
+        data analytics, automation, and predictive artificial intelligence.
+    </div>
+    """)
+
+
     services = [
+
         (
             "📊",
             "Logistics BI",
-            "Power BI dashboards for booking, delivery, pending, RTO, hub, and state performance.",
+            "Power BI dashboards for booking, delivery, pending shipments, RTO, hub performance, state performance, and operational KPIs.",
         ),
+
         (
             "🚚",
-            "TAT & Ageing",
-            "Shipment ageing, transit time, delivery SLA performance, and bottleneck detection.",
+            "TAT & Ageing Analytics",
+            "Shipment ageing analysis, transit time monitoring, delivery SLA performance, bottleneck detection, and delayed shipment identification.",
         ),
+
         (
             "⚙️",
             "MIS Automation",
-            "Automate daily operational reporting from ERPs, REST APIs, SQL databases, and Excel.",
+            "Automate daily operational reporting from ERPs, REST APIs, SQL databases, Python pipelines, and Excel reporting systems.",
         ),
+
         (
             "🏢",
-            "Hub Analytics",
-            "Measure hub throughput capacity, productivity, service levels, and staffing efficiency.",
+            "Hub Performance Analytics",
+            "Measure hub throughput, productivity, service levels, pending shipments, delivery performance, and operational efficiency.",
         ),
+
         (
             "🔗",
             "API & ERP Integration",
-            "Connect legacy ERPs and modern REST APIs using Python, SQL, and business intelligence suites.",
+            "Connect legacy ERP systems and modern REST APIs using Python, SQL, automation, and business intelligence platforms.",
         ),
+
         (
             "🤖",
-            "Predictive AI & ML",
-            "Machine Learning for shipment delay predictions, RTO risk scoring, and demand forecasting.",
+            "Predictive AI & Machine Learning",
+            "Machine learning solutions for shipment delay prediction, RTO risk scoring, demand forecasting, anomaly detection, and operational intelligence.",
         ),
+
     ]
 
-    for i, service in enumerate(services):
-        target_col = [col1, col2, col3][i % 3]
-        with target_col:
-            st.markdown(
-                f"""
-<div class="card">
-<div style="font-size:35px; margin-bottom: 8px;">{service[0]}</div>
-<h3>{service[1]}</h3>
-<p>{service[2]}</p>
-</div>
-""",
-                unsafe_allow_html=True,
-            )
 
-    st.markdown(
-        '<div class="section-title">Logistics Data Flow</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-subtitle">End-to-end shipment telemetry from booking to AI-monitored delivery.</div>',
-        unsafe_allow_html=True,
-    )
+    for i in range(0, len(services), 3):
 
-    st.markdown(
-        """<div class="workflow">
-<div class="workflow-container">
-<div class="workflow-step"><div class="workflow-icon">📦</div><div class="workflow-name">Booking</div><div class="workflow-desc">Shipment Created</div></div>
-<div class="workflow-arrow">→</div>
-<div class="workflow-step"><div class="workflow-icon">🚛</div><div class="workflow-name">Pickup</div><div class="workflow-desc">Shipment Picked</div></div>
-<div class="workflow-arrow">→</div>
-<div class="workflow-step"><div class="workflow-icon">🏢</div><div class="workflow-name">Inbound</div><div class="workflow-desc">Hub Received</div></div>
-<div class="workflow-arrow">→</div>
-<div class="workflow-step"><div class="workflow-icon">🔄</div><div class="workflow-name">Processing</div><div class="workflow-desc">Hub Processing</div></div>
-<div class="workflow-arrow">→</div>
-<div class="workflow-step"><div class="workflow-icon">🚚</div><div class="workflow-name">Transit</div><div class="workflow-desc">Shipment Moving</div></div>
-<div class="workflow-arrow">→</div>
-<div class="workflow-step"><div class="workflow-icon">📍</div><div class="workflow-name">Out for Delivery</div><div class="workflow-desc">Last Mile</div></div>
-<div class="workflow-arrow">→</div>
-<div class="workflow-step"><div class="workflow-icon">✅</div><div class="workflow-name">Delivery</div><div class="workflow-desc">Shipment Delivered</div></div>
-</div>
-</div>""",
-        unsafe_allow_html=True,
-    )
+        cols = st.columns(3)
 
-    st.markdown(
-        """
-<div class="hero">
-<h2>Have a Logistics Data or AI Problem?</h2>
-<p>Share your requirement to design custom analytics, machine learning algorithms, or automated data pipelines for your network.</p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
+        for j in range(3):
+
+            if i + j >= len(services):
+                continue
+
+            icon, title, description = services[i + j]
+
+            with cols[j]:
+
+                html(f"""
+                <div class="card">
+
+                    <div class="service-icon">
+                        {icon}
+                    </div>
+
+                    <h3>
+                        {title}
+                    </h3>
+
+                    <p>
+                        {description}
+                    </p>
+
+                </div>
+                """)
+
+
+    # ========================================================
+    # DATA FLOW
+    # ========================================================
+
+    html("""
+    <div class="section-title">
+        Logistics Data Flow
+    </div>
+
+    <div class="section-subtitle">
+        End-to-end shipment telemetry and operational intelligence
+        from booking to AI-monitored delivery.
+    </div>
+    """)
+
+
+    html("""
+    <div class="workflow">
+
+        <div class="workflow-container">
+
+            <div class="workflow-step">
+                <div class="workflow-icon">📦</div>
+                <div class="workflow-name">Booking</div>
+                <div class="workflow-desc">Shipment Created</div>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-icon">🚛</div>
+                <div class="workflow-name">Pickup</div>
+                <div class="workflow-desc">Shipment Picked</div>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-icon">🏢</div>
+                <div class="workflow-name">Inbound</div>
+                <div class="workflow-desc">Hub Received</div>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-icon">🔄</div>
+                <div class="workflow-name">Processing</div>
+                <div class="workflow-desc">Hub Processing</div>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-icon">🚚</div>
+                <div class="workflow-name">Transit</div>
+                <div class="workflow-desc">Shipment Moving</div>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-icon">📍</div>
+                <div class="workflow-name">Out for Delivery</div>
+                <div class="workflow-desc">Last Mile</div>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-icon">✅</div>
+                <div class="workflow-name">Delivery</div>
+                <div class="workflow-desc">Shipment Delivered</div>
+            </div>
+
+        </div>
+
+    </div>
+    """)
+
+
+    # ========================================================
+    # CTA
+    # ========================================================
+
+    html("""
+    <div class="hero">
+
+        <h2>
+            Have a Logistics Data or AI Problem?
+        </h2>
+
+        <p>
+            Share your business requirement and explore custom solutions
+            for logistics analytics, Power BI dashboards,
+            machine learning, SQL data engineering,
+            automated MIS reporting, and AI-powered
+            operational intelligence.
+        </p>
+
+    </div>
+    """)
+
 
 # ============================================================
-# SERVICES
+# SERVICES PAGE
 # ============================================================
 
 elif page == "Services":
-    st.markdown(
-        '<div class="section-title">Logistics & AI Solutions</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-subtitle">Project-based analytics and machine learning solutions engineered around your operation.</div>',
-        unsafe_allow_html=True,
-    )
+
+    html("""
+    <div class="section-title">
+        Logistics & AI Solutions
+    </div>
+
+    <div class="section-subtitle">
+        Project-based analytics, business intelligence, automation,
+        and machine learning solutions engineered around logistics operations.
+    </div>
+    """)
+
 
     service_details = [
+
         (
             "📊",
             "Courier Operations Dashboard",
@@ -463,6 +896,7 @@ elif page == "Services":
                 "Real-time operational trends",
             ],
         ),
+
         (
             "⏱️",
             "TAT & Ageing Analytics",
@@ -475,21 +909,23 @@ elif page == "Services":
                 "Delay classification",
             ],
         ),
+
         (
             "🏢",
             "Hub Performance Analytics",
             [
                 "Hub productivity scoring",
-                "Booking vs. delivery velocity",
+                "Booking vs delivery velocity",
                 "Pending ageing control",
                 "RTO minimization metrics",
                 "First-attempt delivery rate",
                 "Hub SLA rankings",
             ],
         ),
+
         (
             "🔄",
-            "Inbound / Outbound Network",
+            "Inbound / Outbound Network Analytics",
             [
                 "State-to-state movement",
                 "Hub inbound optimization",
@@ -499,6 +935,7 @@ elif page == "Services":
                 "Network lane performance",
             ],
         ),
+
         (
             "⚙️",
             "MIS Automation",
@@ -507,10 +944,11 @@ elif page == "Services":
                 "REST API pipelines",
                 "Python ETL scripting",
                 "Excel report generation",
-                "Cron-scheduled jobs",
+                "Scheduled automation",
                 "Email distribution alerts",
             ],
         ),
+
         (
             "🤖",
             "Predictive AI & Analytics",
@@ -519,138 +957,226 @@ elif page == "Services":
                 "RTO probability scoring",
                 "Demand & volume forecasting",
                 "Hub workload prediction",
-                "Anomaly & exception detection",
-                "Custom ML algorithms",
+                "Anomaly detection",
+                "Custom machine learning models",
             ],
         ),
+
     ]
 
+
     for i in range(0, len(service_details), 3):
+
         cols = st.columns(3)
+
         for j in range(3):
-            if i + j < len(service_details):
-                icon, title, items = service_details[i + j]
-                with cols[j]:
-                    item_html = "".join([f"<li>{item}</li>" for item in items])
-                    st.markdown(
-                        f"""
-<div class="card">
-<div style="font-size:35px; margin-bottom: 8px;">{icon}</div>
-<h3>{title}</h3>
-<ul>{item_html}</ul>
-</div>
-""",
-                        unsafe_allow_html=True,
-                    )
+
+            if i + j >= len(service_details):
+                continue
+
+            icon, title, items = service_details[i + j]
+
+            item_html = "".join(
+                f"<li>{item}</li>"
+                for item in items
+            )
+
+            with cols[j]:
+
+                html(f"""
+                <div class="card">
+
+                    <div class="service-icon">
+                        {icon}
+                    </div>
+
+                    <h3>
+                        {title}
+                    </h3>
+
+                    <ul>
+                        {item_html}
+                    </ul>
+
+                </div>
+                """)
+
 
 # ============================================================
-# PROJECTS
+# PROJECTS PAGE
 # ============================================================
 
 elif page == "Projects":
-    st.markdown(
-        '<div class="section-title">Logistics & AI Projects</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-subtitle">Sample project ideas demonstrating core capabilities in logistics analytics and machine learning.</div>',
-        unsafe_allow_html=True,
-    )
+
+    html("""
+    <div class="section-title">
+        Logistics & AI Projects
+    </div>
+
+    <div class="section-subtitle">
+        Sample projects demonstrating capabilities in logistics analytics,
+        business intelligence, automation, and machine learning.
+    </div>
+    """)
+
 
     projects = [
+
         (
             "01",
             "Courier Operations Dashboard",
-            "Complete operational dashboard covering booking, delivery, pending, RTO, ageing, and hub performance.",
+            "Complete operational dashboard covering booking, delivery, pending shipments, RTO, ageing, hub performance, and business KPIs.",
             "Power BI • SQL • DAX",
             "Operations Analytics",
         ),
+
         (
             "02",
-            "Shipment TAT & Ageing",
-            "Identify delayed shipments, ageing buckets, route-level delays, and SLA performance limits.",
+            "Shipment TAT & Ageing Analytics",
+            "Identify delayed shipments, ageing buckets, route-level delays, transit performance, and SLA bottlenecks.",
             "SQL • Python • Power BI",
             "TAT Analytics",
         ),
+
         (
             "03",
             "Hub Performance Analytics",
-            "Compare hubs based on booking, delivery, pending, RTO, weight, and operational SLAs.",
+            "Compare hubs based on booking, delivery, pending shipments, RTO, shipment weight, productivity, and operational SLAs.",
             "SQL • Power BI • DAX",
             "Hub Analytics",
         ),
+
         (
             "04",
             "Inbound / Outbound Analytics",
-            "Analyze shipment movement from origin state and hub to destination hub across transit corridors.",
+            "Analyze shipment movement from origin states and hubs to destination hubs across logistics corridors.",
             "SQL • Python • Power BI",
             "Network Analytics",
         ),
+
         (
             "05",
             "Shipment Delay Prediction AI",
             "Machine learning model using XGBoost to identify shipments with high probabilities of delay before SLA breaches.",
-            "Python • XGBoost • ML",
+            "Python • XGBoost • Machine Learning",
             "Predictive AI",
         ),
+
         (
             "06",
             "Automated Daily MIS Engine",
-            "ERP/API automated data extraction, transformation, validation, and scheduled report distribution.",
-            "Python • SQL • API",
+            "ERP and API automated data extraction, transformation, validation, and scheduled report distribution.",
+            "Python • SQL • REST API",
             "Automation",
         ),
+
     ]
 
+
     for i in range(0, len(projects), 2):
+
         cols = st.columns(2)
+
         for j in range(2):
-            if i + j < len(projects):
-                number, title, description, tech, category = projects[i + j]
-                with cols[j]:
-                    st.markdown(
-                        f"""
-<div class="project-card">
-<div style="font-size:13px; color:#0066CC; font-weight: 700;">PROJECT {number}</div>
-<h3>{title}</h3>
-<p>{description}</p>
-<b>Technology:</b> <p>{tech}</p>
-<b>Category:</b> <p>{category}</p>
-</div>
-""",
-                        unsafe_allow_html=True,
-                    )
+
+            if i + j >= len(projects):
+                continue
+
+            number, title, description, tech, category = projects[i + j]
+
+            with cols[j]:
+
+                html(f"""
+                <div class="project-card">
+
+                    <div style="
+                        color:#0066CC;
+                        font-size:13px;
+                        font-weight:800;
+                        margin-bottom:8px;
+                    ">
+                        PROJECT {number}
+                    </div>
+
+                    <h3>
+                        {title}
+                    </h3>
+
+                    <p>
+                        {description}
+                    </p>
+
+                    <p>
+                        <strong>Technology:</strong><br>
+                        {tech}
+                    </p>
+
+                    <p>
+                        <strong>Category:</strong><br>
+                        {category}
+                    </p>
+
+                </div>
+                """)
+
 
 # ============================================================
 # REQUEST PROJECT
 # ============================================================
 
 elif page == "Request Project":
-    st.markdown(
-        '<div class="section-title">Request a Project</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        """
-    <div class="section-subtitle">
-    Share your logistics analytics, machine learning, or automation project specifications.
+
+    html("""
+    <div class="section-title">
+        Request a Project
     </div>
-    """,
-        unsafe_allow_html=True,
+
+    <div class="section-subtitle">
+        Share your logistics analytics, business intelligence,
+        machine learning, or automation project requirements.
+    </div>
+    """)
+
+
+    GOOGLE_SHEET_WEB_APP_URL = st.secrets.get(
+        "GOOGLE_SHEET_WEB_APP_URL",
+        ""
     )
 
-    GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwRG4BzU91339mhwtD3QIGBkJWphnJkJ3R01LURdLV6Ge8znKM4arEKttRR800MdGBI/exec"
+
+    if not GOOGLE_SHEET_WEB_APP_URL:
+
+        st.info(
+            "Project request system is currently being configured."
+        )
+
 
     with st.form("project_request_form"):
+
         col1, col2 = st.columns(2)
 
+
         with col1:
-            company_name = st.text_input("Company Name")
-            contact_name = st.text_input("Contact Person*")
-            email = st.text_input("Email*")
-            phone = st.text_input("Phone")
+
+            company_name = st.text_input(
+                "Company Name"
+            )
+
+            contact_name = st.text_input(
+                "Contact Person *"
+            )
+
+            email = st.text_input(
+                "Business Email *"
+            )
+
+            phone = st.text_input(
+                "Phone / WhatsApp"
+            )
+
 
         with col2:
+
             service = st.selectbox(
                 "Required Solution",
                 [
@@ -658,7 +1184,7 @@ elif page == "Request Project":
                     "SQL Analytics",
                     "Predictive AI / Machine Learning",
                     "TAT & Ageing Analytics",
-                    "Hub Performance",
+                    "Hub Performance Analytics",
                     "Route Analytics",
                     "Automated MIS",
                     "API / ERP Integration",
@@ -673,6 +1199,7 @@ elif page == "Request Project":
                     "CSV",
                     "MySQL",
                     "SQL Server",
+                    "PostgreSQL",
                     "ERP",
                     "REST API",
                     "Multiple Sources",
@@ -691,107 +1218,315 @@ elif page == "Request Project":
                 ],
             )
 
+
         requirement = st.text_area(
-            "Describe Your Requirement*",
+            "Describe Your Requirement *",
             height=150,
             placeholder=(
-                "Example: We need an automated daily courier performance "
-                "dashboard and an AI model for predicting shipment delay risk."
+                "Example: We need an automated daily courier "
+                "performance dashboard and an AI model for "
+                "predicting shipment delay risk."
             ),
         )
 
-        submitted = st.form_submit_button("Submit Project Request")
+
+        submitted = st.form_submit_button(
+            "Submit Project Request"
+        )
+
 
         if submitted:
-            if not contact_name or not email or not requirement:
+
+            if not contact_name.strip():
+
                 st.warning(
-                    "Please provide Contact Person, Email, and Requirement details."
+                    "Please enter the Contact Person name."
                 )
+
+            elif not email.strip():
+
+                st.warning(
+                    "Please enter your Email address."
+                )
+
+            elif not requirement.strip():
+
+                st.warning(
+                    "Please describe your project requirement."
+                )
+
+            elif not GOOGLE_SHEET_WEB_APP_URL:
+
+                st.error(
+                    "Project request system is not configured yet."
+                )
+
             else:
+
                 payload = {
-                    "Date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+
+                    "Date": datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+
                     "Company": company_name,
+
                     "Contact": contact_name,
+
                     "Email": email,
+
                     "Phone": phone,
+
                     "Service": service,
+
                     "Data_Source": data_source,
+
                     "Timeline": timeline,
+
                     "Requirement": requirement,
                 }
 
+
                 try:
+
                     response = requests.post(
                         GOOGLE_SHEET_WEB_APP_URL,
                         data=json.dumps(payload),
-                        headers={"Content-Type": "text/plain;charset=utf-8"},
-                        timeout=10,
+                        headers={
+                            "Content-Type":
+                            "text/plain;charset=utf-8"
+                        },
+                        timeout=15,
                     )
 
+
                     if response.status_code == 200:
+
                         st.success(
-                            "Thank you! Your project request has been logged successfully into our system."
-                        )
-                    else:
-                        st.error(
-                            f"Submission error ({response.status_code}). Please try again."
+                            "🎉 Thank you! Your project request "
+                            "has been submitted successfully."
                         )
 
-                except Exception as e:
-                    st.error(f"Failed to transmit request: {e}")
+                    else:
+
+                        st.error(
+                            f"Submission failed. "
+                            f"Status Code: {response.status_code}"
+                        )
+
+
+                except requests.exceptions.Timeout:
+
+                    st.error(
+                        "Request timed out. Please try again."
+                    )
+
+
+                except requests.exceptions.RequestException as e:
+
+                    st.error(
+                        f"Unable to submit request: {e}"
+                    )
+
 
 # ============================================================
 # ABOUT
 # ============================================================
 
 elif page == "About":
-    st.markdown(
-        '<div class="section-title">About LogiIntelli</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        """
-<div class="card">
-<p><b>LogiIntelli</b> delivers enterprise-grade analytics, machine learning, and automation solutions engineered for the logistics, courier, and supply chain industries.</p>
-<p>By processing complex operational streams into interactive dashboards, predictive AI models, and automated data pipelines, businesses unlock end-to-end visibility, decrease manual reporting work, and optimize delivery SLA performance.</p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
+
+    html("""
+    <div class="section-title">
+        About LogiIntelli
+    </div>
+
+    <div class="card">
+
+        <h2>
+            AI & Data Intelligence for Logistics
+        </h2>
+
+        <p>
+            <strong>LogiIntelli</strong> is an AI, Data Analytics,
+            and Business Intelligence platform focused on
+            logistics, courier, supply chain,
+            and e-commerce industries.
+        </p>
+
+        <p>
+            We transform complex operational data into
+            actionable business intelligence using SQL,
+            Python, Power BI, machine learning,
+            APIs, and automated data pipelines.
+        </p>
+
+        <p>
+            Our expertise includes logistics analytics,
+            shipment tracking, delivery performance,
+            TAT and ageing analysis, hub performance,
+            route analytics, predictive AI,
+            shipment delay prediction,
+            demand forecasting, and MIS automation.
+        </p>
+
+        <p>
+            LogiIntelli helps businesses improve operational
+            visibility, reduce manual reporting,
+            identify bottlenecks, monitor delivery SLAs,
+            and make better data-driven decisions using
+            modern analytics and artificial intelligence.
+        </p>
+
+    </div>
+    """)
+
+
+    html("""
+    <div class="card">
+
+        <h3>
+            Our Technology Stack
+        </h3>
+
+        <p>
+            🐍 Python &nbsp; • &nbsp;
+            🗄️ SQL & Data Engineering &nbsp; • &nbsp;
+            📊 Power BI & DAX &nbsp; • &nbsp;
+            🤖 Machine Learning & AI &nbsp; • &nbsp;
+            🔗 REST APIs & Automation
+        </p>
+
+    </div>
+    """)
+
 
 # ============================================================
 # CONTACT
 # ============================================================
 
 elif page == "Contact":
-    st.markdown(
-        '<div class="section-title">Contact Information</div>',
-        unsafe_allow_html=True,
-    )
+
+    html("""
+    <div class="section-title">
+        Contact LogiIntelli
+    </div>
+
+    <div class="section-subtitle">
+        Let's discuss your logistics analytics,
+        AI, automation, or business intelligence requirements.
+    </div>
+    """)
+
 
     c1, c2 = st.columns(2)
+
+
     with c1:
-        st.markdown(
-            """
-<div class="card">
-<h3>Email</h3>
-<p><a href="mailto:sumansekar1205@gmail.com" style="color: #0066CC;">sumansekar1205@gmail.com</a></p>
-<h3>Phone / WhatsApp</h3>
-<p><a href="https://wa.me/918825674102" target="_blank" style="color: #0066CC;">📱 +91 8825674102 (Chat on WhatsApp)</a></p>
-</div>
-""",
-            unsafe_allow_html=True,
-        )
+
+        html("""
+        <div class="card">
+
+            <h3>
+                📧 Email
+            </h3>
+
+            <p>
+                <a
+                    class="contact-link"
+                    href="mailto:sumansekar1205@gmail.com"
+                >
+                    sumansekar1205@gmail.com
+                </a>
+            </p>
+
+            <h3>
+                📱 Phone / WhatsApp
+            </h3>
+
+            <p>
+                <a
+                    class="contact-link"
+                    href="https://wa.me/918825674102"
+                    target="_blank"
+                >
+                    +91 8825674102
+                </a>
+            </p>
+
+        </div>
+        """)
+
 
     with c2:
-        st.markdown(
-            """
-<div class="card">
-<h3>LinkedIn</h3>
-<p><a href="https://linkedin.com/in/sumansekar12/" target="_blank" style="color: #0066CC;">linkedin.com/in/sumansekar12/</a></p>
-<h3>GitHub</h3>
-<p><a href="https://github.com/Suman-SekarSagadev" target="_blank" style="color: #0066CC;">github.com/Suman-SekarSagadev</a></p>
+
+        html("""
+        <div class="card">
+
+            <h3>
+                💼 LinkedIn
+            </h3>
+
+            <p>
+                <a
+                    class="contact-link"
+                    href="https://linkedin.com/in/sumansekar12/"
+                    target="_blank"
+                >
+                    linkedin.com/in/sumansekar12/
+                </a>
+            </p>
+
+            <h3>
+                💻 GitHub
+            </h3>
+
+            <p>
+                <a
+                    class="contact-link"
+                    href="https://github.com/Suman-SekarSagadev"
+                    target="_blank"
+                >
+                    github.com/Suman-SekarSagadev
+                </a>
+            </p>
+
+        </div>
+        """)
+
+
+# ============================================================
+# FOOTER
+# ============================================================
+
+html("""
+<hr style="
+    border:0;
+    border-top:1px solid #E2E8F0;
+    margin-top:50px;
+">
+
+<div class="footer">
+
+    <div class="footer-title">
+        🚚 LogiIntelli
+    </div>
+
+    <div>
+        Logistics AI • Data Analytics • Business Intelligence
+    </div>
+
+    <br>
+
+    <div>
+        Power BI Dashboards • Machine Learning • SQL Data Engineering
+        • Shipment Analytics • Supply Chain Intelligence • MIS Automation
+    </div>
+
+    <br>
+
+    <div>
+        © 2026 LogiIntelli. All Rights Reserved.
+    </div>
+
 </div>
-""",
-            unsafe_allow_html=True,
-        )
+""")
