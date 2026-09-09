@@ -110,7 +110,7 @@ header[data-testid="stHeader"] {
     height: 0px !important;
 }
 
-/* Hide Streamlit Cloud top-right controls such as Manage App */
+/* Hide Streamlit developer toolbar / controls */
 [data-testid="stToolbar"] {
     display: none !important;
 }
@@ -121,6 +121,24 @@ header[data-testid="stHeader"] {
 
 [data-testid="stStatusWidget"] {
     display: none !important;
+}
+
+/* Hide Streamlit deploy/manage controls when exposed in the page DOM */
+button[title*="Manage app"],
+button[aria-label*="Manage app"],
+[title*="Manage app"],
+[aria-label*="Manage app"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Hide bottom-right Streamlit status/developer area */
+.stAppDeployButton,
+[data-testid="stAppDeployButton"],
+[data-testid="stStatusWidget"],
+[data-testid="stToolbarActions"] {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 
