@@ -9,7 +9,7 @@ import streamlit as st
 # ============================================================
 
 st.set_page_config(
-    page_title="Suman Analytics | AI, Data & Logistics",
+    page_title="LogiIntelli  | AI, Data & Logistics",
     page_icon="🚚",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -275,7 +275,7 @@ div[data-testid="stForm"] button[type="submit"]:hover {
 st.markdown(
     """
 <div style="text-align:center;">
-    <div class="main-title">🚚 SUMAN ANALYTICS</div>
+    <div class="main-title">🚚 LogiIntelli</div>
     <div class="sub-title">Logistics Analytics • AI & Predictive Intelligence • BI Automation</div>
 </div>
 """,
