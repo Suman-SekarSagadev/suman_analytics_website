@@ -401,42 +401,40 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   SMALL FLOATING CHATBOT - BOTTOM LEFT
+   SMALL FLOATING CHATBOT - LEFT SIDE SMALL BOX
 ============================================================ */
 
 .st-key-floating_chatbot {
     position: fixed !important;
     left: 20px !important;
     bottom: 20px !important;
-    width: 270px !important;
+    width: 250px !important;
     max-width: calc(100vw - 40px) !important;
     z-index: 999999 !important;
     background: white !important;
     border: 1px solid #D9E2EC !important;
-    border-radius: 14px !important;
-    box-shadow:
-        0 10px 30px rgba(15,23,42,0.18),
-        0 3px 10px rgba(15,23,42,0.08) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.15) !important;
     overflow: hidden !important;
 }
 
 
 /* ============================================================
-   CHAT HEADER
+   CHAT HEADER & CLOSE BUTTON
 ============================================================ */
 
 .chat-header-left {
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    justify-content: center;
     background: linear-gradient(135deg, #0F172A, #2563EB);
-    padding: 10px;
-    border-radius: 14px 14px 0 0;
+    padding: 8px 10px;
+    border-radius: 12px 0 0 0;
     color: white;
 }
 
 .chat-header-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     line-height: 1.2;
 }
@@ -444,7 +442,24 @@ div.stButton > button:hover {
 .chat-header-subtitle {
     font-size: 9px;
     color: #CBD5E1;
-    margin-top: 3px;
+    margin-top: 2px;
+}
+
+.st-key-chat_close button {
+    min-height: 22px !important;
+    height: 22px !important;
+    width: 22px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.20) !important;
+    color: white !important;
+    border: none !important;
+    font-size: 11px !important;
+    margin-top: 6px !important;
+}
+
+.st-key-chat_close button:hover {
+    background: rgba(255,255,255,0.40) !important;
 }
 
 
@@ -454,16 +469,16 @@ div.stButton > button:hover {
 
 .chat-body {
     padding: 7px 9px;
-    max-height: 270px;
+    max-height: 250px;
     overflow-y: auto;
 }
 
 .chat-message {
-    padding: 7px 9px;
-    border-radius: 9px;
-    margin: 5px 0;
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin: 4px 0;
     font-size: 10px;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 .chat-assistant {
@@ -475,58 +490,32 @@ div.stButton > button:hover {
 .chat-user {
     background: #0F172A;
     color: white;
-    margin-left: 20px;
+    margin-left: 15px;
 }
 
 
 /* ============================================================
-   CLOSE BUTTON & REOPEN BUTTON
+   REOPEN BUTTON - FIXED LEFT SIDE
 ============================================================ */
-
-.st-key-chat_close button {
-    min-height: 25px !important;
-    height: 25px !important;
-    width: 25px !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-    background: rgba(255,255,255,0.15) !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.20) !important;
-    font-size: 13px !important;
-    margin-top: 5px !important;
-}
-
-.st-key-chat_close button:hover {
-    background: rgba(255,255,255,0.30) !important;
-    color: white !important;
-}
 
 .st-key-open_chat {
     position: fixed !important;
     left: 20px !important;
     bottom: 20px !important;
     z-index: 999999 !important;
-    width: 58px !important;
-    height: 58px !important;
 }
 
 .st-key-open_chat button {
-    width: 58px !important;
-    height: 58px !important;
-    min-height: 58px !important;
+    width: 50px !important;
+    height: 50px !important;
+    min-height: 50px !important;
     padding: 0 !important;
     border-radius: 50% !important;
     background: linear-gradient(135deg, #0F172A, #2563EB) !important;
     color: white !important;
     border: none !important;
-    box-shadow: 0 8px 25px rgba(15,23,42,0.25) !important;
-    font-size: 21px !important;
-}
-
-.st-key-open_chat button:hover {
-    color: white !important;
-    border: none !important;
-    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(15,23,42,0.2) !important;
+    font-size: 18px !important;
 }
 
 
@@ -551,7 +540,7 @@ div.stButton > button:hover {
     .st-key-floating_chatbot {
         left: 10px !important;
         bottom: 10px !important;
-        width: 250px !important;
+        width: 230px !important;
         max-width: calc(100vw - 20px) !important;
     }
 
@@ -1273,7 +1262,7 @@ html(
 
 
 # ============================================================
-# FLOATING CHATBOT WIDGET
+# FLOATING CHATBOT WIDGET - LEFT SIDE SMALL BOX
 # ============================================================
 
 if st.session_state.chat_open:
@@ -1286,7 +1275,7 @@ if st.session_state.chat_open:
             """
             <div class="chat-header-left">
                 <div class="chat-header-title">🤖 LogiIntelli Assistant</div>
-                <div class="chat-header-subtitle">Project & Analytics Consultation</div>
+                <div class="chat-header-subtitle">Project Consultation</div>
             </div>
             """,
             unsafe_allow_html=True,
