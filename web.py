@@ -1032,7 +1032,7 @@ html(
 <div class="logi-header">
 
     <div class="logi-brand">
-        🚚 Logi<span class="logi-blue">Intelli</span>
+        JYORA <span class="logi-blue">Consulting</span>
     </div>
 
     <div class="logi-subtitle">
@@ -1086,7 +1086,7 @@ def show_home():
 <div class="hero">
 
     <div class="hero-badge">
-        🚚 DATA • AI • BUSINESS INTELLIGENCE • AUTOMATION
+        📊 DATA • AI • BUSINESS INTELLIGENCE • AUTOMATION
     </div>
 
     <div class="hero-title">
