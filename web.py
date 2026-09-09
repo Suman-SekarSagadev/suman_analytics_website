@@ -19,7 +19,7 @@ st.set_page_config(
 
 
 # ============================================================
-# GOOGLE APPS SCRIPT WEB APP
+# GOOGLE APPS SCRIPT WEB APP URL
 # ============================================================
 
 GOOGLE_SHEET_WEB_APP_URL = (
@@ -44,8 +44,20 @@ def html(content):
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-if "submitted" not in st.session_state:
-    st.session_state.submitted = False
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
+
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+
+if "chat_step" not in st.session_state:
+    st.session_state.chat_step = 0
+
+if "chat_data" not in st.session_state:
+    st.session_state.chat_data = {}
+
+if "chat_submitted" not in st.session_state:
+    st.session_state.chat_submitted = False
 
 
 # ============================================================
@@ -109,30 +121,15 @@ html, body {
    NAVIGATION
 ============================================================ */
 
-.nav-container {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
 .stButton > button {
     width: 100%;
     min-height: 42px;
-
     border-radius: 10px;
-
     border: 1px solid #E2E8F0;
-
     background: #FFFFFF;
-
     color: #0B2545;
-
     font-weight: 700;
-
-    transition:
-        background .2s ease,
-        color .2s ease,
-        transform .2s ease,
-        border-color .2s ease;
+    transition: all .2s ease;
 }
 
 .stButton > button:hover {
@@ -172,37 +169,24 @@ html, body {
 }
 
 .hero h1 {
-
     color: #FFFFFF;
-
     font-size: 36px;
-
     font-weight: 900;
-
     margin-bottom: 20px;
-
     line-height: 1.2;
 }
 
 .hero h2 {
-
     color: #FFFFFF;
-
     font-size: 28px;
-
     font-weight: 850;
-
     margin-bottom: 15px;
 }
 
 .hero p {
-
     color: #E2E8F0;
-
     font-size: 17px;
-
     line-height: 1.75;
-
     margin-bottom: 15px;
 }
 
@@ -216,26 +200,17 @@ html, body {
 ============================================================ */
 
 .section-title {
-
     font-size: 31px;
-
     font-weight: 900;
-
     color: #0B2545;
-
     margin-top: 42px;
-
     margin-bottom: 7px;
 }
 
 .section-subtitle {
-
     color: #64748B;
-
     font-size: 15px;
-
     line-height: 1.65;
-
     margin-bottom: 25px;
 }
 
@@ -282,20 +257,15 @@ html, body {
 .card h2,
 .card h3,
 .project-card h3 {
-
     color: #0B2545;
-
     font-weight: 850;
-
     margin-bottom: 12px;
 }
 
 .card p,
 .card li,
 .project-card p {
-
     color: #334155;
-
     line-height: 1.65;
 }
 
@@ -309,29 +279,20 @@ html, body {
 ============================================================ */
 
 .metric-card {
-
     text-align: center;
-
     padding: 27px 15px;
 }
 
 .metric-value {
-
     font-size: 35px;
-
     font-weight: 900;
-
     color: #0066CC;
-
     margin-bottom: 5px;
 }
 
 .metric-label {
-
     color: #64748B;
-
     font-size: 14px;
-
     font-weight: 700;
 }
 
@@ -341,9 +302,7 @@ html, body {
 ============================================================ */
 
 .service-icon {
-
     font-size: 40px;
-
     margin-bottom: 9px;
 }
 
@@ -384,43 +343,30 @@ html, body {
 }
 
 .workflow-step {
-
     text-align: center;
-
     min-width: 115px;
 }
 
 .workflow-icon {
-
     font-size: 38px;
-
     margin-bottom: 8px;
 }
 
 .workflow-name {
-
     font-size: 15px;
-
     font-weight: 800;
-
     color: #0B2545;
 }
 
 .workflow-desc {
-
     font-size: 12px;
-
     color: #64748B;
-
     margin-top: 4px;
 }
 
 .workflow-arrow {
-
     font-size: 22px;
-
     color: #0066CC;
-
     font-weight: 800;
 }
 
@@ -444,9 +390,7 @@ div[data-testid="stForm"] {
 }
 
 div[data-testid="stWidgetLabel"] label {
-
     color: #0B2545 !important;
-
     font-weight: 750 !important;
 }
 
@@ -460,12 +404,6 @@ div[data-testid="stForm"] textarea {
     border: 1px solid #CBD5E1 !important;
 
     border-radius: 9px !important;
-}
-
-div[data-testid="stForm"] input:focus,
-div[data-testid="stForm"] textarea:focus {
-
-    border-color: #0066CC !important;
 }
 
 
@@ -485,38 +423,31 @@ div[data-testid="stFormSubmitButton"] button {
 
     font-weight: 800 !important;
 
-    padding: 10px 28px !important;
-
     min-height: 45px;
 }
 
 div[data-testid="stFormSubmitButton"] button:hover {
-
     background: #0066CC !important;
 }
 
 
 /* ============================================================
-   CONTACT LINKS
+   CONTACT
 ============================================================ */
 
 .contact-link {
-
     color: #0066CC;
-
     text-decoration: none;
-
     font-weight: 700;
 }
 
 .contact-link:hover {
-
     text-decoration: underline;
 }
 
 
 /* ============================================================
-   BADGES
+   BADGE
 ============================================================ */
 
 .badge {
@@ -536,6 +467,70 @@ div[data-testid="stFormSubmitButton"] button:hover {
     font-weight: 800;
 
     margin-top: 5px;
+}
+
+
+/* ============================================================
+   CHATBOT
+============================================================ */
+
+/*
+   Streamlit chat_input is fixed at the bottom of the browser.
+   This styling gives it the appearance of a floating assistant.
+*/
+
+[data-testid="stChatInput"] {
+
+    border-radius: 18px !important;
+
+}
+
+[data-testid="stChatMessage"] {
+
+    border-radius: 14px;
+
+}
+
+
+/* ============================================================
+   CHATBOT HEADER
+============================================================ */
+
+.chat-header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0B2545,
+            #0066CC
+        );
+
+    color: white;
+
+    padding: 18px 22px;
+
+    border-radius: 18px;
+
+    margin-bottom: 15px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 102, 204, 0.18);
+}
+
+.chat-header-title {
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+.chat-header-sub {
+
+    font-size: 13px;
+
+    color: #E2E8F0;
+
+    margin-top: 4px;
 }
 
 
@@ -616,6 +611,447 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
 
 # ============================================================
+# CHATBOT FUNCTIONS
+# ============================================================
+
+def reset_chat():
+
+    st.session_state.chat_messages = []
+
+    st.session_state.chat_step = 0
+
+    st.session_state.chat_data = {}
+
+    st.session_state.chat_submitted = False
+
+
+def valid_email(email):
+
+    return re.match(
+        r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+        email.strip()
+    )
+
+
+def submit_chat_request():
+
+    data = st.session_state.chat_data
+
+    payload = {
+
+        "Date": datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+
+        "Company": data.get(
+            "company",
+            ""
+        ),
+
+        "Contact": data.get(
+            "name",
+            ""
+        ),
+
+        "Email": data.get(
+            "email",
+            ""
+        ),
+
+        "Phone": data.get(
+            "phone",
+            ""
+        ),
+
+        "Industry": data.get(
+            "industry",
+            ""
+        ),
+
+        "Service": data.get(
+            "service",
+            ""
+        ),
+
+        "Data_Source": data.get(
+            "data_source",
+            ""
+        ),
+
+        "Shipment_Volume": data.get(
+            "volume",
+            ""
+        ),
+
+        "Timeline": data.get(
+            "timeline",
+            ""
+        ),
+
+        "Requirement": data.get(
+            "requirement",
+            ""
+        ),
+    }
+
+
+    try:
+
+        response = requests.post(
+
+            GOOGLE_SHEET_WEB_APP_URL,
+
+            data=json.dumps(payload),
+
+            headers={
+                "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            timeout=20,
+
+            allow_redirects=True,
+        )
+
+
+        if response.status_code == 200:
+
+            return True, "success"
+
+        return False, response.text
+
+
+    except requests.exceptions.Timeout:
+
+        return False, "timeout"
+
+
+    except requests.exceptions.RequestException as e:
+
+        return False, str(e)
+
+
+def chatbot_response(user_message):
+
+    step = st.session_state.chat_step
+
+    data = st.session_state.chat_data
+
+    message = user_message.strip()
+
+
+    # ========================================================
+    # STEP 0 - NAME
+    # ========================================================
+
+    if step == 0:
+
+        data["name"] = message
+
+        st.session_state.chat_step = 1
+
+        return (
+            f"Nice to meet you, **{message}**! 👋\n\n"
+            "What is your **company name**?"
+        )
+
+
+    # ========================================================
+    # STEP 1 - COMPANY
+    # ========================================================
+
+    if step == 1:
+
+        data["company"] = message
+
+        st.session_state.chat_step = 2
+
+        return (
+            "Great! Which industry does your company operate in?\n\n"
+            "**Courier / Logistics / E-commerce / "
+            "Manufacturing / Other**"
+        )
+
+
+    # ========================================================
+    # STEP 2 - INDUSTRY
+    # ========================================================
+
+    if step == 2:
+
+        data["industry"] = message
+
+        st.session_state.chat_step = 3
+
+        return (
+            "What solution are you looking for?\n\n"
+            "📊 **Power BI Dashboard**\n\n"
+            "🗄️ **SQL Analytics**\n\n"
+            "🤖 **Predictive AI / Machine Learning**\n\n"
+            "⚙️ **MIS Automation**\n\n"
+            "🔗 **API / ERP Integration**\n\n"
+            "⏱️ **TAT & Ageing Analytics**\n\n"
+            "🏢 **Hub Performance Analytics**\n\n"
+            "📍 **Route Analytics**\n\n"
+            "Other"
+        )
+
+
+    # ========================================================
+    # STEP 3 - SERVICE
+    # ========================================================
+
+    if step == 3:
+
+        data["service"] = message
+
+        st.session_state.chat_step = 4
+
+        return (
+            "Understood. 👍\n\n"
+            "Please describe the **business problem or "
+            "requirement** you want to solve.\n\n"
+            "For example:\n"
+            "> We need a dashboard to monitor delayed shipments, "
+            "hub performance and pending ageing."
+        )
+
+
+    # ========================================================
+    # STEP 4 - REQUIREMENT
+    # ========================================================
+
+    if step == 4:
+
+        data["requirement"] = message
+
+        st.session_state.chat_step = 5
+
+        return (
+            "What is your current **data source**?\n\n"
+            "Excel / CSV / MySQL / SQL Server / PostgreSQL / "
+            "ERP / REST API / Multiple Sources / Other"
+        )
+
+
+    # ========================================================
+    # STEP 5 - DATA SOURCE
+    # ========================================================
+
+    if step == 5:
+
+        data["data_source"] = message
+
+        st.session_state.chat_step = 6
+
+        return (
+            "Approximately how much data do you handle?\n\n"
+            "For example:\n"
+            "• 1,000 shipments/day\n"
+            "• 10,000 shipments/day\n"
+            "• 1 lakh shipments/day\n"
+            "• Not sure"
+        )
+
+
+    # ========================================================
+    # STEP 6 - VOLUME
+    # ========================================================
+
+    if step == 6:
+
+        data["volume"] = message
+
+        st.session_state.chat_step = 7
+
+        return (
+            "What timeline are you expecting?\n\n"
+            "⏱️ Less than 1 week\n\n"
+            "⏱️ 1–2 weeks\n\n"
+            "⏱️ 2–4 weeks\n\n"
+            "⏱️ 1–2 months\n\n"
+            "⏱️ Not decided"
+        )
+
+
+    # ========================================================
+    # STEP 7 - TIMELINE
+    # ========================================================
+
+    if step == 7:
+
+        data["timeline"] = message
+
+        st.session_state.chat_step = 8
+
+        return (
+            "Almost done! 😊\n\n"
+            "Please provide your **business email address**."
+        )
+
+
+    # ========================================================
+    # STEP 8 - EMAIL
+    # ========================================================
+
+    if step == 8:
+
+        if not valid_email(message):
+
+            return (
+                "That doesn't look like a valid email address. "
+                "Please enter something like:\n\n"
+                "**name@company.com**"
+            )
+
+        data["email"] = message
+
+        st.session_state.chat_step = 9
+
+        return (
+            "Thanks! 📧\n\n"
+            "Please provide your **Phone / WhatsApp number**.\n\n"
+            "You can also type **Skip** if you don't want to provide it."
+        )
+
+
+    # ========================================================
+    # STEP 9 - PHONE
+    # ========================================================
+
+    if step == 9:
+
+        if message.lower() == "skip":
+
+            data["phone"] = ""
+
+        else:
+
+            data["phone"] = message
+
+        st.session_state.chat_step = 10
+
+        summary = f"""
+### 📋 Project Request Summary
+
+**Name:** {data.get("name", "")}
+
+**Company:** {data.get("company", "")}
+
+**Industry:** {data.get("industry", "")}
+
+**Solution:** {data.get("service", "")}
+
+**Requirement:** {data.get("requirement", "")}
+
+**Data Source:** {data.get("data_source", "")}
+
+**Data Volume:** {data.get("volume", "")}
+
+**Timeline:** {data.get("timeline", "")}
+
+**Email:** {data.get("email", "")}
+
+**Phone:** {data.get("phone", "") or "Not provided"}
+
+---
+
+Would you like me to **submit this project request** to LogiIntelli?
+"""
+
+        return summary
+
+
+    # ========================================================
+    # STEP 10 - CONFIRMATION
+    # ========================================================
+
+    if step == 10:
+
+        positive_words = [
+            "yes",
+            "y",
+            "sure",
+            "submit",
+            "confirm",
+            "ok",
+            "okay",
+            "go ahead",
+        ]
+
+        negative_words = [
+            "no",
+            "n",
+            "cancel",
+            "not now",
+        ]
+
+
+        lower_message = message.lower()
+
+
+        if lower_message in positive_words:
+
+            success, result = submit_chat_request()
+
+
+            if success:
+
+                st.session_state.chat_submitted = True
+
+                st.session_state.chat_step = 11
+
+                return (
+                    "🎉 **Your project request has been submitted successfully!**\n\n"
+                    "Thank you for contacting **LogiIntelli**.\n\n"
+                    "We have received your requirement and will "
+                    "contact you using the details you provided.\n\n"
+                    "🚚 **LogiIntelli — Logistics AI • Data Analytics • BI**"
+                )
+
+
+            if result == "timeout":
+
+                return (
+                    "⏱️ The submission timed out.\n\n"
+                    "Please try sending **Submit** again."
+                )
+
+
+            return (
+                "❌ I couldn't submit the request right now.\n\n"
+                "Please try again in a moment."
+            )
+
+
+        if lower_message in negative_words:
+
+            st.session_state.chat_step = 11
+
+            return (
+                "No problem! 👍\n\n"
+                "I haven't submitted anything.\n\n"
+                "Whenever you're ready, you can use "
+                "**Request Project** or start the assistant again."
+            )
+
+
+        return (
+            "Please type **Yes** to submit the project request "
+            "or **No** to cancel."
+        )
+
+
+    # ========================================================
+    # AFTER SUBMISSION
+    # ========================================================
+
+    return (
+        "Your request has already been submitted successfully. 🎉"
+    )
+
+
+# ============================================================
 # HEADER
 # ============================================================
 
@@ -653,7 +1089,9 @@ for idx, page_name in enumerate(pages):
 
     with nav_cols[idx]:
 
-        selected = st.session_state.page == page_name
+        selected = (
+            st.session_state.page == page_name
+        )
 
         label = (
             f"● {page_name}"
@@ -669,8 +1107,6 @@ for idx, page_name in enumerate(pages):
 
             st.session_state.page = page_name
 
-            st.session_state.submitted = False
-
             st.rerun()
 
 
@@ -678,7 +1114,7 @@ page = st.session_state.page
 
 
 # ============================================================
-# HOME PAGE
+# HOME
 # ============================================================
 
 if page == "Home":
@@ -754,7 +1190,7 @@ if page == "Home":
 
 
     # ========================================================
-    # WHAT WE BUILD
+    # SERVICES
     # ========================================================
 
     html("""
@@ -843,7 +1279,7 @@ if page == "Home":
 
 
     # ========================================================
-    # DATA FLOW
+    # WORKFLOW
     # ========================================================
 
     html("""
@@ -855,10 +1291,7 @@ if page == "Home":
         End-to-end shipment telemetry and operational intelligence
         from booking to AI-monitored delivery.
     </div>
-    """)
 
-
-    html("""
     <div class="workflow">
 
         <div class="workflow-container">
@@ -935,11 +1368,14 @@ if page == "Home":
         </h2>
 
         <p>
-            Share your business requirement and explore custom solutions
-            for logistics analytics, Power BI dashboards,
-            machine learning, SQL data engineering,
-            automated MIS reporting, and AI-powered
-            operational intelligence.
+            Our Project Assistant can collect your requirements
+            and submit them directly to our project management
+            system.
+        </p>
+
+        <p>
+            Look for the chat assistant at the bottom of the page
+            and tell us what you want to build.
         </p>
 
     </div>
@@ -947,7 +1383,7 @@ if page == "Home":
 
 
 # ============================================================
-# SERVICES PAGE
+# SERVICES
 # ============================================================
 
 elif page == "Services":
@@ -1085,7 +1521,7 @@ elif page == "Services":
 
 
 # ============================================================
-# PROJECTS PAGE
+# PROJECTS
 # ============================================================
 
 elif page == "Projects":
@@ -1202,7 +1638,7 @@ elif page == "Projects":
 
 
 # ============================================================
-# REQUEST PROJECT PAGE
+# REQUEST PROJECT - NORMAL FORM
 # ============================================================
 
 elif page == "Request Project":
@@ -1213,8 +1649,8 @@ elif page == "Request Project":
     </div>
 
     <div class="section-subtitle">
-        Share your logistics analytics, business intelligence,
-        machine learning, or automation project requirements.
+        Prefer a traditional form? You can submit your requirement
+        here, or use the LogiIntelli Project Assistant.
     </div>
     """)
 
@@ -1226,10 +1662,6 @@ elif page == "Request Project":
 
         col1, col2 = st.columns(2)
 
-
-        # ====================================================
-        # LEFT
-        # ====================================================
 
         with col1:
 
@@ -1249,10 +1681,6 @@ elif page == "Request Project":
                 "Phone / WhatsApp"
             )
 
-
-        # ====================================================
-        # RIGHT
-        # ====================================================
 
         with col2:
 
@@ -1298,10 +1726,6 @@ elif page == "Request Project":
             )
 
 
-        # ====================================================
-        # REQUIREMENT
-        # ====================================================
-
         requirement = st.text_area(
             "Describe Your Requirement *",
             height=160,
@@ -1319,41 +1743,27 @@ elif page == "Request Project":
         )
 
 
-        # ====================================================
-        # FORM VALIDATION
-        # ====================================================
-
         if submitted:
 
-            contact_name_clean = contact_name.strip()
-
-            email_clean = email.strip()
-
-            requirement_clean = requirement.strip()
-
-
-            if not contact_name_clean:
+            if not contact_name.strip():
 
                 st.warning(
                     "Please enter the Contact Person name."
                 )
 
-            elif not email_clean:
+            elif not email.strip():
 
                 st.warning(
                     "Please enter your Business Email."
                 )
 
-            elif not re.match(
-                r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                email_clean
-            ):
+            elif not valid_email(email):
 
                 st.warning(
                     "Please enter a valid email address."
                 )
 
-            elif not requirement_clean:
+            elif not requirement.strip():
 
                 st.warning(
                     "Please describe your project requirement."
@@ -1369,9 +1779,9 @@ elif page == "Request Project":
 
                     "Company": company_name.strip(),
 
-                    "Contact": contact_name_clean,
+                    "Contact": contact_name.strip(),
 
-                    "Email": email_clean,
+                    "Email": email.strip(),
 
                     "Phone": phone.strip(),
 
@@ -1381,13 +1791,9 @@ elif page == "Request Project":
 
                     "Timeline": timeline,
 
-                    "Requirement": requirement_clean,
+                    "Requirement": requirement.strip(),
                 }
 
-
-                # ====================================================
-                # SEND TO GOOGLE APPS SCRIPT
-                # ====================================================
 
                 try:
 
@@ -1412,13 +1818,7 @@ elif page == "Request Project":
                         )
 
 
-                    # ====================================================
-                    # SUCCESS
-                    # ====================================================
-
                     if response.status_code == 200:
-
-                        st.session_state.submitted = True
 
                         st.success(
                             "🎉 Thank you! Your project request "
@@ -1430,23 +1830,12 @@ elif page == "Request Project":
                             "and contact you shortly."
                         )
 
-
-                    # ====================================================
-                    # FAILURE
-                    # ====================================================
-
                     else:
 
                         st.error(
-                            "Submission failed. "
-                            f"Server returned status "
-                            f"{response.status_code}."
+                            f"Submission failed. "
+                            f"Status Code: {response.status_code}"
                         )
-
-                        st.code(
-                            response.text[:500]
-                        )
-
 
                 except requests.exceptions.Timeout:
 
@@ -1454,16 +1843,6 @@ elif page == "Request Project":
                         "⏱️ The request timed out. "
                         "Please try again."
                     )
-
-
-                except requests.exceptions.ConnectionError:
-
-                    st.error(
-                        "🌐 Unable to connect to the project "
-                        "request server. Please check your "
-                        "internet connection."
-                    )
-
 
                 except requests.exceptions.RequestException as e:
 
@@ -1473,7 +1852,7 @@ elif page == "Request Project":
 
 
 # ============================================================
-# ABOUT PAGE
+# ABOUT
 # ============================================================
 
 elif page == "About":
@@ -1553,7 +1932,7 @@ elif page == "About":
 
 
 # ============================================================
-# CONTACT PAGE
+# CONTACT
 # ============================================================
 
 elif page == "Contact":
@@ -1573,10 +1952,6 @@ elif page == "Contact":
     c1, c2 = st.columns(2)
 
 
-    # ========================================================
-    # CONTACT DETAILS
-    # ========================================================
-
     with c1:
 
         html("""
@@ -1595,7 +1970,6 @@ elif page == "Contact":
                 </a>
             </p>
 
-
             <h3>
                 📱 Phone / WhatsApp
             </h3>
@@ -1613,10 +1987,6 @@ elif page == "Contact":
         </div>
         """)
 
-
-    # ========================================================
-    # SOCIAL
-    # ========================================================
 
     with c2:
 
@@ -1637,7 +2007,6 @@ elif page == "Contact":
                 </a>
             </p>
 
-
             <h3>
                 💻 GitHub
             </h3>
@@ -1655,10 +2024,6 @@ elif page == "Contact":
         </div>
         """)
 
-
-    # ========================================================
-    # CONTACT CTA
-    # ========================================================
 
     html("""
     <div class="hero">
@@ -1716,3 +2081,156 @@ html("""
 
 </div>
 """)
+
+
+# ============================================================
+# FLOATING CHATBOT
+# ============================================================
+
+html("""
+<div style="
+    position:fixed;
+    right:22px;
+    bottom:82px;
+    z-index:9999;
+">
+
+    <div style="
+        background:linear-gradient(135deg,#0B2545,#0066CC);
+        color:white;
+        padding:12px 17px;
+        border-radius:20px;
+        box-shadow:0 8px 25px rgba(0,0,0,.18);
+        font-size:13px;
+        font-weight:700;
+    ">
+
+        🤖 LogiIntelli Project Assistant
+
+    </div>
+
+</div>
+""")
+
+
+# ============================================================
+# CHATBOT AREA
+# ============================================================
+
+html("""
+<div class="chat-header">
+
+    <div class="chat-header-title">
+        🤖 LogiIntelli Project Assistant
+    </div>
+
+    <div class="chat-header-sub">
+        Tell us about your project and we'll collect the
+        requirements for you.
+    </div>
+
+</div>
+""")
+
+
+# ============================================================
+# START CHAT
+# ============================================================
+
+if not st.session_state.chat_messages:
+
+    initial_message = (
+        "👋 Hi! I'm the **LogiIntelli Project Assistant**.\n\n"
+        "I can collect your project requirements and submit "
+        "them directly to our team.\n\n"
+        "Let's get started!\n\n"
+        "**What is your name?**"
+    )
+
+    st.session_state.chat_messages.append(
+        {
+            "role": "assistant",
+            "content": initial_message,
+        }
+    )
+
+
+# ============================================================
+# DISPLAY CHAT
+# ============================================================
+
+for message in st.session_state.chat_messages:
+
+    with st.chat_message(
+        message["role"]
+    ):
+
+        st.markdown(
+            message["content"]
+        )
+
+
+# ============================================================
+# CHAT INPUT
+# ============================================================
+
+user_input = st.chat_input(
+    "Type your answer here..."
+)
+
+
+if user_input:
+
+    # --------------------------------------------------------
+    # USER MESSAGE
+    # --------------------------------------------------------
+
+    st.session_state.chat_messages.append(
+        {
+            "role": "user",
+            "content": user_input,
+        }
+    )
+
+
+    # --------------------------------------------------------
+    # BOT RESPONSE
+    # --------------------------------------------------------
+
+    response = chatbot_response(
+        user_input
+    )
+
+
+    st.session_state.chat_messages.append(
+        {
+            "role": "assistant",
+            "content": response,
+        }
+    )
+
+
+    st.rerun()
+
+
+# ============================================================
+# RESET CHAT BUTTON
+# ============================================================
+
+if st.session_state.chat_messages:
+
+    reset_col1, reset_col2, reset_col3 = st.columns(
+        [1, 1, 1]
+    )
+
+    with reset_col2:
+
+        if st.button(
+            "🔄 Start New Conversation",
+            key="reset_chat",
+            use_container_width=True,
+        ):
+
+            reset_chat()
+
+            st.rerun()
