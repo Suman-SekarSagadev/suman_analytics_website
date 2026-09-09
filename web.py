@@ -53,10 +53,12 @@ if "chat_submitted" not in st.session_state:
 
 # ============================================================
 # HTML HELPER
+# IMPORTANT:
+# Use markdown instead of st.html for predictable rendering.
 # ============================================================
 
 def render_html(content):
-    st.html(content)
+    st.markdown(content, unsafe_allow_html=True)
 
 
 # ============================================================
@@ -176,11 +178,7 @@ def submit_chat_request():
             allow_redirects=True
         )
 
-        if response.status_code == 200:
-
-            return True
-
-        return False
+        return response.status_code == 200
 
     except Exception:
 
@@ -515,9 +513,25 @@ render_html(
     """
 <style>
 
-html, body {
-    font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+html,
+body,
+.stApp {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
 }
+
+
+/* ============================================================
+   APP BACKGROUND
+   ============================================================ */
 
 .stApp {
 
@@ -533,6 +547,7 @@ html, body {
             #ffffff 50%,
             #f5f8fc 100%
         );
+
 }
 
 
@@ -542,15 +557,17 @@ html, body {
 
 .block-container {
 
-    padding-top: 1rem;
+    padding-top: 1rem !important;
 
-    padding-bottom: 4rem;
+    padding-bottom: 4rem !important;
+
+    max-width: 1400px !important;
 
 }
 
 
 /* ============================================================
-   HIDE STREAMLIT DEFAULT
+   HIDE STREAMLIT DEFAULT UI
    ============================================================ */
 
 #MainMenu {
@@ -568,21 +585,23 @@ footer {
 
 .logo-title {
 
-    font-size: 27px;
+    font-size: 27px !important;
 
-    font-weight: 800;
+    font-weight: 800 !important;
 
-    color: #0B2545;
+    color: #0B2545 !important;
+
+    line-height: 1.2 !important;
 
 }
 
 .logo-subtitle {
 
-    font-size: 12px;
+    font-size: 12px !important;
 
-    color: #60758A;
+    color: #60758A !important;
 
-    margin-top: 3px;
+    margin-top: 3px !important;
 
 }
 
@@ -593,25 +612,25 @@ footer {
 
 .stButton > button {
 
-    border-radius: 10px;
+    border-radius: 10px !important;
 
-    border: 1px solid #d9e3ee;
+    border: 1px solid #d9e3ee !important;
 
-    background: white;
+    background: white !important;
 
-    color: #0B2545;
+    color: #0B2545 !important;
 
-    font-weight: 600;
+    font-weight: 600 !important;
 
-    min-height: 40px;
+    min-height: 40px !important;
 
 }
 
 .stButton > button:hover {
 
-    border-color: #0066CC;
+    border-color: #0066CC !important;
 
-    color: #0066CC;
+    color: #0066CC !important;
 
 }
 
@@ -622,9 +641,15 @@ footer {
 
 .hero {
 
-    padding: 65px 45px;
+    display: block !important;
 
-    border-radius: 28px;
+    width: 100% !important;
+
+    box-sizing: border-box !important;
+
+    padding: 65px 45px !important;
+
+    border-radius: 28px !important;
 
     background:
         linear-gradient(
@@ -632,71 +657,114 @@ footer {
             #071d35 0%,
             #0b3c6f 45%,
             #0066cc 100%
-        );
+        ) !important;
 
-    color: white;
+    color: white !important;
 
-    margin-top: 20px;
+    margin-top: 20px !important;
 
-    margin-bottom: 35px;
+    margin-bottom: 35px !important;
 
     box-shadow:
-        0 20px 60px rgba(0, 50, 100, 0.20);
+        0 20px 60px rgba(0, 50, 100, 0.20) !important;
 
 }
 
 .hero-small-title {
 
-    color: #7ec8ff;
+    display: block !important;
 
-    font-size: 14px;
+    color: #7ec8ff !important;
 
-    font-weight: 800;
+    font-size: 14px !important;
 
-    letter-spacing: 1px;
+    font-weight: 800 !important;
 
-    margin-bottom: 12px;
+    letter-spacing: 1px !important;
+
+    margin-bottom: 12px !important;
 
 }
 
 .hero h1 {
 
-    font-size: 50px;
+    display: block !important;
 
-    line-height: 1.1;
+    color: #ffffff !important;
 
-    margin: 0 0 15px 0;
+    font-size: 50px !important;
+
+    font-weight: 800 !important;
+
+    line-height: 1.1 !important;
+
+    margin: 0 0 15px 0 !important;
+
+    padding: 0 !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
 
 }
 
 .hero p {
 
-    max-width: 850px;
+    display: block !important;
 
-    color: #dbeeff;
+    max-width: 850px !important;
 
-    font-size: 18px;
+    color: #dbeeff !important;
 
-    line-height: 1.7;
+    font-size: 18px !important;
+
+    line-height: 1.7 !important;
+
+    margin: 0 !important;
 
 }
 
 
 /* ============================================================
    SECTION TITLE
+   IMPORTANT FIX FOR INVISIBLE HEADINGS
    ============================================================ */
 
 .section-title {
 
-    font-size: 30px;
+    display: block !important;
 
-    font-weight: 800;
+    width: 100% !important;
 
-    color: #0B2545;
+    box-sizing: border-box !important;
 
-    margin-top: 35px;
+    color: #0B2545 !important;
 
-    margin-bottom: 20px;
+    font-size: 30px !important;
+
+    font-weight: 800 !important;
+
+    line-height: 1.3 !important;
+
+    margin-top: 35px !important;
+
+    margin-bottom: 20px !important;
+
+    padding: 0 !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+}
+
+.section-title * {
+
+    color: #0B2545 !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
 
 }
 
@@ -710,20 +778,24 @@ footer {
 .metric-card,
 .info-card {
 
-    background: rgba(255,255,255,0.96);
+    display: block !important;
 
-    border: 1px solid #e2eaf2;
+    width: 100% !important;
 
-    border-radius: 18px;
+    box-sizing: border-box !important;
 
-    padding: 24px;
+    background: rgba(255,255,255,0.96) !important;
+
+    border: 1px solid #e2eaf2 !important;
+
+    border-radius: 18px !important;
+
+    padding: 24px !important;
 
     box-shadow:
-        0 8px 30px rgba(15,42,70,0.06);
+        0 8px 30px rgba(15,42,70,0.06) !important;
 
-    height: 100%;
-
-    box-sizing: border-box;
+    height: 100% !important;
 
 }
 
@@ -731,7 +803,34 @@ footer {
 .project-card:hover {
 
     box-shadow:
-        0 15px 40px rgba(15,42,70,0.12);
+        0 15px 40px rgba(15,42,70,0.12) !important;
+
+}
+
+
+/* ============================================================
+   CARD TEXT
+   ============================================================ */
+
+.service-card h3,
+.project-card h3,
+.info-card h2,
+.info-card h3,
+.info-card h4 {
+
+    color: #0B2545 !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+}
+
+.service-card p,
+.project-card p,
+.info-card p {
+
+    color: #60758A !important;
 
 }
 
@@ -742,21 +841,60 @@ footer {
 
 .metric-number {
 
-    font-size: 34px;
+    font-size: 34px !important;
 
-    font-weight: 800;
+    font-weight: 800 !important;
 
-    color: #0066CC;
+    color: #0066CC !important;
 
 }
 
 .metric-label {
 
-    color: #60758A;
+    color: #60758A !important;
 
-    font-size: 14px;
+    font-size: 14px !important;
 
-    margin-top: 5px;
+    margin-top: 5px !important;
+
+}
+
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+.stTextInput label,
+.stTextArea label,
+.stSelectbox label {
+
+    color: #0B2545 !important;
+
+    font-weight: 600 !important;
+
+}
+
+
+/* ============================================================
+   SUBMIT BUTTON
+   ============================================================ */
+
+.stFormSubmitButton button {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0B2545,
+            #0066CC
+        ) !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    border-radius: 10px !important;
+
+    font-weight: 800 !important;
 
 }
 
@@ -764,11 +902,6 @@ footer {
 /* ============================================================
    FLOATING CHAT LAUNCHER
    ============================================================ */
-
-/*
-   Streamlit container key:
-   chat_launcher
-*/
 
 .st-key-chat_launcher {
 
@@ -785,7 +918,9 @@ footer {
 }
 
 
-/* Launcher button */
+/* ============================================================
+   CHAT LAUNCHER BUTTON
+   ============================================================ */
 
 .st-key-chat_launcher button {
 
@@ -817,11 +952,6 @@ footer {
 /* ============================================================
    FLOATING CHAT WINDOW
    ============================================================ */
-
-/*
-   Streamlit container key:
-   chat_panel
-*/
 
 .st-key-chat_panel {
 
@@ -859,7 +989,9 @@ footer {
 }
 
 
-/* Chat header */
+/* ============================================================
+   CHAT HEADER
+   ============================================================ */
 
 .chat-header {
 
@@ -868,68 +1000,76 @@ footer {
             135deg,
             #071d35,
             #0066cc
-        );
+        ) !important;
 
-    color: white;
+    color: white !important;
 
-    padding: 16px;
+    padding: 16px !important;
 
-    border-radius: 15px;
+    border-radius: 15px !important;
 
-    margin-bottom: 15px;
+    margin-bottom: 15px !important;
 
 }
 
 .chat-header-title {
 
-    font-size: 17px;
+    font-size: 17px !important;
 
-    font-weight: 800;
+    font-weight: 800 !important;
+
+    color: white !important;
 
 }
 
 .chat-header-status {
 
-    font-size: 11px;
+    font-size: 11px !important;
 
-    margin-top: 4px;
+    margin-top: 4px !important;
 
-    color: #cce8ff;
+    color: #cce8ff !important;
 
 }
 
 
-/* Chat information */
+/* ============================================================
+   CHAT INFORMATION
+   ============================================================ */
 
 .chat-info {
 
-    background: #f2f7fc;
+    background: #f2f7fc !important;
 
-    border-radius: 12px;
+    border-radius: 12px !important;
 
-    padding: 12px;
+    padding: 12px !important;
 
-    color: #536a80;
+    color: #536a80 !important;
 
-    font-size: 12px;
+    font-size: 12px !important;
 
-    line-height: 1.6;
+    line-height: 1.6 !important;
 
-    margin-bottom: 15px;
+    margin-bottom: 15px !important;
 
 }
 
 
-/* Chat messages */
+/* ============================================================
+   CHAT MESSAGES
+   ============================================================ */
 
 [data-testid="stChatMessage"] {
 
-    background: transparent;
+    background: transparent !important;
 
 }
 
 
-/* Chat input */
+/* ============================================================
+   CHAT INPUT
+   ============================================================ */
 
 [data-testid="stChatInput"] {
 
@@ -938,6 +1078,25 @@ footer {
     bottom: 0 !important;
 
     background: white !important;
+
+    z-index: 10 !important;
+
+}
+
+
+/* ============================================================
+   CHAT MARKDOWN
+   ============================================================ */
+
+.st-key-chat_panel [data-testid="stChatMessage"] p {
+
+    color: #26384a !important;
+
+}
+
+.st-key-chat_panel [data-testid="stChatMessage"] strong {
+
+    color: #0B2545 !important;
 
 }
 
@@ -948,13 +1107,15 @@ footer {
 
 .footer {
 
-    text-align: center;
+    display: block !important;
 
-    color: #718297;
+    text-align: center !important;
 
-    font-size: 12px;
+    color: #718297 !important;
 
-    padding: 35px 10px;
+    font-size: 12px !important;
+
+    padding: 35px 10px !important;
 
 }
 
@@ -965,21 +1126,37 @@ footer {
 
 @media (max-width: 600px) {
 
+    .block-container {
+
+        padding-left: 15px !important;
+
+        padding-right: 15px !important;
+
+    }
+
     .hero {
 
-        padding: 40px 25px;
+        padding: 40px 25px !important;
+
+        border-radius: 20px !important;
 
     }
 
     .hero h1 {
 
-        font-size: 36px;
+        font-size: 36px !important;
 
     }
 
     .hero p {
 
-        font-size: 15px;
+        font-size: 15px !important;
+
+    }
+
+    .section-title {
+
+        font-size: 25px !important;
 
     }
 
@@ -1089,7 +1266,7 @@ for i, page_name in enumerate(pages):
 
 
 # ============================================================
-# PAGE
+# CURRENT PAGE
 # ============================================================
 
 page = st.session_state.page
@@ -1549,6 +1726,7 @@ elif page == "Request Project":
 </div>
 """
     )
+
 
     st.write(
         "Tell us about your requirement and we will review it."
