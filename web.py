@@ -1,10 +1,11 @@
 from datetime import datetime
 import json
 import re
-import html as html_lib
 
 import requests
 import streamlit as st
+
+from streamlit_float import float_init
 
 
 # ============================================================
@@ -31,6 +32,14 @@ GOOGLE_SHEET_WEB_APP_URL = (
 
 
 # ============================================================
+# FLOAT INITIALIZATION
+# ============================================================
+
+# Required by streamlit-float
+float_init()
+
+
+# ============================================================
 # HTML HELPER
 # ============================================================
 
@@ -48,423 +57,24 @@ if "page" not in st.session_state:
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 
-# -----------------------------
-# CHATBOT STATE
-# -----------------------------
+# Chatbot
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
 
-if "chatbot_open" not in st.session_state:
-    st.session_state.chatbot_open = False
+if "chat_started" not in st.session_state:
+    st.session_state.chat_started = False
 
-if "chat_step" not in st.session_state:
-    st.session_state.chat_step = "name"
+if "chat_message" not in st.session_state:
+    st.session_state.chat_message = ""
 
-if "chat_data" not in st.session_state:
-    st.session_state.chat_data = {}
+if "chat_recommendation" not in st.session_state:
+    st.session_state.chat_recommendation = ""
 
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "👋 Hi! I'm the LogiIntelli AI Project Assistant."
-            ),
-        },
-        {
-            "role": "assistant",
-            "content": (
-                "I can help you define your logistics analytics, "
-                "Power BI, automation, SQL, or AI project."
-            ),
-        },
-        {
-            "role": "assistant",
-            "content": "Let's get started. What is your name?",
-        },
-    ]
-
-
-# ============================================================
-# CHATBOT FUNCTIONS
-# ============================================================
-
-def chatbot_reset():
-
-    st.session_state.chat_step = "name"
-
-    st.session_state.chat_data = {}
-
-    st.session_state.chat_messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "👋 Hi! I'm the LogiIntelli AI Project Assistant."
-            ),
-        },
-        {
-            "role": "assistant",
-            "content": (
-                "I can help you define your logistics analytics, "
-                "Power BI, automation, SQL, or AI project."
-            ),
-        },
-        {
-            "role": "assistant",
-            "content": "Let's get started. What is your name?",
-        },
-    ]
-
+if "chat_submitted" not in st.session_state:
     st.session_state.chat_submitted = False
 
-
-def add_chat_message(role, content):
-
-    st.session_state.chat_messages.append(
-        {
-            "role": role,
-            "content": content,
-        }
-    )
-
-
-def valid_email(email):
-
-    return bool(
-        re.match(
-            r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-            email.strip(),
-        )
-    )
-
-
-def submit_chatbot_project():
-
-    data = st.session_state.chat_data
-
-    payload = {
-        "Date": datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S"
-        ),
-        "Company": data.get("company", ""),
-        "Contact": data.get("name", ""),
-        "Email": data.get("email", ""),
-        "Phone": data.get("phone", ""),
-        "Service": data.get("service", ""),
-        "Data_Source": data.get("data_source", ""),
-        "Timeline": data.get("timeline", ""),
-        "Requirement": data.get("requirement", ""),
-        "Source": "AI Chatbot",
-    }
-
-    try:
-
-        response = requests.post(
-            GOOGLE_SHEET_WEB_APP_URL,
-            data=json.dumps(payload),
-            headers={
-                "Content-Type": "text/plain;charset=utf-8"
-            },
-            timeout=20,
-            allow_redirects=True,
-        )
-
-        if response.status_code == 200:
-
-            st.session_state.chat_submitted = True
-
-            add_chat_message(
-                "assistant",
-                (
-                    "🎉 Thank you! Your project request "
-                    "has been submitted successfully."
-                ),
-            )
-
-            add_chat_message(
-                "assistant",
-                (
-                    "Our team will review your requirement "
-                    "and contact you shortly."
-                ),
-            )
-
-            st.session_state.chat_step = "completed"
-
-            return True
-
-        else:
-
-            add_chat_message(
-                "assistant",
-                (
-                    "⚠️ I couldn't submit the request right now. "
-                    f"Server returned status {response.status_code}."
-                ),
-            )
-
-            return False
-
-    except requests.exceptions.Timeout:
-
-        add_chat_message(
-            "assistant",
-            (
-                "⏱️ The request timed out. "
-                "Please try again."
-            ),
-        )
-
-        return False
-
-    except requests.exceptions.ConnectionError:
-
-        add_chat_message(
-            "assistant",
-            (
-                "🌐 I couldn't connect to the project "
-                "request server. Please try again."
-            ),
-        )
-
-        return False
-
-    except Exception as e:
-
-        add_chat_message(
-            "assistant",
-            (
-                "⚠️ Something went wrong while submitting "
-                "your request."
-            ),
-        )
-
-        return False
-
-
-def process_chatbot_answer(answer):
-
-    answer = answer.strip()
-
-    if not answer:
-        return
-
-    step = st.session_state.chat_step
-
-    add_chat_message(
-        "user",
-        answer,
-    )
-
-    # ========================================================
-    # NAME
-    # ========================================================
-
-    if step == "name":
-
-        if len(answer) < 2:
-
-            add_chat_message(
-                "assistant",
-                "Please enter your name.",
-            )
-
-            return
-
-        st.session_state.chat_data["name"] = answer
-
-        add_chat_message(
-            "assistant",
-            (
-                f"Nice to meet you, {answer}! 👋"
-            ),
-        )
-
-        add_chat_message(
-            "assistant",
-            "What is your business or company name?",
-        )
-
-        st.session_state.chat_step = "company"
-
-    # ========================================================
-    # COMPANY
-    # ========================================================
-
-    elif step == "company":
-
-        st.session_state.chat_data["company"] = answer
-
-        add_chat_message(
-            "assistant",
-            "What is your business email address?",
-        )
-
-        st.session_state.chat_step = "email"
-
-    # ========================================================
-    # EMAIL
-    # ========================================================
-
-    elif step == "email":
-
-        if not valid_email(answer):
-
-            add_chat_message(
-                "assistant",
-                (
-                    "❌ That doesn't look like a valid email. "
-                    "Please enter a valid business email."
-                ),
-            )
-
-            return
-
-        st.session_state.chat_data["email"] = answer
-
-        add_chat_message(
-            "assistant",
-            "What is your phone number or WhatsApp number?",
-        )
-
-        st.session_state.chat_step = "phone"
-
-    # ========================================================
-    # PHONE
-    # ========================================================
-
-    elif step == "phone":
-
-        st.session_state.chat_data["phone"] = answer
-
-        add_chat_message(
-            "assistant",
-            (
-                "Which solution are you interested in?"
-            ),
-        )
-
-        add_chat_message(
-            "assistant",
-            (
-                "Examples: Power BI Dashboard, "
-                "SQL Analytics, Predictive AI, "
-                "MIS Automation, API / ERP Integration, "
-                "TAT Analytics, or Hub Analytics."
-            ),
-        )
-
-        st.session_state.chat_step = "service"
-
-    # ========================================================
-    # SERVICE
-    # ========================================================
-
-    elif step == "service":
-
-        st.session_state.chat_data["service"] = answer
-
-        add_chat_message(
-            "assistant",
-            (
-                "What type of data source are you currently using?"
-            ),
-        )
-
-        add_chat_message(
-            "assistant",
-            (
-                "For example: Excel, CSV, MySQL, SQL Server, "
-                "PostgreSQL, ERP, REST API, or multiple sources."
-            ),
-        )
-
-        st.session_state.chat_step = "data_source"
-
-    # ========================================================
-    # DATA SOURCE
-    # ========================================================
-
-    elif step == "data_source":
-
-        st.session_state.chat_data["data_source"] = answer
-
-        add_chat_message(
-            "assistant",
-            (
-                "What timeline are you targeting for the project?"
-            ),
-        )
-
-        add_chat_message(
-            "assistant",
-            (
-                "For example: Less than 1 week, "
-                "1–2 weeks, 2–4 weeks, 1–2 months, "
-                "or Not decided."
-            ),
-        )
-
-        st.session_state.chat_step = "timeline"
-
-    # ========================================================
-    # TIMELINE
-    # ========================================================
-
-    elif step == "timeline":
-
-        st.session_state.chat_data["timeline"] = answer
-
-        add_chat_message(
-            "assistant",
-            (
-                "Great. Now please describe your project "
-                "requirement in as much detail as possible."
-            ),
-        )
-
-        add_chat_message(
-            "assistant",
-            (
-                "For example: "
-                "\"We need a daily courier dashboard showing "
-                "booking, delivery, pending shipments, ageing, "
-                "RTO and hub performance, plus shipment delay "
-                "prediction.\""
-            ),
-        )
-
-        st.session_state.chat_step = "requirement"
-
-    # ========================================================
-    # REQUIREMENT
-    # ========================================================
-
-    elif step == "requirement":
-
-        if len(answer) < 10:
-
-            add_chat_message(
-                "assistant",
-                (
-                    "Please provide a little more information "
-                    "about your project requirement."
-                ),
-            )
-
-            return
-
-        st.session_state.chat_data["requirement"] = answer
-
-        add_chat_message(
-            "assistant",
-            "Thanks! I have all the information I need. 🔍",
-        )
-
-        add_chat_message(
-            "assistant",
-            "I'm submitting your project request now...",
-        )
-
-        submit_chatbot_project()
+if "chat_form_reset" not in st.session_state:
+    st.session_state.chat_form_reset = 0
 
 
 # ============================================================
@@ -857,477 +467,101 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
 
 /* ============================================================
-   ============================================================
-   FLOATING AI CHATBOT
-   ============================================================
+   CHATBOT
 ============================================================ */
 
-
-/* ------------------------------------------------------------
-   CHATBOT LAUNCHER
------------------------------------------------------------- */
-
-div[data-testid="stButton"]:has(
-    button[data-testid="baseButton-secondary"]
-) {
-}
-
-
-/*
-   The chatbot launcher is the final Streamlit button.
-   Position it independently from the normal page.
-*/
-
-section.main
-div[data-testid="stButton"]:last-of-type {
-
-    position: fixed !important;
-
-    right: 24px !important;
-
-    bottom: 22px !important;
-
-    width: 68px !important;
-
-    height: 68px !important;
-
-    z-index: 999999 !important;
-
-    margin: 0 !important;
-}
-
-
-section.main
-div[data-testid="stButton"]:last-of-type button {
-
-    width: 68px !important;
-
-    height: 68px !important;
-
-    min-width: 68px !important;
-
-    min-height: 68px !important;
-
-    max-width: 68px !important;
-
-    max-height: 68px !important;
-
-    padding: 0 !important;
-
-    border-radius: 50% !important;
-
-    border: 3px solid #FFFFFF !important;
-
+.chatbot-title {
     background:
         linear-gradient(
             135deg,
-            #0066CC,
-            #0B2545
-        ) !important;
-
-    color: #FFFFFF !important;
-
-    font-size: 29px !important;
-
-    font-weight: 900 !important;
-
-    box-shadow:
-        0 12px 32px
-        rgba(0, 102, 204, 0.42) !important;
-
-    cursor: pointer !important;
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease !important;
-}
-
-
-section.main
-div[data-testid="stButton"]:last-of-type button:hover {
-
-    transform: scale(1.10) !important;
-
-    box-shadow:
-        0 18px 42px
-        rgba(0, 102, 204, 0.58) !important;
-}
-
-
-/* ------------------------------------------------------------
-   CHAT WINDOW
------------------------------------------------------------- */
-
-.ai-chat-wrapper {
-
-    position: fixed;
-
-    right: 24px;
-
-    bottom: 105px;
-
-    width: 410px;
-
-    max-width: calc(100vw - 30px);
-
-    height: 620px;
-
-    max-height: calc(100vh - 125px);
-
-    background: #FFFFFF;
-
-    border-radius: 22px;
-
-    overflow: hidden;
-
-    border: 1px solid #DCE5F0;
-
-    box-shadow:
-        0 25px 80px
-        rgba(15, 23, 42, 0.32);
-
-    z-index: 999998;
-
-    animation:
-        chatbotOpen .25s ease-out;
-}
-
-
-@keyframes chatbotOpen {
-
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-}
-
-
-/* ------------------------------------------------------------
-   CHAT HEADER
------------------------------------------------------------- */
-
-.ai-chat-header {
-
-    height: 84px;
-
-    padding: 15px 18px;
-
-    color: #FFFFFF;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0B2545 0%,
-            #134074 55%,
-            #0066CC 100%
+            #0B2545,
+            #0066CC
         );
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
+    color: white;
+    padding: 15px 16px;
+    border-radius: 15px 15px 0 0;
+    margin: -1px -1px 12px -1px;
 }
 
-
-.ai-avatar {
-
-    width: 49px;
-
-    height: 49px;
-
-    min-width: 49px;
-
-    border-radius: 50%;
-
-    background: #FFFFFF;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 25px;
-
-    box-shadow:
-        0 4px 15px
-        rgba(0, 0, 0, .18);
-
-    animation:
-        aiPulse 2.5s infinite;
-}
-
-
-@keyframes aiPulse {
-
-    0%, 100% {
-        box-shadow:
-            0 4px 15px
-            rgba(0, 0, 0, .18);
-    }
-
-    50% {
-        box-shadow:
-            0 4px 22px
-            rgba(255, 255, 255, .35);
-    }
-
-}
-
-
-.ai-header-title {
-
-    font-size: 16px;
-
+.chatbot-title-main {
+    font-size: 17px;
     font-weight: 900;
-
-    line-height: 1.3;
 }
 
-
-.ai-header-subtitle {
-
+.chatbot-title-sub {
     font-size: 11px;
-
-    color: #DBEAFE;
-
-    margin-top: 4px;
+    opacity: .85;
+    margin-top: 3px;
 }
 
-
-/* ------------------------------------------------------------
-   CHAT MESSAGES
------------------------------------------------------------- */
-
-.ai-messages {
-
-    height: 480px;
-
-    overflow-y: auto;
-
-    padding: 17px 14px 30px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #F8FAFC 0%,
-            #F1F5F9 100%
-        );
-}
-
-
-.ai-messages::-webkit-scrollbar {
-
-    width: 5px;
-}
-
-
-.ai-messages::-webkit-scrollbar-track {
-
-    background: transparent;
-}
-
-
-.ai-messages::-webkit-scrollbar-thumb {
-
-    background: #CBD5E1;
-
-    border-radius: 20px;
-}
-
-
-.ai-message-row {
-
-    display: flex;
-
-    margin-bottom: 12px;
-
-    width: 100%;
-}
-
-
-.ai-message-row.user {
-
-    justify-content: flex-end;
-}
-
-
-.ai-message-row.assistant {
-
-    justify-content: flex-start;
-}
-
-
-.ai-message-bubble {
-
-    max-width: 84%;
-
-    padding: 11px 14px;
-
-    border-radius: 17px;
-
+.chatbot-welcome {
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    border-radius: 12px;
+    padding: 12px;
+    color: #0B2545;
     font-size: 13px;
-
     line-height: 1.55;
-
-    word-break: break-word;
+    margin-bottom: 12px;
 }
 
-
-.ai-message-row.assistant
-.ai-message-bubble {
-
-    background: #FFFFFF;
-
+.chatbot-ai-message {
+    background: #F1F5F9;
+    border-radius: 12px;
+    padding: 10px 12px;
     color: #334155;
-
-    border: 1px solid #E2E8F0;
-
-    border-bottom-left-radius: 5px;
-
-    box-shadow:
-        0 3px 9px
-        rgba(15, 23, 42, .045);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 10px;
 }
 
-
-.ai-message-row.user
-.ai-message-bubble {
-
-    background:
-        linear-gradient(
-            135deg,
-            #0066CC,
-            #0052A3
-        );
-
-    color: #FFFFFF;
-
-    border: none;
-
-    border-bottom-right-radius: 5px;
-
-    box-shadow:
-        0 4px 10px
-        rgba(0, 102, 204, .18);
+.chatbot-user-message {
+    background: #0066CC;
+    color: white;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 10px;
 }
 
-
-/* ------------------------------------------------------------
-   STATUS
------------------------------------------------------------- */
-
-.ai-chat-status {
-
-    position: absolute;
-
-    left: 0;
-
-    right: 0;
-
-    bottom: 7px;
-
-    text-align: center;
-
-    background: rgba(255,255,255,.95);
-
+.chatbot-small {
     color: #64748B;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 8px;
+}
 
-    font-size: 10px;
-
-    padding-top: 3px;
+.chatbot-success {
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    color: #065F46;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 
-.ai-online-dot {
+/* Chatbot widget inputs */
 
-    display: inline-block;
-
-    width: 7px;
-
-    height: 7px;
-
-    background: #22C55E;
-
-    border-radius: 50%;
-
-    margin-right: 4px;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(34,197,94,.12);
+div[data-testid="stTextInput"] input,
+div[data-testid="stTextArea"] textarea,
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    border-radius: 9px !important;
 }
 
 
-/* ------------------------------------------------------------
-   CHAT INPUT
------------------------------------------------------------- */
+/* Chatbot buttons */
 
-div[data-testid="stChatInput"] {
-
-    position: fixed !important;
-
-    right: 39px !important;
-
-    bottom: 117px !important;
-
-    width: 380px !important;
-
-    z-index: 999999 !important;
-
-    background: transparent !important;
+.chatbot-floating button {
+    border-radius: 12px !important;
 }
 
 
-div[data-testid="stChatInput"] textarea {
-
-    background: #FFFFFF !important;
-
-    color: #0F172A !important;
-
-    border: 1px solid #CBD5E1 !important;
-
-    border-radius: 14px !important;
-
-    font-size: 13px !important;
-
-    box-shadow:
-        0 5px 20px
-        rgba(15,23,42,.12) !important;
-}
-
-
-div[data-testid="stChatInput"] textarea:focus {
-
-    border-color: #0066CC !important;
-
-    box-shadow:
-        0 0 0 1px #0066CC,
-        0 5px 20px
-        rgba(15,23,42,.12) !important;
-}
-
-
-/* ------------------------------------------------------------
-   NEW REQUEST BUTTON
------------------------------------------------------------- */
-
-div[data-testid="stButton"] button {
-
-    font-family: inherit;
-}
-
-
-/* ------------------------------------------------------------
+/* ============================================================
    MOBILE
------------------------------------------------------------- */
+============================================================ */
 
 @media (max-width: 768px) {
 
@@ -1363,78 +597,167 @@ div[data-testid="stButton"] button {
     .metric-value {
         font-size: 29px;
     }
-
-
-    /* Chat window */
-
-    .ai-chat-wrapper {
-
-        right: 10px;
-
-        bottom: 82px;
-
-        width: calc(100vw - 20px);
-
-        height: calc(100vh - 100px);
-
-        max-height: none;
-
-        border-radius: 18px;
-    }
-
-
-    .ai-messages {
-
-        height: calc(100% - 105px);
-
-    }
-
-
-    /* Chat input */
-
-    div[data-testid="stChatInput"] {
-
-        right: 20px !important;
-
-        bottom: 94px !important;
-
-        width: calc(100vw - 40px) !important;
-    }
-
-
-    /* Floating button */
-
-    section.main
-    div[data-testid="stButton"]:last-of-type {
-
-        right: 14px !important;
-
-        bottom: 14px !important;
-
-        width: 60px !important;
-
-        height: 60px !important;
-    }
-
-
-    section.main
-    div[data-testid="stButton"]:last-of-type button {
-
-        width: 60px !important;
-
-        height: 60px !important;
-
-        min-width: 60px !important;
-
-        min-height: 60px !important;
-
-        font-size: 25px !important;
-    }
-
 }
 
 </style>
 """)
+
+
+# ============================================================
+# HELPER: SEND TO GOOGLE SHEET
+# ============================================================
+
+def send_project_request(payload):
+    try:
+
+        response = requests.post(
+            GOOGLE_SHEET_WEB_APP_URL,
+            data=json.dumps(payload),
+            headers={
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+            timeout=20,
+            allow_redirects=True,
+        )
+
+        if response.status_code == 200:
+            return True, response.text
+
+        return False, (
+            f"Server returned status {response.status_code}. "
+            f"{response.text[:300]}"
+        )
+
+    except requests.exceptions.Timeout:
+        return False, "The request timed out."
+
+    except requests.exceptions.ConnectionError:
+        return False, "Unable to connect to the project request server."
+
+    except Exception as e:
+        return False, str(e)
+
+
+# ============================================================
+# CHATBOT INTELLIGENCE
+# ============================================================
+
+def chatbot_recommendation(text):
+
+    text_lower = text.lower()
+
+    if any(
+        word in text_lower
+        for word in [
+            "dashboard",
+            "power bi",
+            "bi",
+            "report",
+            "visualization",
+            "kpi",
+        ]
+    ):
+        return (
+            "📊 **Recommended solution: Logistics BI Dashboard**\n\n"
+            "Based on your requirement, a Power BI dashboard could "
+            "cover booking, delivery, pending shipments, RTO, "
+            "TAT, ageing, hub performance and operational KPIs."
+        )
+
+    if any(
+        word in text_lower
+        for word in [
+            "delay",
+            "prediction",
+            "predict",
+            "machine learning",
+            "ml",
+            "ai",
+            "forecast",
+            "forecasting",
+            "risk",
+        ]
+    ):
+        return (
+            "🤖 **Recommended solution: Predictive AI / Machine Learning**\n\n"
+            "Your requirement looks suitable for shipment delay prediction, "
+            "RTO risk scoring, demand forecasting, anomaly detection, "
+            "or hub workload prediction."
+        )
+
+    if any(
+        word in text_lower
+        for word in [
+            "tat",
+            "ageing",
+            "aging",
+            "sla",
+            "pending",
+            "transit",
+            "delivery time",
+        ]
+    ):
+        return (
+            "⏱️ **Recommended solution: TAT & Ageing Analytics**\n\n"
+            "We can analyze shipment ageing buckets, transit TAT, "
+            "delivery SLA breaches, route delays and bottlenecks."
+        )
+
+    if any(
+        word in text_lower
+        for word in [
+            "hub",
+            "warehouse",
+            "productivity",
+            "inbound",
+            "outbound",
+        ]
+    ):
+        return (
+            "🏢 **Recommended solution: Hub Performance Analytics**\n\n"
+            "We can compare hubs using throughput, delivery velocity, "
+            "pending ageing, RTO, productivity and SLA metrics."
+        )
+
+    if any(
+        word in text_lower
+        for word in [
+            "api",
+            "erp",
+            "integration",
+            "webhook",
+            "rest",
+            "connect",
+        ]
+    ):
+        return (
+            "🔗 **Recommended solution: API / ERP Integration**\n\n"
+            "We can connect ERP systems, REST APIs, SQL databases, "
+            "Python pipelines and Power BI into one automated architecture."
+        )
+
+    if any(
+        word in text_lower
+        for word in [
+            "mis",
+            "excel",
+            "automation",
+            "automate",
+            "daily report",
+            "email report",
+        ]
+    ):
+        return (
+            "⚙️ **Recommended solution: Automated MIS**\n\n"
+            "We can automate extraction, transformation, validation, "
+            "Excel reporting, scheduled reporting and email distribution."
+        )
+
+    return (
+        "💡 Your requirement may involve multiple logistics analytics "
+        "components. I recommend submitting the project brief below so "
+        "our team can review the requirement and suggest the right architecture."
+    )
 
 
 # ============================================================
@@ -1473,9 +796,7 @@ for idx, page_name in enumerate(pages):
 
     with nav_cols[idx]:
 
-        selected = (
-            st.session_state.page == page_name
-        )
+        selected = st.session_state.page == page_name
 
         label = (
             f"● {page_name}"
@@ -1490,7 +811,6 @@ for idx, page_name in enumerate(pages):
         ):
 
             st.session_state.page = page_name
-
             st.session_state.submitted = False
 
             st.rerun()
@@ -1540,9 +860,9 @@ if page == "Home":
     """)
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # METRICS
-    # --------------------------------------------------------
+    # ========================================================
 
     c1, c2, c3, c4 = st.columns(4)
 
@@ -1575,9 +895,9 @@ if page == "Home":
             """)
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # WHAT WE BUILD
-    # --------------------------------------------------------
+    # ========================================================
 
     html("""
     <div class="section-title">
@@ -1664,9 +984,9 @@ if page == "Home":
                 """)
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # DATA FLOW
-    # --------------------------------------------------------
+    # ========================================================
 
     html("""
     <div class="section-title">
@@ -1745,9 +1065,9 @@ if page == "Home":
     """)
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # CTA
-    # --------------------------------------------------------
+    # ========================================================
 
     html("""
     <div class="hero">
@@ -2131,11 +1451,8 @@ elif page == "Request Project":
         if submitted:
 
             contact_name_clean = contact_name.strip()
-
             email_clean = email.strip()
-
             requirement_clean = requirement.strip()
-
 
             if not contact_name_clean:
 
@@ -2143,20 +1460,20 @@ elif page == "Request Project":
                     "Please enter the Contact Person name."
                 )
 
-
             elif not email_clean:
 
                 st.warning(
                     "Please enter your Business Email."
                 )
 
-
-            elif not valid_email(email_clean):
+            elif not re.match(
+                r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                email_clean,
+            ):
 
                 st.warning(
                     "Please enter a valid email address."
                 )
-
 
             elif not requirement_clean:
 
@@ -2164,113 +1481,50 @@ elif page == "Request Project":
                     "Please describe your project requirement."
                 )
 
-
             else:
 
                 payload = {
-
-                    "Date":
-                        datetime.now().strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-
-                    "Company":
-                        company_name.strip(),
-
-                    "Contact":
-                        contact_name_clean,
-
-                    "Email":
-                        email_clean,
-
-                    "Phone":
-                        phone.strip(),
-
-                    "Service":
-                        service,
-
-                    "Data_Source":
-                        data_source,
-
-                    "Timeline":
-                        timeline,
-
-                    "Requirement":
-                        requirement_clean,
-
-                    "Source":
-                        "Request Project Form",
+                    "Date": datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+                    "Company": company_name.strip(),
+                    "Contact": contact_name_clean,
+                    "Email": email_clean,
+                    "Phone": phone.strip(),
+                    "Service": service,
+                    "Data_Source": data_source,
+                    "Timeline": timeline,
+                    "Requirement": requirement_clean,
                 }
 
 
-                try:
+                with st.spinner(
+                    "Submitting your project request..."
+                ):
 
-                    with st.spinner(
-                        "Submitting your project request..."
-                    ):
-
-                        response = requests.post(
-                            GOOGLE_SHEET_WEB_APP_URL,
-                            data=json.dumps(payload),
-                            headers={
-                                "Content-Type":
-                                    "text/plain;charset=utf-8"
-                            },
-                            timeout=20,
-                            allow_redirects=True,
-                        )
-
-
-                    if response.status_code == 200:
-
-                        st.session_state.submitted = True
-
-                        st.success(
-                            "🎉 Thank you! Your project request "
-                            "has been submitted successfully."
-                        )
-
-                        st.info(
-                            "Our team will review your requirement "
-                            "and contact you shortly."
-                        )
-
-
-                    else:
-
-                        st.error(
-                            "Submission failed. "
-                            f"Server returned status "
-                            f"{response.status_code}."
-                        )
-
-                        st.code(
-                            response.text[:500]
-                        )
-
-
-                except requests.exceptions.Timeout:
-
-                    st.error(
-                        "⏱️ The request timed out. "
-                        "Please try again."
+                    success, message = send_project_request(
+                        payload
                     )
 
 
-                except requests.exceptions.ConnectionError:
+                if success:
 
-                    st.error(
-                        "🌐 Unable to connect to the project "
-                        "request server. Please check your "
-                        "internet connection and try again."
+                    st.session_state.submitted = True
+
+                    st.success(
+                        "🎉 Thank you! Your project request "
+                        "has been submitted successfully."
                     )
 
+                    st.info(
+                        "Our team will review your requirement "
+                        "and contact you shortly."
+                    )
 
-                except Exception as e:
+                else:
 
                     st.error(
-                        "⚠️ An unexpected error occurred: "
-                        f"{str(e)}"
+                        f"Submission failed: {message}"
                     )
 
 
@@ -2322,6 +1576,7 @@ elif page == "About":
             </h3>
 
             <ul>
+
                 <li>
                     Power BI & Interactive Dashboard Engineering
                 </li>
@@ -2342,6 +1597,7 @@ elif page == "About":
                 <li>
                     REST API Integrations & Webhooks
                 </li>
+
             </ul>
 
         </div>
@@ -2422,7 +1678,11 @@ elif page == "Contact":
                     href="mailto:support@logiintelli.com"
                 >
                     support@logiintelli.com
-                </a>,
+                </a>
+            </p>
+
+            <p>
+                <strong>Email:</strong>
                 <a
                     class="contact-link"
                     href="mailto:sumansekar1205@gmail.com"
@@ -2466,11 +1726,16 @@ elif page == "Contact":
             </h3>
 
             <p>
-                If you have an urgent requirement or need assistance
-                setting up your Google Apps Script endpoint,
-                navigate to the <strong>Request Project</strong> tab
-                to submit your project details directly into our
-                dashboard queue.
+                Use the <strong>AI Project Assistant</strong>
+                in the bottom-right corner to quickly describe
+                your logistics analytics, AI, BI, automation,
+                or integration requirement.
+            </p>
+
+            <p>
+                You can also use the
+                <strong>Request Project</strong> page to submit
+                a complete project brief.
             </p>
 
         </div>
@@ -2506,158 +1771,427 @@ html("""
 
 # ============================================================
 # ============================================================
-# FLOATING CHATBOT UI
+# FLOATING AI PROJECT ASSISTANT
 # ============================================================
-# IMPORTANT:
-# This is deliberately placed AFTER the main website content.
 # ============================================================
 
+chatbot_container = st.container()
 
-# ------------------------------------------------------------
-# CHAT WINDOW
-# ------------------------------------------------------------
 
-if st.session_state.chatbot_open:
+with chatbot_container:
 
-    html("""
-    <div class="ai-chat-wrapper">
+    # ========================================================
+    # CLOSED STATE
+    # ========================================================
 
-        <div class="ai-chat-header">
+    if not st.session_state.chat_open:
 
-            <div class="ai-avatar">
-                🤖
+        if st.button(
+            "🤖  AI Project Assistant",
+            key="open_ai_chat",
+            use_container_width=True,
+        ):
+
+            st.session_state.chat_open = True
+            st.session_state.chat_started = True
+
+            st.rerun()
+
+
+    # ========================================================
+    # OPEN STATE
+    # ========================================================
+
+    else:
+
+        html("""
+        <div class="chatbot-title">
+
+            <div class="chatbot-title-main">
+                🤖 LogiIntelli AI Assistant
             </div>
 
-            <div>
-
-                <div class="ai-header-title">
-                    LogiIntelli AI Assistant
-                </div>
-
-                <div class="ai-header-subtitle">
-                    Logistics • BI • AI • Automation
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="ai-messages">
-    """)
-
-
-    # --------------------------------------------------------
-    # RENDER MESSAGES
-    # --------------------------------------------------------
-
-    for message in st.session_state.chat_messages:
-
-        role = message["role"]
-
-        safe_message = html_lib.escape(
-            message["content"]
-        )
-
-        safe_message = safe_message.replace(
-            "\n",
-            "<br>"
-        )
-
-        safe_message = re.sub(
-            r"\*\*(.*?)\*\*",
-            r"<strong>\1</strong>",
-            safe_message
-        )
-
-
-        html(f"""
-        <div class="ai-message-row {role}">
-
-            <div class="ai-message-bubble">
-                {safe_message}
+            <div class="chatbot-title-sub">
+                Logistics • BI • AI • Automation
             </div>
 
         </div>
         """)
 
 
-    html("""
+        # ----------------------------------------------------
+        # CLOSE BUTTON
+        # ----------------------------------------------------
+
+        close_col1, close_col2 = st.columns([5, 1])
+
+        with close_col2:
+
+            if st.button(
+                "✕",
+                key="close_ai_chat",
+                help="Close assistant",
+            ):
+
+                st.session_state.chat_open = False
+
+                st.rerun()
+
+
+        # ----------------------------------------------------
+        # WELCOME
+        # ----------------------------------------------------
+
+        html("""
+        <div class="chatbot-welcome">
+
+            👋 Hi! I'm the
+            <strong>LogiIntelli AI Project Assistant</strong>.
+
+            <br><br>
+
+            Tell me about your logistics data problem and I'll
+            recommend the most suitable solution.
+
+            <br><br>
+
+            Examples:
+            <br>
+            • "I need a Power BI courier dashboard"
+            <br>
+            • "We want shipment delay prediction"
+            <br>
+            • "Automate our daily MIS"
+            <br>
+            • "Analyze hub performance"
+
         </div>
+        """)
 
 
-        <div class="ai-chat-status">
+        # ====================================================
+        # QUICK REQUIREMENT ANALYZER
+        # ====================================================
 
-            <span class="ai-online-dot"></span>
+        quick_requirement = st.text_area(
+            "💬 Describe your requirement",
+            value=st.session_state.chat_message,
+            height=85,
+            placeholder=(
+                "Example: We have 2 lakh shipments per day "
+                "and want to predict delayed deliveries..."
+            ),
+            key="chat_requirement",
+        )
 
-            AI Project Assistant Online
 
-        </div>
-
-    </div>
-    """)
-
-
-    # --------------------------------------------------------
-    # NEW REQUEST
-    # --------------------------------------------------------
-
-    if st.session_state.chat_step == "completed":
-
-        new_request = st.button(
-            "🔄 Start New Project Request",
-            key="chat_new_request",
+        if st.button(
+            "✨ Analyze Requirement",
+            key="analyze_chat_requirement",
             use_container_width=True,
-        )
+        ):
 
-        if new_request:
+            if quick_requirement.strip():
 
-            chatbot_reset()
+                st.session_state.chat_message = (
+                    quick_requirement.strip()
+                )
 
-            st.rerun()
+                st.session_state.chat_recommendation = (
+                    chatbot_recommendation(
+                        quick_requirement.strip()
+                    )
+                )
+
+                st.rerun()
+
+            else:
+
+                st.warning(
+                    "Please describe your requirement first."
+                )
 
 
-    # --------------------------------------------------------
-    # CHAT INPUT
-    # --------------------------------------------------------
+        # ----------------------------------------------------
+        # RECOMMENDATION
+        # ----------------------------------------------------
 
-    if st.session_state.chat_step != "completed":
+        if st.session_state.chat_recommendation:
 
-        chat_input = st.chat_input(
-            "Type your answer...",
-            key="logiintelli_chat_input",
-        )
-
-
-        if chat_input:
-
-            process_chatbot_answer(
-                chat_input
+            html(
+                f"""
+                <div class="chatbot-ai-message">
+                    {st.session_state.chat_recommendation}
+                </div>
+                """
             )
 
-            st.rerun()
+
+        # ====================================================
+        # PROJECT QUESTIONNAIRE
+        # ====================================================
+
+        st.markdown(
+            "### 📋 Project Brief",
+        )
+
+
+        chat_company = st.text_input(
+            "Company Name",
+            key="chat_company",
+            placeholder="Your company",
+        )
+
+
+        chat_contact = st.text_input(
+            "Contact Person *",
+            key="chat_contact",
+            placeholder="Your name",
+        )
+
+
+        chat_email = st.text_input(
+            "Business Email *",
+            key="chat_email",
+            placeholder="name@company.com",
+        )
+
+
+        chat_phone = st.text_input(
+            "Phone / WhatsApp",
+            key="chat_phone",
+            placeholder="+91...",
+        )
+
+
+        chat_service = st.selectbox(
+            "Required Solution",
+            [
+                "Power BI Dashboard",
+                "SQL Analytics",
+                "Predictive AI / Machine Learning",
+                "TAT & Ageing Analytics",
+                "Hub Performance Analytics",
+                "Route Analytics",
+                "Automated MIS",
+                "API / ERP Integration",
+                "Other",
+            ],
+            key="chat_service",
+        )
+
+
+        chat_data_source = st.selectbox(
+            "Current Data Source",
+            [
+                "Excel",
+                "CSV",
+                "MySQL",
+                "SQL Server",
+                "PostgreSQL",
+                "ERP",
+                "REST API",
+                "Multiple Sources",
+                "Other",
+            ],
+            key="chat_data_source",
+        )
+
+
+        chat_timeline = st.selectbox(
+            "Expected Timeline",
+            [
+                "Less than 1 week",
+                "1-2 weeks",
+                "2-4 weeks",
+                "1-2 months",
+                "Not decided",
+            ],
+            key="chat_timeline",
+        )
+
+
+        chat_details = st.text_area(
+            "Project Requirement *",
+            height=110,
+            key="chat_details",
+            placeholder=(
+                "Please explain what you want to achieve..."
+            ),
+        )
+
+
+        # ====================================================
+        # SUBMIT
+        # ====================================================
+
+        if st.button(
+            "🚀 Send Project Requirement",
+            key="chat_submit_project",
+            use_container_width=True,
+        ):
+
+            contact_clean = chat_contact.strip()
+            email_clean = chat_email.strip()
+            details_clean = chat_details.strip()
+
+            if not contact_clean:
+
+                st.error(
+                    "Please enter your Contact Person name."
+                )
+
+            elif not email_clean:
+
+                st.error(
+                    "Please enter your Business Email."
+                )
+
+            elif not re.match(
+                r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                email_clean,
+            ):
+
+                st.error(
+                    "Please enter a valid email address."
+                )
+
+            elif not details_clean:
+
+                st.error(
+                    "Please describe your project requirement."
+                )
+
+            else:
+
+                final_requirement = details_clean
+
+                if st.session_state.chat_recommendation:
+
+                    final_requirement += (
+                        "\n\nAI Assistant Recommendation:\n"
+                        + re.sub(
+                            r"\*\*",
+                            "",
+                            st.session_state.chat_recommendation,
+                        )
+                    )
+
+
+                chatbot_payload = {
+
+                    "Date": datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+
+                    "Company": chat_company.strip(),
+
+                    "Contact": contact_clean,
+
+                    "Email": email_clean,
+
+                    "Phone": chat_phone.strip(),
+
+                    "Service": chat_service,
+
+                    "Data_Source": chat_data_source,
+
+                    "Timeline": chat_timeline,
+
+                    "Requirement": final_requirement,
+
+                }
+
+
+                with st.spinner(
+                    "Sending your project requirement..."
+                ):
+
+                    success, message = send_project_request(
+                        chatbot_payload
+                    )
+
+
+                if success:
+
+                    st.session_state.chat_submitted = True
+
+                    html("""
+                    <div class="chatbot-success">
+
+                        🎉 <strong>Thank you!</strong>
+
+                        <br><br>
+
+                        Your project requirement has been
+                        successfully submitted.
+
+                        <br><br>
+
+                        Our team will review the requirement
+                        and contact you shortly.
+
+                    </div>
+                    """)
+
+                else:
+
+                    st.error(
+                        f"Unable to submit request: {message}"
+                    )
+
+
+        # ----------------------------------------------------
+        # FOOTER
+        # ----------------------------------------------------
+
+        html("""
+        <div class="chatbot-small">
+
+            🔒 Your project details are securely sent
+            to the LogiIntelli project queue.
+
+        </div>
+        """)
 
 
 # ============================================================
-# FLOATING CHATBOT LAUNCHER
+# FLOAT THE CHATBOT
 # ============================================================
 
-if st.session_state.chatbot_open:
+if st.session_state.chat_open:
 
-    chatbot_button_label = "✕"
+    chatbot_container.float(
+        """
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        width: 390px;
+        max-width: calc(100vw - 30px);
+        max-height: 86vh;
+        overflow-y: auto;
+        z-index: 999999;
+        background: #FFFFFF;
+        border: 1px solid #CBD5E1;
+        border-radius: 16px;
+        box-shadow:
+            0 25px 60px rgba(15, 23, 42, 0.25);
+        padding: 12px;
+        """
+    )
 
 else:
 
-    chatbot_button_label = "🤖"
-
-
-if st.button(
-    chatbot_button_label,
-    key="ai_chat_launcher",
-):
-
-    st.session_state.chatbot_open = (
-        not st.session_state.chatbot_open
+    chatbot_container.float(
+        """
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        width: 190px;
+        max-width: calc(100vw - 30px);
+        z-index: 999999;
+        background: transparent;
+        border-radius: 16px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+        """
     )
-
-    st.rerun()
