@@ -1,4 +1,4 @@
-
+```python
 from datetime import datetime
 import json
 import re
@@ -30,7 +30,7 @@ GOOGLE_SCRIPT_URL = (
 
 
 # ============================================================
-# HELPERS
+# HELPER FUNCTIONS
 # ============================================================
 
 def html(content):
@@ -105,8 +105,12 @@ html(
     """
 <style>
 
+/* ============================================================
+   FONT
+   ============================================================ */
+
 @import url(
-'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap'
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap'
 );
 
 
@@ -121,8 +125,8 @@ body,
 }
 
 .stApp {
-    background: #FFFFFF;
-    color: #0F172A;
+    background: #FFFFFF !important;
+    color: #0F172A !important;
 }
 
 .block-container {
@@ -133,7 +137,7 @@ body,
 
 
 /* ============================================================
-   HEADER
+   WEBSITE HEADER
    ============================================================ */
 
 .top-header {
@@ -162,11 +166,12 @@ body,
 
     border-radius: 12px;
 
-    background: linear-gradient(
-        135deg,
-        #0F172A,
-        #2563EB
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #0F172A,
+            #2563EB
+        );
 
     display: flex;
     align-items: center;
@@ -191,7 +196,6 @@ body,
 
     display: block !important;
     visibility: visible !important;
-
     opacity: 1 !important;
 }
 
@@ -249,7 +253,7 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   HERO
+   HERO SECTION
    ============================================================ */
 
 .hero-section {
@@ -373,15 +377,63 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   JYORA FLOATING CHATBOT
+   FLOATING CHAT LAUNCHER
    ============================================================ */
 
-/*
-   IMPORTANT:
-   Use a wrapper with fixed position.
-   The Streamlit buttons remain functional while
-   the visual container stays at bottom-left.
-*/
+.jyora-chat-launcher {
+
+    position: fixed !important;
+
+    left: 20px !important;
+
+    bottom: 20px !important;
+
+    z-index: 2147483647 !important;
+
+    width: auto !important;
+}
+
+.jyora-chat-launcher button {
+
+    border-radius: 50px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0F172A,
+            #2563EB
+        ) !important;
+
+    color: #FFFFFF !important;
+
+    border: none !important;
+
+    min-height: 42px !important;
+
+    padding: 0 18px !important;
+
+    font-size: 12px !important;
+
+    font-weight: 700 !important;
+
+    box-shadow:
+        0 10px 25px rgba(37,99,235,0.25) !important;
+
+    transition: all 0.2s ease !important;
+}
+
+.jyora-chat-launcher button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(37,99,235,0.30) !important;
+}
+
+
+/* ============================================================
+   CHAT WRAPPER
+   ============================================================ */
 
 .jyora-chat-wrapper {
 
@@ -400,7 +452,7 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   CHAT OPEN BOX
+   CHAT BOX
    ============================================================ */
 
 .jyora-chat-box {
@@ -428,6 +480,12 @@ div.stButton > button:hover {
 
 .jyora-chat-header {
 
+    width: 100% !important;
+
+    min-height: 62px !important;
+
+    box-sizing: border-box !important;
+
     background:
         linear-gradient(
             135deg,
@@ -437,15 +495,13 @@ div.stButton > button:hover {
 
     color: #FFFFFF !important;
 
-    padding: 14px 16px !important;
-
-    min-height: 58px !important;
+    padding: 12px 14px !important;
 
     display: flex !important;
 
     align-items: center !important;
 
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
 }
 
 .jyora-chat-header-left {
@@ -459,15 +515,15 @@ div.stButton > button:hover {
 
 .jyora-chat-avatar {
 
-    width: 34px !important;
+    width: 36px !important;
 
-    height: 34px !important;
+    height: 36px !important;
 
-    min-width: 34px !important;
+    min-width: 36px !important;
 
     border-radius: 10px !important;
 
-    background: rgba(255,255,255,0.15) !important;
+    background: rgba(255,255,255,0.14) !important;
 
     border: 1px solid rgba(255,255,255,0.25) !important;
 
@@ -481,13 +537,15 @@ div.stButton > button:hover {
 }
 
 
-/*
-   THIS IS THE IMPORTANT HEADING FIX
-*/
+/* ============================================================
+   CHAT HEADING FIX
+   ============================================================ */
 
 .jyora-chat-title {
 
     color: #FFFFFF !important;
+
+    background: transparent !important;
 
     font-size: 14px !important;
 
@@ -502,11 +560,17 @@ div.stButton > button:hover {
     opacity: 1 !important;
 
     white-space: nowrap !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
 }
 
 .jyora-chat-subtitle {
 
-    color: rgba(255,255,255,0.75) !important;
+    color: rgba(255,255,255,0.78) !important;
+
+    background: transparent !important;
 
     font-size: 10px !important;
 
@@ -515,6 +579,12 @@ div.stButton > button:hover {
     font-weight: 500 !important;
 
     margin-top: 1px !important;
+
+    display: block !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
 }
 
 
@@ -526,7 +596,7 @@ div.stButton > button:hover {
 
     padding: 12px !important;
 
-    max-height: 220px !important;
+    max-height: 210px !important;
 
     overflow-y: auto !important;
 
@@ -577,7 +647,7 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   CHAT STREAMLIT CONTROLS
+   CHAT CONTROLS
    ============================================================ */
 
 .jyora-chat-controls {
@@ -588,9 +658,9 @@ div.stButton > button:hover {
 }
 
 
-/*
-   Make chatbot input small
-*/
+/* ============================================================
+   CHAT INPUT
+   ============================================================ */
 
 .jyora-chat-controls input {
 
@@ -600,9 +670,9 @@ div.stButton > button:hover {
 }
 
 
-/*
-   Chat buttons
-*/
+/* ============================================================
+   CHAT BUTTONS
+   ============================================================ */
 
 .jyora-chat-controls button {
 
@@ -615,55 +685,12 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   FLOATING CHAT BUTTON
+   CLOSE BUTTON
    ============================================================ */
 
-.jyora-chat-launcher {
+.jyora-chat-box > div button {
 
-    position: fixed !important;
-
-    left: 20px !important;
-
-    bottom: 20px !important;
-
-    z-index: 2147483647 !important;
-
-    pointer-events: auto !important;
-}
-
-.jyora-chat-launcher button {
-
-    border-radius: 50px !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0F172A,
-            #2563EB
-        ) !important;
-
-    color: #FFFFFF !important;
-
-    border: none !important;
-
-    padding: 0 18px !important;
-
-    min-height: 42px !important;
-
-    font-size: 12px !important;
-
-    font-weight: 700 !important;
-
-    box-shadow:
-        0 10px 25px rgba(37,99,235,0.25) !important;
-}
-
-.jyora-chat-launcher button:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 14px 30px rgba(37,99,235,0.30) !important;
+    font-size: 10px !important;
 }
 
 
@@ -701,10 +728,8 @@ div.stButton > button:hover {
         padding: 45px 20px;
     }
 
-    .jyora-chat-wrapper,
-    .jyora-chat-box {
-
-        width: 285px !important;
+    .brand-name {
+        font-size: 25px !important;
     }
 
     .jyora-chat-wrapper {
@@ -712,6 +737,13 @@ div.stButton > button:hover {
         left: 10px !important;
 
         bottom: 10px !important;
+
+        width: 285px !important;
+    }
+
+    .jyora-chat-box {
+
+        width: 285px !important;
     }
 
     .jyora-chat-launcher {
@@ -788,7 +820,10 @@ navigation = [
     ("Contact", "Contact"),
 ]
 
-for col, (label, page) in zip(nav_cols, navigation):
+for col, (label, page) in zip(
+    nav_cols,
+    navigation
+):
 
     with col:
 
@@ -818,10 +853,12 @@ def home_page():
     </div>
 
     <div class="hero-title">
+
         Intelligence That
         <span>
             Moves Business Forward
         </span>
+
     </div>
 
     <div class="hero-description">
@@ -835,6 +872,7 @@ def home_page():
 </div>
 """
     )
+
 
     services = [
 
@@ -860,7 +898,9 @@ def home_page():
 
     ]
 
+
     cols = st.columns(2)
+
 
     for idx, (title, desc) in enumerate(services):
 
@@ -884,7 +924,7 @@ def home_page():
 
 
 # ============================================================
-# SERVICES
+# SERVICES PAGE
 # ============================================================
 
 def services_page():
@@ -897,7 +937,7 @@ def services_page():
 
 
 # ============================================================
-# PROJECTS
+# PROJECTS PAGE
 # ============================================================
 
 def projects_page():
@@ -911,36 +951,47 @@ def projects_page():
 
 
 # ============================================================
-# REQUEST PROJECT
+# REQUEST PROJECT PAGE
 # ============================================================
 
 def request_project_page():
 
     st.title("Start a Project")
 
+
     with st.form("req_form"):
 
-        name = st.text_input("Name")
+        name = st.text_input(
+            "Name"
+        )
 
-        email = st.text_input("Email")
+        email = st.text_input(
+            "Email"
+        )
 
         overview = st.text_area(
             "Project Overview"
         )
 
+
         submitted = st.form_submit_button(
             "Submit"
         )
+
 
         if submitted:
 
             if not name.strip():
 
-                st.error("Please enter your name.")
+                st.error(
+                    "Please enter your name."
+                )
 
             elif not valid_email(email):
 
-                st.error("Please enter a valid email.")
+                st.error(
+                    "Please enter a valid email."
+                )
 
             else:
 
@@ -958,7 +1009,11 @@ def request_project_page():
 
                 }
 
-                success = submit_to_google(payload)
+
+                success = submit_to_google(
+                    payload
+                )
+
 
                 if success:
 
@@ -969,17 +1024,20 @@ def request_project_page():
                 else:
 
                     st.warning(
-                        "Request submitted, but confirmation could not be verified."
+                        "Request submitted, but confirmation "
+                        "could not be verified."
                     )
 
 
 # ============================================================
-# ABOUT
+# ABOUT PAGE
 # ============================================================
 
 def about_page():
 
-    st.title("About JYORA AI")
+    st.title(
+        "About JYORA AI"
+    )
 
     st.write(
         "Over a decade of expertise delivering actionable insights."
@@ -987,12 +1045,14 @@ def about_page():
 
 
 # ============================================================
-# CONTACT
+# CONTACT PAGE
 # ============================================================
 
 def contact_page():
 
-    st.title("Contact Us")
+    st.title(
+        "Contact Us"
+    )
 
     st.write(
         "Get in touch with our engineering team."
@@ -1019,10 +1079,12 @@ pages = {
 
 }
 
+
 current_page_func = pages.get(
     st.session_state.page,
     home_page
 )
+
 
 current_page_func()
 
@@ -1033,9 +1095,10 @@ current_page_func()
 
 def render_floating_chatbot():
 
-    # --------------------------------------------------------
-    # CLOSED STATE
-    # --------------------------------------------------------
+
+    # ========================================================
+    # CLOSED CHAT
+    # ========================================================
 
     if not st.session_state.chat_open:
 
@@ -1043,6 +1106,7 @@ def render_floating_chatbot():
             '<div class="jyora-chat-launcher">',
             unsafe_allow_html=True
         )
+
 
         if st.button(
             "💬 Chat with JYORA AI",
@@ -1053,17 +1117,19 @@ def render_floating_chatbot():
 
             st.rerun()
 
+
         st.markdown(
-            '</div>',
+            "</div>",
             unsafe_allow_html=True
         )
+
 
         return
 
 
-    # --------------------------------------------------------
-    # OPEN STATE
-    # --------------------------------------------------------
+    # ========================================================
+    # OPEN CHAT CONTAINER
+    # ========================================================
 
     st.markdown(
         '<div class="jyora-chat-wrapper">',
@@ -1076,9 +1142,9 @@ def render_floating_chatbot():
     )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # CHAT HEADER
-    # --------------------------------------------------------
+    # ========================================================
 
     html(
         """
@@ -1109,9 +1175,9 @@ def render_floating_chatbot():
     )
 
 
-    # --------------------------------------------------------
-    # CLOSE BUTTON
-    # --------------------------------------------------------
+    # ========================================================
+    # CLOSE CHAT
+    # ========================================================
 
     if st.button(
         "✕ Close & New Chat",
@@ -1126,48 +1192,61 @@ def render_floating_chatbot():
         st.rerun()
 
 
-    # --------------------------------------------------------
-    # CHAT MESSAGES
-    # --------------------------------------------------------
+    # ========================================================
+    # CHAT MESSAGE DISPLAY
+    # ========================================================
 
-    chat_html = '<div class="jyora-chat-body">'
+    chat_html = (
+        '<div class="jyora-chat-body">'
+    )
+
 
     for msg in st.session_state.chat_messages:
 
         if msg["role"] == "assistant":
 
-            cls = "jyora-message-assistant"
+            message_class = (
+                "jyora-message "
+                "jyora-message-assistant"
+            )
 
         else:
 
-            cls = "jyora-message-user"
+            message_class = (
+                "jyora-message "
+                "jyora-message-user"
+            )
+
 
         chat_html += (
-            f'<div class="jyora-message {cls}">'
+            f'<div class="{message_class}">'
             f'{msg["text"]}'
             f'</div>'
         )
 
+
     chat_html += "</div>"
+
 
     html(chat_html)
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # CHAT CONTROLS
-    # --------------------------------------------------------
+    # ========================================================
 
     st.markdown(
         '<div class="jyora-chat-controls">',
         unsafe_allow_html=True
     )
 
+
     step = st.session_state.chat_step
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # STEP 0 — NAME
-    # --------------------------------------------------------
+    # ========================================================
 
     if step == 0:
 
@@ -1177,6 +1256,7 @@ def render_floating_chatbot():
             placeholder="Your name..."
         )
 
+
         if st.button(
             "Next →",
             key="chat_btn_s0",
@@ -1185,9 +1265,10 @@ def render_floating_chatbot():
 
             if name.strip():
 
-                st.session_state.chat_data["name"] = (
-                    name.strip()
-                )
+                st.session_state.chat_data[
+                    "name"
+                ] = name.strip()
+
 
                 st.session_state.chat_messages.append(
                     {
@@ -1196,6 +1277,7 @@ def render_floating_chatbot():
                     }
                 )
 
+
                 st.session_state.chat_messages.append(
                     {
                         "role": "assistant",
@@ -1203,9 +1285,12 @@ def render_floating_chatbot():
                     }
                 )
 
+
                 st.session_state.chat_step = 1
 
+
                 st.rerun()
+
 
             else:
 
@@ -1214,9 +1299,9 @@ def render_floating_chatbot():
                 )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # STEP 1 — SERVICE
-    # --------------------------------------------------------
+    # ========================================================
 
     elif step == 1:
 
@@ -1232,6 +1317,7 @@ def render_floating_chatbot():
 
         ]
 
+
         for opt in options:
 
             if st.button(
@@ -1244,12 +1330,14 @@ def render_floating_chatbot():
                     "service"
                 ] = opt
 
+
                 st.session_state.chat_messages.append(
                     {
                         "role": "user",
                         "text": opt
                     }
                 )
+
 
                 st.session_state.chat_messages.append(
                     {
@@ -1258,14 +1346,16 @@ def render_floating_chatbot():
                     }
                 )
 
+
                 st.session_state.chat_step = 2
+
 
                 st.rerun()
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # STEP 2 — EMAIL
-    # --------------------------------------------------------
+    # ========================================================
 
     elif step == 2:
 
@@ -1274,6 +1364,7 @@ def render_floating_chatbot():
             key="chat_email",
             placeholder="email@domain.com"
         )
+
 
         if st.button(
             "Submit Request",
@@ -1285,9 +1376,11 @@ def render_floating_chatbot():
 
                 clean_email = email.strip()
 
+
                 st.session_state.chat_data[
                     "email"
                 ] = clean_email
+
 
                 st.session_state.chat_messages.append(
                     {
@@ -1296,6 +1389,10 @@ def render_floating_chatbot():
                     }
                 )
 
+
+                # ------------------------------------------------
+                # GOOGLE SHEETS PAYLOAD
+                # ------------------------------------------------
 
                 payload = {
 
@@ -1316,7 +1413,9 @@ def render_floating_chatbot():
                 }
 
 
-                submit_to_google(payload)
+                submit_to_google(
+                    payload
+                )
 
 
                 st.session_state.chat_messages.append(
@@ -1329,9 +1428,12 @@ def render_floating_chatbot():
                     }
                 )
 
+
                 st.session_state.chat_step = 3
 
+
                 st.rerun()
+
 
             else:
 
@@ -1340,9 +1442,9 @@ def render_floating_chatbot():
                 )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # STEP 3 — COMPLETED
-    # --------------------------------------------------------
+    # ========================================================
 
     elif step == 3:
 
@@ -1357,11 +1459,14 @@ def render_floating_chatbot():
             st.rerun()
 
 
+    # ========================================================
+    # CLOSE HTML CONTAINERS
+    # ========================================================
+
     st.markdown(
         "</div>",
         unsafe_allow_html=True
     )
-
 
     st.markdown(
         "</div>",
