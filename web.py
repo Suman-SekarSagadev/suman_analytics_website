@@ -18,7 +18,7 @@ st.set_page_config(
 
 
 # ============================================================
-# GOOGLE APPS SCRIPT
+# GOOGLE APPS SCRIPT URL
 # ============================================================
 
 GOOGLE_SCRIPT_URL = (
@@ -59,8 +59,13 @@ if "chat_messages" not in st.session_state:
     ]
 
 
+# ============================================================
+# RESET CHAT
+# ============================================================
+
 def reset_chat():
     st.session_state.chat_open = False
+
     st.session_state.chat_messages = [
         {
             "role": "assistant",
@@ -82,12 +87,17 @@ html(
 <style>
 
 /* ============================================================
-   FONT
+   GOOGLE FONT
 ============================================================ */
 
 @import url(
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap'
 );
+
+
+/* ============================================================
+   GLOBAL
+============================================================ */
 
 html,
 body {
@@ -99,25 +109,22 @@ body {
         linear-gradient(
             180deg,
             #F8FAFC 0%,
-            #FFFFFF 40%,
+            #FFFFFF 45%,
             #F8FAFC 100%
         );
 }
 
-
-/* ============================================================
-   STREAMLIT MAIN CONTAINER
-============================================================ */
-
 .block-container {
     max-width: 1380px !important;
+
     padding-top: 1rem !important;
+
     padding-bottom: 5rem !important;
 }
 
 
 /* ============================================================
-   HIDE STREAMLIT DEFAULT UI
+   HIDE STREAMLIT DEFAULT
 ============================================================ */
 
 #MainMenu {
@@ -139,8 +146,11 @@ header[data-testid="stHeader"] {
 
 .top-header {
     width: 100%;
+
     display: flex !important;
+
     align-items: center !important;
+
     justify-content: space-between !important;
 
     padding: 12px 0 20px 0;
@@ -150,17 +160,21 @@ header[data-testid="stHeader"] {
     border-bottom: 1px solid #E2E8F0;
 
     position: relative !important;
+
     z-index: 100 !important;
 
     visibility: visible !important;
+
     opacity: 1 !important;
 }
 
 .brand-wrapper {
     display: flex !important;
+
     flex-direction: column !important;
 
     visibility: visible !important;
+
     opacity: 1 !important;
 }
 
@@ -168,6 +182,7 @@ header[data-testid="stHeader"] {
     display: block !important;
 
     font-size: 38px !important;
+
     font-weight: 900 !important;
 
     line-height: 1.1 !important;
@@ -177,6 +192,7 @@ header[data-testid="stHeader"] {
     color: #0F172A !important;
 
     visibility: visible !important;
+
     opacity: 1 !important;
 }
 
@@ -200,12 +216,13 @@ header[data-testid="stHeader"] {
     letter-spacing: 0.2px !important;
 
     visibility: visible !important;
+
     opacity: 1 !important;
 }
 
 
 /* ============================================================
-   NAVIGATION BUTTONS
+   NAVIGATION
 ============================================================ */
 
 div.stButton > button {
@@ -221,8 +238,7 @@ div.stButton > button {
 
     min-height: 40px !important;
 
-    transition:
-        all 0.2s ease !important;
+    transition: all 0.2s ease !important;
 }
 
 div.stButton > button:hover {
@@ -257,17 +273,19 @@ div.stButton > button:hover {
     position: absolute;
 
     width: 420px;
+
     height: 420px;
 
     background: #DBEAFE;
 
     border-radius: 50%;
 
-    filter: blur(100px);
+    filter: blur(110px);
 
-    opacity: 0.35;
+    opacity: 0.30;
 
-    top: -180px;
+    top: -200px;
+
     left: 50%;
 
     transform: translateX(-50%);
@@ -275,6 +293,7 @@ div.stButton > button:hover {
 
 .hero-content {
     position: relative;
+
     z-index: 2;
 }
 
@@ -459,7 +478,7 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   PROJECT CARD
+   PROJECTS
 ============================================================ */
 
 .project-card {
@@ -565,10 +584,6 @@ div.stButton > button:hover {
 ============================================================ */
 
 .cta {
-    position: relative;
-
-    overflow: hidden;
-
     background:
         linear-gradient(
             135deg,
@@ -694,33 +709,51 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   CHATBOT
+   FLOATING CHATBOT
 ============================================================ */
 
-.chat-wrapper {
-    position: fixed;
+/*
+   IMPORTANT:
+   This selector identifies the Streamlit container that contains
+   the chatbot anchor and fixes the entire container to the
+   bottom-left of the browser.
+*/
 
-    left: 20px;
+div[data-testid="stVerticalBlock"]:has(
+    .chatbot-anchor
+) {
+    position: fixed !important;
 
-    bottom: 20px;
+    left: 20px !important;
 
-    width: 280px;
+    bottom: 20px !important;
 
-    max-width: calc(100vw - 40px);
+    width: 290px !important;
 
-    z-index: 999999;
+    max-width: calc(100vw - 40px) !important;
 
-    background: #FFFFFF;
+    z-index: 999999 !important;
 
-    border: 1px solid #DCE5EF;
+    background: #FFFFFF !important;
 
-    border-radius: 16px;
+    border: 1px solid #DCE5EF !important;
+
+    border-radius: 16px !important;
 
     box-shadow:
-        0 15px 40px rgba(15,23,42,0.18);
+        0 15px 40px rgba(15,23,42,0.20) !important;
 
-    overflow: hidden;
+    overflow: hidden !important;
+
+    padding: 0 !important;
+
+    margin: 0 !important;
 }
+
+
+/* ============================================================
+   CHAT HEADER
+============================================================ */
 
 .chat-header {
     background:
@@ -732,13 +765,15 @@ div.stButton > button:hover {
 
     color: white;
 
-    padding: 13px 14px;
+    padding: 12px 13px;
 }
 
 .chat-header-title {
     font-size: 13px;
 
     font-weight: 800;
+
+    line-height: 1.2;
 }
 
 .chat-header-subtitle {
@@ -749,72 +784,109 @@ div.stButton > button:hover {
     margin-top: 3px;
 }
 
-.chat-body {
-    padding: 10px;
 
-    max-height: 230px;
+/* ============================================================
+   CHAT CLOSE
+============================================================ */
 
-    overflow-y: auto;
-
-    background: #F8FAFC;
-}
-
-.chat-message {
-    padding: 8px 10px;
-
-    border-radius: 10px;
-
-    margin: 6px 0;
-
-    font-size: 10px;
-
-    line-height: 1.5;
-}
-
-.chat-assistant {
-    background: #EFF6FF;
-
-    color: #1E3A8A;
-
-    border: 1px solid #DBEAFE;
-}
-
-.chat-user {
-    background: #0F172A;
-
-    color: #FFFFFF;
-
-    margin-left: 25px;
-}
-
-.chat-options {
-    padding: 9px;
-
-    background: #FFFFFF;
-
-    border-top: 1px solid #E2E8F0;
-}
-
-.chat-close-button button {
-    border: none !important;
-
-    background: rgba(255,255,255,0.15) !important;
-
-    color: white !important;
-
+div[data-testid="stVerticalBlock"]:has(
+    .chatbot-anchor
+) .chat-close button {
     min-height: 25px !important;
 
     height: 25px !important;
 
     width: 25px !important;
 
+    padding: 0 !important;
+
     border-radius: 50% !important;
 
-    padding: 0 !important;
+    background: rgba(255,255,255,0.18) !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    font-size: 10px !important;
 }
 
-.chat-close-button button:hover {
-    background: rgba(255,255,255,0.3) !important;
+div[data-testid="stVerticalBlock"]:has(
+    .chatbot-anchor
+) .chat-close button:hover {
+    background: rgba(255,255,255,0.35) !important;
+}
+
+
+/* ============================================================
+   CHAT MESSAGES
+============================================================ */
+
+.chatbot-messages {
+    background: #F8FAFC;
+
+    padding: 9px;
+
+    max-height: 210px;
+
+    overflow-y: auto;
+}
+
+.chatbot-message {
+    padding: 8px 9px;
+
+    border-radius: 10px;
+
+    margin-bottom: 6px;
+
+    font-size: 10px;
+
+    line-height: 1.45;
+}
+
+.chatbot-assistant {
+    background: #EFF6FF;
+
+    border: 1px solid #DBEAFE;
+
+    color: #1E3A8A;
+}
+
+.chatbot-user {
+    background: #0F172A;
+
+    color: white;
+
+    margin-left: 22px;
+}
+
+
+/* ============================================================
+   CHAT OPTIONS
+============================================================ */
+
+.chatbot-options {
+    background: #FFFFFF;
+
+    padding: 8px;
+
+    border-top: 1px solid #E2E8F0;
+}
+
+div[data-testid="stVerticalBlock"]:has(
+    .chatbot-anchor
+) .chatbot-option button {
+    font-size: 9px !important;
+
+    min-height: 29px !important;
+
+    height: 29px !important;
+
+    padding: 2px 4px !important;
+
+    border-radius: 8px !important;
+
+    margin: 0 !important;
 }
 
 
@@ -822,22 +894,36 @@ div.stButton > button:hover {
    CHAT OPEN BUTTON
 ============================================================ */
 
-.chat-open {
-    position: fixed;
+div[data-testid="stVerticalBlock"]:has(
+    .chatbot-open-anchor
+) {
+    position: fixed !important;
 
-    left: 20px;
+    left: 20px !important;
 
-    bottom: 20px;
+    bottom: 20px !important;
 
-    z-index: 999999;
+    width: 58px !important;
+
+    height: 58px !important;
+
+    z-index: 999999 !important;
+
+    padding: 0 !important;
+
+    margin: 0 !important;
 }
 
-.chat-open button {
-    width: 54px !important;
+div[data-testid="stVerticalBlock"]:has(
+    .chatbot-open-anchor
+) button {
+    width: 58px !important;
 
-    height: 54px !important;
+    height: 58px !important;
 
-    min-height: 54px !important;
+    min-height: 58px !important;
+
+    padding: 0 !important;
 
     border-radius: 50% !important;
 
@@ -852,25 +938,10 @@ div.stButton > button:hover {
 
     color: white !important;
 
-    font-size: 20px !important;
+    font-size: 21px !important;
 
     box-shadow:
-        0 10px 25px rgba(15,23,42,0.2) !important;
-}
-
-
-/* ============================================================
-   STREAMLIT INPUTS
-============================================================ */
-
-div[data-baseweb="input"] > div,
-div[data-baseweb="textarea"] > div,
-div[data-baseweb="select"] > div {
-    border-radius: 10px !important;
-}
-
-label {
-    font-weight: 600 !important;
+        0 10px 25px rgba(15,23,42,0.22) !important;
 }
 
 
@@ -882,6 +953,7 @@ label {
 
     .block-container {
         padding-left: 1rem !important;
+
         padding-right: 1rem !important;
     }
 
@@ -899,6 +971,7 @@ label {
 
     .hero-title {
         font-size: 39px;
+
         letter-spacing: -1.8px;
     }
 
@@ -910,20 +983,24 @@ label {
         font-size: 25px;
     }
 
-    .chat-wrapper {
-        left: 10px;
+    div[data-testid="stVerticalBlock"]:has(
+        .chatbot-anchor
+    ) {
+        left: 10px !important;
 
-        bottom: 10px;
+        bottom: 10px !important;
 
-        width: 260px;
+        width: 270px !important;
 
-        max-width: calc(100vw - 20px);
+        max-width: calc(100vw - 20px) !important;
     }
 
-    .chat-open {
-        left: 10px;
+    div[data-testid="stVerticalBlock"]:has(
+        .chatbot-open-anchor
+    ) {
+        left: 10px !important;
 
-        bottom: 10px;
+        bottom: 10px !important;
     }
 }
 
@@ -979,9 +1056,11 @@ for col, (label, page) in zip(nav_cols, navigation):
         if st.button(
             label,
             use_container_width=True,
-            key=f"nav_{page}",
+            key=f"navigation_{page}",
         ):
+
             st.session_state.page = page
+
             st.rerun()
 
 
@@ -990,10 +1069,6 @@ for col, (label, page) in zip(nav_cols, navigation):
 # ============================================================
 
 def home_page():
-
-    # --------------------------------------------------------
-    # HERO
-    # --------------------------------------------------------
 
     html(
         """
@@ -1083,37 +1158,37 @@ def home_page():
         (
             "📊",
             "Power BI & Business Intelligence",
-            "Interactive dashboards, KPI monitoring, DAX, Power Query and executive reporting."
+            "Interactive dashboards, KPI monitoring, DAX, Power Query and executive reporting.",
         ),
 
         (
             "🚚",
             "Logistics Analytics",
-            "Shipment analytics, hub performance, SLA, TAT, delivery and operational intelligence."
+            "Shipment analytics, hub performance, SLA, TAT, delivery and operational intelligence.",
         ),
 
         (
             "🤖",
             "AI & Machine Learning",
-            "Forecasting, prediction, classification, churn models and intelligent decision systems."
+            "Forecasting, prediction, classification, churn models and intelligent decision systems.",
         ),
 
         (
             "⚙️",
             "Automation & MIS",
-            "Automate repetitive reports, Excel workflows, Python processes and operational MIS."
+            "Automate repetitive reports, Excel workflows, Python processes and operational MIS.",
         ),
 
         (
             "🗄️",
             "SQL & Data Engineering",
-            "Advanced SQL, data transformation, ETL pipelines and reporting datasets."
+            "Advanced SQL, data transformation, ETL pipelines and reporting datasets.",
         ),
 
         (
             "🔗",
             "API & Data Integration",
-            "Connect APIs, databases, JSON feeds and multiple data sources into one analytics ecosystem."
+            "Connect APIs, databases, JSON feeds and multiple data sources into one analytics ecosystem.",
         ),
     ]
 
@@ -1145,7 +1220,11 @@ def home_page():
             )
 
         if (i + 1) % 3 == 0:
-            st.markdown("<br>", unsafe_allow_html=True)
+
+            st.markdown(
+                "<br>",
+                unsafe_allow_html=True
+            )
 
 
     # --------------------------------------------------------
@@ -1173,25 +1252,25 @@ def home_page():
         (
             "01",
             "Understand",
-            "Understand your business problem and objectives."
+            "Understand your business problem and objectives.",
         ),
 
         (
             "02",
             "Analyze",
-            "Study your data sources and identify opportunities."
+            "Study your data sources and identify opportunities.",
         ),
 
         (
             "03",
             "Build",
-            "Develop dashboards, models, automation or data solutions."
+            "Develop dashboards, models, automation or data solutions.",
         ),
 
         (
             "04",
             "Deliver",
-            "Deploy the solution and provide actionable insights."
+            "Deploy the solution and provide actionable insights.",
         ),
     ]
 
@@ -1200,7 +1279,7 @@ def home_page():
 
     for col, (number, title, text) in zip(
         workflow_cols,
-        workflow
+        workflow,
     ):
 
         with col:
@@ -1235,7 +1314,11 @@ def home_page():
     # TECHNOLOGY
     # --------------------------------------------------------
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown(
+        "<br><br>",
+        unsafe_allow_html=True
+    )
+
 
     html(
         """
@@ -1244,7 +1327,7 @@ def home_page():
 </div>
 
 <div class="section-subtitle">
-    Modern analytics, cloud and data technologies.
+    Modern analytics and data technologies.
 </div>
 """
     )
@@ -1264,7 +1347,7 @@ def home_page():
 
     for col, tech in zip(
         tech_cols,
-        technologies
+        technologies,
     ):
 
         with col:
@@ -1428,9 +1511,12 @@ def services_page():
 
     cols = st.columns(2)
 
-    for i, (icon, title, points) in enumerate(
-        service_details
-    ):
+
+    for i, (
+        icon,
+        title,
+        points
+    ) in enumerate(service_details):
 
         with cols[i % 2]:
 
@@ -1455,7 +1541,11 @@ def services_page():
             )
 
         if i % 2 == 1:
-            st.markdown("<br>", unsafe_allow_html=True)
+
+            st.markdown(
+                "<br>",
+                unsafe_allow_html=True
+            )
 
 
 # ============================================================
@@ -1539,11 +1629,12 @@ def projects_page():
 
     cols = st.columns(2)
 
+
     for i, (
         icon,
         title,
         category,
-        description
+        description,
     ) in enumerate(projects):
 
         with cols[i % 2]:
@@ -1573,7 +1664,11 @@ def projects_page():
             )
 
         if i % 2 == 1:
-            st.markdown("<br>", unsafe_allow_html=True)
+
+            st.markdown(
+                "<br>",
+                unsafe_allow_html=True
+            )
 
 
 # ============================================================
@@ -1905,7 +2000,10 @@ def about_page():
         )
 
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown(
+        "<br><br>",
+        unsafe_allow_html=True
+    )
 
 
     html(
@@ -1931,27 +2029,28 @@ def about_page():
         (
             "📊",
             "Visibility",
-            "Get a clear view of your business performance through dashboards and KPIs."
+            "Get a clear view of your business performance through dashboards and KPIs.",
         ),
 
         (
             "🔮",
             "Prediction",
-            "Use historical data and machine learning to anticipate future outcomes."
+            "Use historical data and machine learning to anticipate future outcomes.",
         ),
 
         (
             "⚡",
             "Automation",
-            "Reduce manual work by automating repetitive reporting and data processes."
+            "Reduce manual work by automating repetitive reporting and data processes.",
         ),
     ]
 
 
-    for col, (icon, title, text) in zip(
-        cols,
-        about_points
-    ):
+    for col, (
+        icon,
+        title,
+        text
+    ) in zip(cols, about_points):
 
         with col:
 
@@ -2082,7 +2181,10 @@ def contact_page():
         )
 
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown(
+        "<br><br>",
+        unsafe_allow_html=True
+    )
 
 
     if st.button(
@@ -2145,186 +2247,283 @@ html(
 
 
 # ============================================================
-# FLOATING CHATBOT
+# GLOBAL FLOATING CHATBOT
 # ============================================================
 
 if st.session_state.chat_open:
 
-    html(
-        """
-<div class="chat-wrapper">
+    # --------------------------------------------------------
+    # CREATE CONTAINER
+    # --------------------------------------------------------
 
-    <div class="chat-header">
+    chatbot = st.container()
 
-        <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        ">
 
-            <div>
+    with chatbot:
 
-                <div class="chat-header-title">
-                    🤖 LogiIntelli AI Assistant
-                </div>
+        # IMPORTANT:
+        # CSS uses this invisible anchor to identify
+        # the chatbot's Streamlit container.
 
-                <div class="chat-header-subtitle">
-                    Analytics & Project Consultation
-                </div>
+        html(
+            """
+            <div class="chatbot-anchor"></div>
+            """
+        )
 
-            </div>
 
-        </div>
+        # ----------------------------------------------------
+        # CHAT HEADER
+        # ----------------------------------------------------
 
+        header_col1, header_col2 = st.columns(
+            [0.84, 0.16]
+        )
+
+
+        with header_col1:
+
+            html(
+                """
+<div class="chat-header">
+
+    <div class="chat-header-title">
+        🤖 LogiIntelli AI
+    </div>
+
+    <div class="chat-header-subtitle">
+        Analytics & Project Consultation
     </div>
 
 </div>
 """
-    )
+            )
 
 
-    # Chat header close button
-    close_col1, close_col2 = st.columns(
-        [0.88, 0.12]
-    )
+        with header_col2:
 
+            st.markdown(
+                '<div class="chat-close">',
+                unsafe_allow_html=True
+            )
 
-    with close_col2:
-
-        if st.button(
-            "✕",
-            key="chat_close",
-            help="Close chatbot",
-        ):
-
-            reset_chat()
-
-            st.rerun()
-
-
-    # Messages
-    html(
-        """
-<div class="chat-body">
-"""
-    )
-
-
-    for msg in st.session_state.chat_messages:
-
-        role_class = (
-            "chat-assistant"
-            if msg["role"] == "assistant"
-            else "chat-user"
-        )
-
-        html(
-            f"""
-<div class="chat-message {role_class}">
-    {msg["text"]}
-</div>
-"""
-        )
-
-
-    html(
-        """
-</div>
-"""
-    )
-
-
-    # Options
-    html(
-        """
-<div class="chat-options">
-"""
-    )
-
-
-    options = [
-
-        "📊 Power BI Dashboard",
-
-        "🚚 Logistics Analytics",
-
-        "🤖 AI / Machine Learning",
-
-        "⚙️ Automation / MIS",
-
-        "🗄️ SQL / Data Engineering",
-
-        "💡 Not Sure",
-    ]
-
-
-    option_cols = st.columns(2)
-
-
-    for i, option in enumerate(options):
-
-        with option_cols[i % 2]:
 
             if st.button(
-                option,
-                key=f"chat_option_{i}",
-                use_container_width=True,
+                "✕",
+                key="chat_close_global",
+                help="Close chatbot",
             ):
 
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "user",
-                        "text": option,
-                    }
-                )
-
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "assistant",
-                        "text": (
-                            f"Great choice! 👍<br><br>"
-                            f"We can discuss your "
-                            f"<b>{option}</b> requirement.<br><br>"
-                            "Please use the <b>Request Project</b> "
-                            "page to share your business requirement."
-                        ),
-                    }
-                )
-
+                reset_chat()
 
                 st.rerun()
 
 
-    html(
-        """
+            st.markdown(
+                "</div>",
+                unsafe_allow_html=True
+            )
+
+
+        # ----------------------------------------------------
+        # CHAT MESSAGES
+        # ----------------------------------------------------
+
+        html(
+            """
+<div class="chatbot-messages">
+"""
+        )
+
+
+        for msg in st.session_state.chat_messages:
+
+            if msg["role"] == "assistant":
+
+                role_class = "chatbot-assistant"
+
+            else:
+
+                role_class = "chatbot-user"
+
+
+            html(
+                f"""
+<div class="chatbot-message {role_class}">
+    {msg["text"]}
 </div>
 """
-    )
+            )
+
+
+        html(
+            """
+</div>
+"""
+        )
+
+
+        # ----------------------------------------------------
+        # CHAT OPTIONS
+        # ----------------------------------------------------
+
+        html(
+            """
+<div class="chatbot-options">
+"""
+        )
+
+
+        options = [
+
+            "📊 Power BI",
+
+            "🚚 Logistics",
+
+            "🤖 AI / ML",
+
+            "⚙️ Automation",
+
+            "🗄️ SQL",
+
+            "💡 Not Sure",
+        ]
+
+
+        option_cols = st.columns(2)
+
+
+        for i, option in enumerate(options):
+
+            with option_cols[i % 2]:
+
+                st.markdown(
+                    '<div class="chatbot-option">',
+                    unsafe_allow_html=True
+                )
+
+
+                if st.button(
+                    option,
+                    key=f"chat_global_option_{i}",
+                    use_container_width=True,
+                ):
+
+                    st.session_state.chat_messages.append(
+                        {
+                            "role": "user",
+                            "text": option,
+                        }
+                    )
+
+
+                    if "Power BI" in option:
+
+                        reply = (
+                            "Great! We can help with "
+                            "<b>Power BI dashboards</b>, "
+                            "KPI reporting, DAX, Power Query "
+                            "and business intelligence."
+                        )
+
+                    elif "Logistics" in option:
+
+                        reply = (
+                            "We can help with "
+                            "<b>Logistics Analytics</b>, "
+                            "shipment tracking, SLA, TAT, "
+                            "hub performance and delivery analytics."
+                        )
+
+                    elif "AI" in option:
+
+                        reply = (
+                            "We can help with "
+                            "<b>AI & Machine Learning</b>, "
+                            "forecasting, prediction, classification "
+                            "and intelligent decision systems."
+                        )
+
+                    elif "Automation" in option:
+
+                        reply = (
+                            "We can help automate "
+                            "<b>MIS, Excel, Python and reporting "
+                            "workflows</b>."
+                        )
+
+                    elif "SQL" in option:
+
+                        reply = (
+                            "We can help with "
+                            "<b>SQL, ETL, data transformation, "
+                            "database optimization and reporting datasets</b>."
+                        )
+
+                    else:
+
+                        reply = (
+                            "No problem! 😊 "
+                            "Tell us about your business problem "
+                            "and we can suggest a suitable "
+                            "Analytics, AI, BI or Automation solution."
+                        )
+
+
+                    st.session_state.chat_messages.append(
+                        {
+                            "role": "assistant",
+                            "text": (
+                                reply
+                                + "<br><br>"
+                                + "You can also use the "
+                                + "<b>Request Project</b> page "
+                                + "to submit your requirement."
+                            ),
+                        }
+                    )
+
+
+                    st.rerun()
+
+
+                st.markdown(
+                    "</div>",
+                    unsafe_allow_html=True
+                )
+
+
+        html(
+            """
+</div>
+"""
+        )
 
 
 else:
 
-    html(
-        """
-<div class="chat-open">
-"""
-    )
+    # ========================================================
+    # CHAT OPEN BUTTON
+    # ========================================================
+
+    open_chat = st.container()
 
 
-    if st.button(
-        "💬",
-        key="open_chat_btn",
-        help="Open AI Assistant",
-    ):
+    with open_chat:
 
-        st.session_state.chat_open = True
-
-        st.rerun()
+        html(
+            """
+            <div class="chatbot-open-anchor"></div>
+            """
+        )
 
 
-    html(
-        """
-</div>
-"""
-    )
+        if st.button(
+            "💬",
+            key="open_chat_global",
+            help="Open LogiIntelli AI Assistant",
+        ):
+
+            st.session_state.chat_open = True
+
+            st.rerun()
