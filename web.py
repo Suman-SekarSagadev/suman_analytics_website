@@ -74,9 +74,6 @@ def submit_to_google(payload):
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-if "chat_open" not in st.session_state:
-    st.session_state.chat_open = True
-
 if "chat_step" not in st.session_state:
     st.session_state.chat_step = 0
 
@@ -569,58 +566,61 @@ div.stButton > button:hover {
 
 
 /* ============================================================
-   FLOATING CHATBOT WIDGET FIX
+   ISOLATED FLOATING CHATBOT (ST.POPOVER)
 ============================================================ */
 
-/* Target the Streamlit container that wraps our chat header */
-div[data-testid="stVerticalBlock"]:has(> div .jyora-chat-header) {
+/* Floating trigger button in bottom-left corner */
+div[data-testid="stPopover"] {
     position: fixed !important;
-    left: 20px !important;
-    bottom: 20px !important;
-    width: 320px !important;
-    max-width: calc(100vw - 40px) !important;
+    bottom: 25px !important;
+    left: 25px !important;
     z-index: 999999 !important;
-    background: #FFFFFF !important;
-    border: 1px solid #D9E2EC !important;
-    border-radius: 16px !important;
-    box-shadow: 0 15px 45px rgba(15,23,42,0.22) !important;
-    padding: 12px !important;
 }
 
-/* Chat Header */
+div[data-testid="stPopover"] > button {
+    border-radius: 50px !important;
+    background: linear-gradient(135deg, #0F172A, #2563EB) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    padding: 12px 20px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.30) !important;
+}
+
+/* Chat Header styling inside popover */
 .jyora-chat-header {
     width: 100% !important;
-    padding: 12px 14px !important;
+    padding: 12px !important;
     background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%) !important;
-    border-radius: 12px 12px 0 0 !important;
-    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+    margin-bottom: 12px !important;
 }
 
 .jyora-chat-title {
     color: #FFFFFF !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
 }
 
 .jyora-chat-subtitle {
     color: #DBEAFE !important;
-    font-size: 9px !important;
-    font-weight: 500 !important;
+    font-size: 10px !important;
     margin-top: 2px !important;
 }
 
-/* Chat Messages */
+/* Chat Log Container */
 .chat-body {
-    padding: 6px 4px !important;
-    max-height: 200px !important;
+    padding: 4px !important;
+    max-height: 220px !important;
     overflow-y: auto !important;
+    margin-bottom: 12px !important;
 }
 
 .chat-message {
-    padding: 7px 10px !important;
+    padding: 8px 12px !important;
     border-radius: 8px !important;
-    margin: 4px 0 !important;
-    font-size: 11px !important;
+    margin: 6px 0 !important;
+    font-size: 12px !important;
     line-height: 1.4 !important;
     white-space: pre-wrap !important;
 }
@@ -634,27 +634,7 @@ div[data-testid="stVerticalBlock"]:has(> div .jyora-chat-header) {
 .chat-user {
     background: #0F172A !important;
     color: #FFFFFF !important;
-    margin-left: 15px !important;
-}
-
-/* Floating Reopen Button */
-.floating-reopen-btn {
-    position: fixed !important;
-    left: 20px !important;
-    bottom: 20px !important;
-    z-index: 999999 !important;
-}
-
-.floating-reopen-btn button {
-    width: 54px !important;
-    height: 54px !important;
-    min-height: 54px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, #0F172A, #2563EB) !important;
-    color: white !important;
-    border: none !important;
-    font-size: 22px !important;
-    box-shadow: 0 10px 25px rgba(15,23,42,0.30) !important;
+    margin-left: 20px !important;
 }
 
 
@@ -1188,21 +1168,12 @@ def contact_page():
 
 
 # ============================================================
-# FLOATING CHATBOT WIDGET
+# FLOATING CHATBOT WIDGET (USING ST.POPOVER)
 # ============================================================
 
 def render_chatbot():
-    if not st.session_state.chat_open:
-        st.markdown('<div class="floating-reopen-btn">', unsafe_allow_html=True)
-        if st.button("💬", key="reopen_chat_btn"):
-            st.session_state.chat_open = True
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-        return
-
-    # Native Streamlit Container enables CSS targeting
-    with st.container():
-        # Header HTML
+    # Popover isolates elements, preventing total layout overriding
+    with st.popover("💬 Chat with AI"):
         html(
             """
 <div class="jyora-chat-header">
@@ -1212,12 +1183,7 @@ def render_chatbot():
 """
         )
 
-        # Header Close Button
-        if st.button("✕ Close Chat", key="close_chat_btn"):
-            st.session_state.chat_open = False
-            st.rerun()
-
-        # Chat Messages Scroll Area
+        # Chat Message History Log
         chat_html = '<div class="chat-body">'
         for msg in st.session_state.chat_messages:
             cls = "chat-assistant" if msg["role"] == "assistant" else "chat-user"
@@ -1259,7 +1225,6 @@ def render_chatbot():
                     st.session_state.chat_data["email"] = email_input.strip()
                     st.session_state.chat_messages.append({"role": "user", "text": email_input.strip()})
                     
-                    # Payload submission
                     payload = {
                         "type": "chat_lead",
                         "name": st.session_state.chat_data.get("name"),
