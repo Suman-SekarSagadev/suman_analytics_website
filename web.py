@@ -47,21 +47,6 @@ if "page" not in st.session_state:
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 
-if "chat_open" not in st.session_state:
-    st.session_state.chat_open = False
-
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "👋 Hi! I'm the LogiIntelli AI assistant. "
-                "I can help you understand our logistics analytics, "
-                "Power BI, automation, SQL and AI solutions."
-            ),
-        }
-    ]
-
 
 # ============================================================
 # CUSTOM CSS
@@ -453,125 +438,10 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
 
 /* ============================================================
-   FLOATING CHATBOT
-============================================================ */
-
-div[data-testid="stVerticalBlock"]:has(.chatbot-marker) {
-    position: fixed;
-    right: 28px;
-    bottom: 25px;
-    z-index: 999999;
-}
-
-
-/* Chat launcher */
-
-.chat-launcher {
-    width: 66px;
-    height: 66px;
-    border-radius: 50%;
-    background:
-        linear-gradient(
-            135deg,
-            #0066CC,
-            #0B2545
-        );
-    box-shadow:
-        0 12px 35px rgba(0, 102, 204, .35),
-        0 4px 12px rgba(11, 37, 69, .20);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 31px;
-    border: 4px solid white;
-    margin-left: auto;
-}
-
-
-/* Chat header */
-
-.chat-header {
-    background:
-        linear-gradient(
-            135deg,
-            #0B2545,
-            #0066CC
-        );
-    color: white;
-    padding: 17px 18px;
-    border-radius: 18px 18px 0 0;
-}
-
-.chat-header-title {
-    font-size: 16px;
-    font-weight: 850;
-}
-
-.chat-header-subtitle {
-    font-size: 11px;
-    color: #DCEBFF;
-    margin-top: 3px;
-}
-
-
-/* Chat body */
-
-.chat-window {
-    width: 370px;
-    background: white;
-    border-radius: 19px;
-    box-shadow:
-        0 25px 70px rgba(15, 23, 42, .25),
-        0 4px 15px rgba(15, 23, 42, .10);
-    border: 1px solid #DCE4EE;
-    overflow: hidden;
-    margin-bottom: 12px;
-}
-
-.chat-body {
-    padding: 14px;
-    max-height: 390px;
-    overflow-y: auto;
-    background: #F8FAFC;
-}
-
-.chat-message {
-    margin-bottom: 11px;
-    padding: 10px 12px;
-    border-radius: 13px;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.chat-ai {
-    background: #FFFFFF;
-    color: #334155;
-    border: 1px solid #E2E8F0;
-    margin-right: 28px;
-}
-
-.chat-user {
-    background: #0066CC;
-    color: white;
-    margin-left: 28px;
-}
-
-.chat-status {
-    padding: 8px 14px;
-    background: #EFF6FF;
-    color: #0066CC;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-
-/* ============================================================
    MOBILE
 ============================================================ */
 
 @media (max-width: 768px) {
-
     .main-title {
         font-size: 32px;
     }
@@ -604,16 +474,6 @@ div[data-testid="stVerticalBlock"]:has(.chatbot-marker) {
     .metric-value {
         font-size: 29px;
     }
-
-    div[data-testid="stVerticalBlock"]:has(.chatbot-marker) {
-        right: 12px;
-        bottom: 15px;
-    }
-
-    .chat-window {
-        width: calc(100vw - 30px);
-        max-width: 370px;
-    }
 }
 
 </style>
@@ -629,7 +489,6 @@ html("""
     <div class="main-title">
         🚚 LogiIntelli
     </div>
-
     <div class="sub-title">
         Logistics Analytics • AI & Predictive Intelligence • BI Automation
     </div>
@@ -653,11 +512,8 @@ pages = [
 nav_cols = st.columns(6)
 
 for idx, page_name in enumerate(pages):
-
     with nav_cols[idx]:
-
         selected = st.session_state.page == page_name
-
         label = (
             f"● {page_name}"
             if selected
@@ -669,12 +525,9 @@ for idx, page_name in enumerate(pages):
             key=f"nav_{idx}",
             use_container_width=True,
         ):
-
             st.session_state.page = page_name
             st.session_state.submitted = False
-
             st.rerun()
-
 
 page = st.session_state.page
 
@@ -687,11 +540,9 @@ if page == "Home":
 
     html("""
     <div class="hero">
-
         <h1>
             Logistics AI, Data Analytics & Business Intelligence
         </h1>
-
         <p>
             <strong>LogiIntelli</strong> is a Logistics AI,
             Data Analytics, and Business Intelligence platform
@@ -699,7 +550,6 @@ if page == "Home":
             and e-commerce businesses transform operational data
             into actionable intelligence.
         </p>
-
         <p>
             We build AI-powered logistics analytics,
             Power BI dashboards, SQL data engineering solutions,
@@ -707,7 +557,6 @@ if page == "Home":
             automated MIS systems, API integrations,
             and real-time operational intelligence platforms.
         </p>
-
         <p>
             Our expertise includes shipment tracking analytics,
             delivery performance, TAT and ageing analysis,
@@ -715,15 +564,10 @@ if page == "Home":
             shipment delay prediction, demand forecasting,
             ERP automation, and AI-powered supply chain intelligence.
         </p>
-
     </div>
     """)
 
-
-    # ========================================================
     # METRICS
-    # ========================================================
-
     c1, c2, c3, c4 = st.columns(4)
 
     metrics = [
@@ -733,76 +577,56 @@ if page == "Home":
         ("BI + AI", "Technology Architecture"),
     ]
 
-    for col, (value, label) in zip(
-        [c1, c2, c3, c4],
-        metrics,
-    ):
-
+    for col, (value, label) in zip([c1, c2, c3, c4], metrics):
         with col:
-
             html(f"""
             <div class="metric-card">
-
                 <div class="metric-value">
                     {value}
                 </div>
-
                 <div class="metric-label">
                     {label}
                 </div>
-
             </div>
             """)
 
-
-    # ========================================================
     # WHAT WE BUILD
-    # ========================================================
-
     html("""
     <div class="section-title">
         What We Build
     </div>
-
     <div class="section-subtitle">
         Solutions engineered specifically around logistics operations,
         data analytics, automation, and predictive artificial intelligence.
     </div>
     """)
 
-
     services = [
-
         (
             "📊",
             "Logistics BI",
             "Power BI dashboards for booking, delivery, pending shipments, RTO, hub performance, state performance, and operational KPIs.",
         ),
-
         (
             "🚚",
             "TAT & Ageing Analytics",
             "Shipment ageing analysis, transit time monitoring, delivery SLA performance, bottleneck detection, and delayed shipment identification.",
         ),
-
         (
             "⚙️",
             "MIS Automation",
             "Automate daily operational reporting from ERPs, REST APIs, SQL databases, Python pipelines, and Excel reporting systems.",
         ),
-
         (
             "🏢",
             "Hub Performance Analytics",
             "Measure hub throughput, productivity, service levels, pending shipments, delivery performance, and operational efficiency.",
         ),
-
         (
             "🔗",
             "API & ERP Integration",
             "Connect legacy ERP systems and modern REST APIs using Python, SQL, automation, and business intelligence platforms.",
         ),
-
         (
             "🤖",
             "Predictive AI & Machine Learning",
@@ -810,127 +634,92 @@ if page == "Home":
         ),
     ]
 
-
     for i in range(0, len(services), 3):
-
         cols = st.columns(3)
-
         for j in range(3):
-
             if i + j >= len(services):
                 continue
-
             icon, title, description = services[i + j]
-
             with cols[j]:
-
                 html(f"""
                 <div class="card">
-
                     <div class="service-icon">
                         {icon}
                     </div>
-
                     <h3>
                         {title}
                     </h3>
-
                     <p>
                         {description}
                     </p>
-
                 </div>
                 """)
 
-
-    # ========================================================
     # DATA FLOW
-    # ========================================================
-
     html("""
     <div class="section-title">
         Logistics Data Flow
     </div>
-
     <div class="section-subtitle">
         End-to-end shipment telemetry and operational intelligence
         from booking to AI-monitored delivery.
     </div>
     """)
 
-
     html("""
     <div class="workflow">
-
         <div class="workflow-container">
-
             <div class="workflow-step">
                 <div class="workflow-icon">📦</div>
                 <div class="workflow-name">Booking</div>
                 <div class="workflow-desc">Shipment Created</div>
             </div>
-
             <div class="workflow-arrow">→</div>
-
             <div class="workflow-step">
                 <div class="workflow-icon">🚛</div>
                 <div class="workflow-name">Pickup</div>
                 <div class="workflow-desc">Shipment Picked</div>
             </div>
-
             <div class="workflow-arrow">→</div>
-
             <div class="workflow-step">
                 <div class="workflow-icon">🏢</div>
                 <div class="workflow-name">Inbound</div>
                 <div class="workflow-desc">Hub Received</div>
             </div>
-
             <div class="workflow-arrow">→</div>
-
             <div class="workflow-step">
                 <div class="workflow-icon">🔄</div>
                 <div class="workflow-name">Processing</div>
                 <div class="workflow-desc">Hub Processing</div>
             </div>
-
             <div class="workflow-arrow">→</div>
-
             <div class="workflow-step">
                 <div class="workflow-icon">🚚</div>
                 <div class="workflow-name">Transit</div>
                 <div class="workflow-desc">Shipment Moving</div>
             </div>
-
             <div class="workflow-arrow">→</div>
-
             <div class="workflow-step">
                 <div class="workflow-icon">📍</div>
                 <div class="workflow-name">Out for Delivery</div>
                 <div class="workflow-desc">Last Mile</div>
             </div>
-
             <div class="workflow-arrow">→</div>
-
             <div class="workflow-step">
                 <div class="workflow-icon">✅</div>
                 <div class="workflow-name">Delivery</div>
                 <div class="workflow-desc">Shipment Delivered</div>
             </div>
-
         </div>
-
     </div>
     """)
 
-
+    # CTA
     html("""
     <div class="hero">
-
         <h2>
             Have a Logistics Data or AI Problem?
         </h2>
-
         <p>
             Share your business requirement and explore custom solutions
             for logistics analytics, Power BI dashboards,
@@ -938,7 +727,6 @@ if page == "Home":
             automated MIS reporting, and AI-powered
             operational intelligence.
         </p>
-
     </div>
     """)
 
@@ -953,16 +741,13 @@ elif page == "Services":
     <div class="section-title">
         Logistics & AI Solutions
     </div>
-
     <div class="section-subtitle">
         Project-based analytics, business intelligence, automation,
         and machine learning solutions engineered around logistics operations.
     </div>
     """)
 
-
     service_details = [
-
         (
             "📊",
             "Courier Operations Dashboard",
@@ -975,7 +760,6 @@ elif page == "Services":
                 "Real-time operational trends",
             ],
         ),
-
         (
             "⏱️",
             "TAT & Ageing Analytics",
@@ -988,7 +772,6 @@ elif page == "Services":
                 "Delay classification",
             ],
         ),
-
         (
             "🏢",
             "Hub Performance Analytics",
@@ -1001,7 +784,6 @@ elif page == "Services":
                 "Hub SLA rankings",
             ],
         ),
-
         (
             "🔄",
             "Inbound / Outbound Network Analytics",
@@ -1014,7 +796,6 @@ elif page == "Services":
                 "Network lane performance",
             ],
         ),
-
         (
             "⚙️",
             "MIS Automation",
@@ -1027,7 +808,6 @@ elif page == "Services":
                 "Email distribution alerts",
             ],
         ),
-
         (
             "🤖",
             "Predictive AI & Analytics",
@@ -1042,40 +822,27 @@ elif page == "Services":
         ),
     ]
 
-
     for i in range(0, len(service_details), 3):
-
         cols = st.columns(3)
-
         for j in range(3):
-
             if i + j >= len(service_details):
                 continue
 
             icon, title, items = service_details[i + j]
-
-            item_html = "".join(
-                f"<li>{item}</li>"
-                for item in items
-            )
+            item_html = "".join(f"<li>{item}</li>" for item in items)
 
             with cols[j]:
-
                 html(f"""
                 <div class="card">
-
                     <div class="service-icon">
                         {icon}
                     </div>
-
                     <h3>
                         {title}
                     </h3>
-
                     <ul>
                         {item_html}
                     </ul>
-
                 </div>
                 """)
 
@@ -1090,16 +857,13 @@ elif page == "Projects":
     <div class="section-title">
         Logistics & AI Projects
     </div>
-
     <div class="section-subtitle">
         Sample projects demonstrating capabilities in logistics analytics,
         business intelligence, automation, and machine learning.
     </div>
     """)
 
-
     projects = [
-
         (
             "01",
             "Courier Operations Dashboard",
@@ -1107,7 +871,6 @@ elif page == "Projects":
             "Power BI • SQL • DAX",
             "Operations Analytics",
         ),
-
         (
             "02",
             "Shipment TAT & Ageing Analytics",
@@ -1115,7 +878,6 @@ elif page == "Projects":
             "SQL • Python • Power BI",
             "TAT Analytics",
         ),
-
         (
             "03",
             "Hub Performance Analytics",
@@ -1123,7 +885,6 @@ elif page == "Projects":
             "SQL • Power BI • DAX",
             "Hub Analytics",
         ),
-
         (
             "04",
             "Inbound / Outbound Analytics",
@@ -1131,7 +892,6 @@ elif page == "Projects":
             "SQL • Python • Power BI",
             "Network Analytics",
         ),
-
         (
             "05",
             "Shipment Delay Prediction AI",
@@ -1139,7 +899,6 @@ elif page == "Projects":
             "Python • XGBoost • Machine Learning",
             "Predictive AI",
         ),
-
         (
             "06",
             "Automated Daily MIS Engine",
@@ -1149,49 +908,33 @@ elif page == "Projects":
         ),
     ]
 
-
     for i in range(0, len(projects), 2):
-
         cols = st.columns(2)
-
         for j in range(2):
-
             if i + j >= len(projects):
                 continue
 
             number, title, description, tech, category = projects[i + j]
 
             with cols[j]:
-
                 html(f"""
                 <div class="project-card">
-
-                    <div style="
-                        color:#0066CC;
-                        font-size:13px;
-                        font-weight:850;
-                        margin-bottom:8px;
-                    ">
+                    <div style="color:#0066CC; font-size:13px; font-weight:850; margin-bottom:8px;">
                         PROJECT {number}
                     </div>
-
                     <h3>
                         {title}
                     </h3>
-
                     <p>
                         {description}
                     </p>
-
                     <p>
                         <strong>Technology:</strong><br>
                         {tech}
                     </p>
-
                     <span class="badge">
                         {category}
                     </span>
-
                 </div>
                 """)
 
@@ -1206,43 +949,22 @@ elif page == "Request Project":
     <div class="section-title">
         Request a Project
     </div>
-
     <div class="section-subtitle">
         Share your logistics analytics, business intelligence,
         machine learning, or automation project requirements.
     </div>
     """)
 
-
-    with st.form(
-        "project_request_form",
-        clear_on_submit=False,
-    ):
-
+    with st.form("project_request_form", clear_on_submit=False):
         col1, col2 = st.columns(2)
 
-
         with col1:
-
-            company_name = st.text_input(
-                "Company Name"
-            )
-
-            contact_name = st.text_input(
-                "Contact Person *"
-            )
-
-            email = st.text_input(
-                "Business Email *"
-            )
-
-            phone = st.text_input(
-                "Phone / WhatsApp"
-            )
-
+            company_name = st.text_input("Company Name")
+            contact_name = st.text_input("Contact Person *")
+            email = st.text_input("Business Email *")
+            phone = st.text_input("Phone / WhatsApp")
 
         with col2:
-
             service = st.selectbox(
                 "Required Solution",
                 [
@@ -1257,7 +979,6 @@ elif page == "Request Project":
                     "Other",
                 ],
             )
-
             data_source = st.selectbox(
                 "Current Data Source",
                 [
@@ -1272,7 +993,6 @@ elif page == "Request Project":
                     "Other",
                 ],
             )
-
             timeline = st.selectbox(
                 "Expected Timeline",
                 [
@@ -1284,7 +1004,6 @@ elif page == "Request Project":
                 ],
             )
 
-
         requirement = st.text_area(
             "Describe Your Requirement *",
             height=160,
@@ -1295,57 +1014,27 @@ elif page == "Request Project":
             ),
         )
 
-
         submitted = st.form_submit_button(
             "🚀 Submit Project Request",
             use_container_width=True,
         )
 
-
         if submitted:
-
             contact_name_clean = contact_name.strip()
             email_clean = email.strip()
             requirement_clean = requirement.strip()
 
-
             if not contact_name_clean:
-
-                st.warning(
-                    "Please enter the Contact Person name."
-                )
-
-
+                st.warning("Please enter the Contact Person name.")
             elif not email_clean:
-
-                st.warning(
-                    "Please enter your Business Email."
-                )
-
-
-            elif not re.match(
-                r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                email_clean,
-            ):
-
-                st.warning(
-                    "Please enter a valid email address."
-                )
-
-
+                st.warning("Please enter your Business Email.")
+            elif not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_clean):
+                st.warning("Please enter a valid email address.")
             elif not requirement_clean:
-
-                st.warning(
-                    "Please describe your project requirement."
-                )
-
-
+                st.warning("Please describe your project requirement.")
             else:
-
                 payload = {
-                    "Date": datetime.now().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),
+                    "Date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "Company": company_name.strip(),
                     "Contact": contact_name_clean,
                     "Email": email_clean,
@@ -1356,75 +1045,47 @@ elif page == "Request Project":
                     "Requirement": requirement_clean,
                 }
 
-
                 try:
-
-                    with st.spinner(
-                        "Submitting your project request..."
-                    ):
-
+                    with st.spinner("Submitting your project request..."):
                         response = requests.post(
                             GOOGLE_SHEET_WEB_APP_URL,
                             data=json.dumps(payload),
                             headers={
-                                "Content-Type":
-                                "text/plain;charset=utf-8"
+                                "Content-Type": "text/plain;charset=utf-8"
                             },
                             timeout=20,
                             allow_redirects=True,
                         )
 
-
                     if response.status_code == 200:
-
                         st.session_state.submitted = True
-
                         st.success(
                             "🎉 Thank you! Your project request "
                             "has been submitted successfully."
                         )
-
                         st.info(
                             "Our team will review your requirement "
                             "and contact you shortly."
                         )
-
-
                     else:
-
                         st.error(
                             "Submission failed. "
-                            f"Server returned status "
-                            f"{response.status_code}."
+                            f"Server returned status {response.status_code}."
                         )
-
-                        st.code(
-                            response.text[:500]
-                        )
-
+                        st.code(response.text[:500])
 
                 except requests.exceptions.Timeout:
-
-                    st.error(
-                        "⏱️ The request timed out. "
-                        "Please try again."
-                    )
-
+                    st.error("⏱️ The request timed out. Please try again.")
 
                 except requests.exceptions.ConnectionError:
-
                     st.error(
                         "🌐 Unable to connect to the project "
                         "request server. Please check your "
                         "internet connection and try again."
                     )
 
-
                 except Exception as e:
-
-                    st.error(
-                        f"⚠️ An unexpected error occurred: {str(e)}"
-                    )
+                    st.error(f"⚠️ An unexpected error occurred: {str(e)}")
 
 
 # ============================================================
@@ -1437,104 +1098,48 @@ elif page == "About":
     <div class="section-title">
         About LogiIntelli
     </div>
-
     <div class="section-subtitle">
-        Bridging the gap between complex supply chain data
-        and actionable executive decisions.
+        Bridging the gap between complex supply chain data and actionable executive decisions.
     </div>
 
     <div class="card">
-
-        <h3>
-            Our Mission
-        </h3>
-
+        <h3>Our Mission</h3>
         <p>
-            LogiIntelli is dedicated to solving core logistics challenges
-            by turning raw operational tracking data into clean,
-            structured, and actionable visual intelligence.
-            We specialize in developing end-to-end data pipelines,
-            custom BI reporting systems, and predictive machine learning
-            models tailored specifically to the courier, express,
-            and parcel (CEP) market.
+            LogiIntelli is dedicated to solving core logistics challenges by turning raw operational tracking 
+            data into clean, structured, and actionable visual intelligence. We specialize in developing 
+            end-to-end data pipelines, custom BI reporting systems, and predictive machine learning models 
+            tailored specifically to the courier, express, and parcel (CEP) market.
         </p>
-
     </div>
     """)
 
-
     c1, c2 = st.columns(2)
 
-
     with c1:
-
         html("""
         <div class="card">
-
-            <h3>
-                Core Expertise
-            </h3>
-
+            <h3>Core Expertise</h3>
             <ul>
-                <li>
-                    Power BI & Interactive Dashboard Engineering
-                </li>
-
-                <li>
-                    SQL Data Warehousing & ETL Pipelines
-                </li>
-
-                <li>
-                    Predictive Machine Learning
-                    (Delay & RTO Risk Scoring)
-                </li>
-
-                <li>
-                    Automated MIS & Enterprise Reporting Systems
-                </li>
-
-                <li>
-                    REST API Integrations & Webhooks
-                </li>
+                <li>Power BI & Interactive Dashboard Engineering</li>
+                <li>SQL Data Warehousing & ETL Pipelines</li>
+                <li>Predictive Machine Learning (Delay & RTO Risk Scoring)</li>
+                <li>Automated MIS & Enterprise Reporting Systems</li>
+                <li>REST API Integrations & Webhooks</li>
             </ul>
-
         </div>
         """)
 
-
     with c2:
-
         html("""
         <div class="card">
-
-            <h3>
-                Domain Knowledge
-            </h3>
-
+            <h3>Domain Knowledge</h3>
             <ul>
-
-                <li>
-                    First-Mile, Mid-Mile, and Last-Mile Tracking
-                </li>
-
-                <li>
-                    Turnaround Time (TAT) & Ageing Bucket Optimization
-                </li>
-
-                <li>
-                    Hub Throughput, Inbound & Outbound Load Balancing
-                </li>
-
-                <li>
-                    Return to Origin (RTO) Minimization Strategies
-                </li>
-
-                <li>
-                    Carrier Performance & SLA Benchmarking
-                </li>
-
+                <li>First-Mile, Mid-Mile, and Last-Mile Tracking</li>
+                <li>Turnaround Time (TAT) & Ageing Bucket Optimization</li>
+                <li>Hub Throughput, Inbound & Outbound Load Balancing</li>
+                <li>Return to Origin (RTO) Minimization Strategies</li>
+                <li>Carrier Performance & SLA Benchmarking</li>
             </ul>
-
         </div>
         """)
 
@@ -1549,85 +1154,32 @@ elif page == "Contact":
     <div class="section-title">
         Get In Touch
     </div>
-
     <div class="section-subtitle">
-        Have questions or want to discuss a custom analytics pipeline?
-        Reach out directly.
+        Have questions or want to discuss a custom analytics pipeline? Reach out directly.
     </div>
     """)
 
-
     c1, c2 = st.columns(2)
 
-
     with c1:
-
         html("""
         <div class="card">
-
-            <h3>
-                Contact Information
-            </h3>
-
-            <p>
-                <strong>Email:</strong>
-                <a
-                    class="contact-link"
-                    href="mailto:support@logiintelli.com"
-                >
-                    support@logiintelli.com
-                </a>
-                ,
-                <a
-                    class="contact-link"
-                    href="mailto:sumansekar1205@gmail.com"
-                >
-                    sumansekar1205@gmail.com
-                </a>
-            </p>
-
-            <p>
-                <strong>WhatsApp:</strong>
-                <a
-                    class="contact-link"
-                    href="https://wa.me/918825674102"
-                    target="_blank"
-                >
-                    +91 8825674102
-                </a>
-            </p>
-
-            <p>
-                <strong>Business Hours:</strong>
-                Monday – Friday, 9:00 AM – 6:00 PM IST
-            </p>
-
-            <p>
-                <strong>Location:</strong>
-                India
-            </p>
-
+            <h3>Contact Information</h3>
+            <p><strong>Email:</strong> <a class="contact-link" href="mailto:support@logiintelli.com">support@logiintelli.com</a>, <a class="contact-link" href="mailto:sumansekar1205@gmail.com">sumansekar1205@gmail.com</a></p>
+            <p><strong>WhatsApp:</strong> <a class="contact-link" href="https://wa.me/918825674102" target="_blank">+91 8825674102</a></p>
+            <p><strong>Business Hours:</strong> Monday – Friday, 9:00 AM – 6:00 PM IST</p>
+            <p><strong>Location:</strong> India</p>
         </div>
         """)
 
-
     with c2:
-
         html("""
         <div class="card">
-
-            <h3>
-                Need Immediate Assistance?
-            </h3>
-
+            <h3>Need Immediate Assistance?</h3>
             <p>
-                If you have an urgent requirement or need assistance
-                setting up your Google Apps Script endpoint,
-                navigate to the <strong>Request Project</strong>
-                tab to submit your project details directly
-                into our dashboard queue.
+                If you have an urgent requirement or need assistance setting up your Google Apps Script endpoint, 
+                navigate to the <strong>Request Project</strong> tab to submit your project details directly into our dashboard queue.
             </p>
-
         </div>
         """)
 
@@ -1638,435 +1190,10 @@ elif page == "Contact":
 
 html("""
 <div class="footer">
-
-    <div class="footer-title">
-        🚚 LogiIntelli
-    </div>
-
-    <div>
-        Logistics AI • Data Analytics • BI Automation
-    </div>
-
-    <div style="
-        margin-top: 8px;
-        font-size: 12px;
-        color: #94A3B8;
-    ">
+    <div class="footer-title">🚚 LogiIntelli</div>
+    <div>Logistics AI • Data Analytics • BI Automation</div>
+    <div style="margin-top: 8px; font-size: 12px; color: #94A3B8;">
         © 2026 LogiIntelli. All rights reserved.
     </div>
-
 </div>
 """)
-
-
-# ============================================================
-# FLOATING AI CHATBOT
-# ============================================================
-
-# The marker is intentionally placed inside a Streamlit
-# container so the CSS above can identify the chatbot.
-
-chat_container = st.container()
-
-with chat_container:
-
-    html("""
-    <div class="chatbot-marker"></div>
-    """)
-
-
-    # --------------------------------------------------------
-    # CHAT CLOSED
-    # --------------------------------------------------------
-
-    if not st.session_state.chat_open:
-
-        if st.button(
-            "🤖",
-            key="open_chatbot",
-            help="Chat with LogiIntelli AI",
-        ):
-
-            st.session_state.chat_open = True
-            st.rerun()
-
-
-    # --------------------------------------------------------
-    # CHAT OPEN
-    # --------------------------------------------------------
-
-    else:
-
-        html("""
-        <div class="chat-window">
-
-            <div class="chat-header">
-
-                <div class="chat-header-title">
-                    🤖 LogiIntelli AI Assistant
-                </div>
-
-                <div class="chat-header-subtitle">
-                    Logistics Analytics • AI • BI • Automation
-                </div>
-
-            </div>
-
-            <div class="chat-status">
-                🟢 Online • Project Assistant
-            </div>
-
-            <div class="chat-body">
-        """)
-
-
-        # ----------------------------------------------------
-        # DISPLAY CHAT HISTORY
-        # ----------------------------------------------------
-
-        for message in st.session_state.chat_messages:
-
-            role = message["role"]
-            content = message["content"]
-
-            if role == "assistant":
-
-                html(f"""
-                <div class="chat-message chat-ai">
-                    🤖 {content}
-                </div>
-                """)
-
-            else:
-
-                html(f"""
-                <div class="chat-message chat-user">
-                    {content}
-                </div>
-                """)
-
-
-        html("""
-            </div>
-        </div>
-        """)
-
-
-        # ----------------------------------------------------
-        # QUICK QUESTIONS
-        # ----------------------------------------------------
-
-        q1, q2 = st.columns(2)
-
-        with q1:
-
-            if st.button(
-                "📊 Power BI",
-                key="chat_powerbi",
-            ):
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "user",
-                        "content": "I need a Power BI dashboard",
-                    }
-                )
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "assistant",
-                        "content": (
-                            "Absolutely! We can build dashboards for "
-                            "booking, delivery, pending shipments, "
-                            "RTO, ageing, hub performance, SLA and "
-                            "operational KPIs. "
-                            "Would you like to request a project?"
-                        ),
-                    }
-                )
-
-                st.rerun()
-
-
-        with q2:
-
-            if st.button(
-                "🤖 AI / ML",
-                key="chat_ai",
-            ):
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "user",
-                        "content": "I need an AI / ML solution",
-                    }
-                )
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "assistant",
-                        "content": (
-                            "We can develop shipment delay prediction, "
-                            "RTO risk scoring, demand forecasting, "
-                            "hub workload prediction and anomaly "
-                            "detection models."
-                        ),
-                    }
-                )
-
-                st.rerun()
-
-
-        q3, q4 = st.columns(2)
-
-        with q3:
-
-            if st.button(
-                "⚙️ MIS Automation",
-                key="chat_mis",
-            ):
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "user",
-                        "content": "I need MIS automation",
-                    }
-                )
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "assistant",
-                        "content": (
-                            "We can automate ERP/API extraction, "
-                            "SQL processing, Excel reporting, "
-                            "scheduled MIS generation and email "
-                            "distribution."
-                        ),
-                    }
-                )
-
-                st.rerun()
-
-
-        with q4:
-
-            if st.button(
-                "🚀 Start Project",
-                key="chat_project",
-            ):
-
-                st.session_state.page = "Request Project"
-                st.session_state.chat_open = False
-                st.rerun()
-
-
-        # ----------------------------------------------------
-        # CHAT INPUT
-        # ----------------------------------------------------
-
-        chat_input = st.chat_input(
-            "Ask about your logistics project..."
-        )
-
-
-        if chat_input:
-
-            question = chat_input.strip()
-
-            if question:
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "user",
-                        "content": question,
-                    }
-                )
-
-
-                # --------------------------------------------
-                # SIMPLE AI-STYLE QUESTIONNAIRE ENGINE
-                # --------------------------------------------
-
-                q = question.lower()
-
-
-                if any(
-                    word in q
-                    for word in [
-                        "power bi",
-                        "dashboard",
-                        "bi dashboard",
-                    ]
-                ):
-
-                    answer = (
-                        "📊 For Power BI, we can build dashboards "
-                        "covering booking, delivery, pending shipments, "
-                        "RTO, ageing, hub performance, state performance "
-                        "and SLA KPIs. "
-                        "You can submit your requirement through "
-                        "the Request Project page."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "delay",
-                        "prediction",
-                        "predict",
-                        "machine learning",
-                        "ml",
-                        "ai",
-                    ]
-                ):
-
-                    answer = (
-                        "🤖 Our predictive AI solutions include "
-                        "shipment delay prediction, RTO probability "
-                        "scoring, demand forecasting, hub workload "
-                        "prediction and anomaly detection."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "tat",
-                        "ageing",
-                        "aging",
-                        "sla",
-                    ]
-                ):
-
-                    answer = (
-                        "⏱️ We provide TAT and ageing analytics including "
-                        "shipment ageing buckets, transit TAT, SLA "
-                        "breaches, route bottlenecks and delayed "
-                        "shipment identification."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "hub",
-                        "warehouse",
-                        "productivity",
-                    ]
-                ):
-
-                    answer = (
-                        "🏢 Hub analytics can measure throughput, "
-                        "booking vs delivery velocity, pending ageing, "
-                        "RTO, productivity, first-attempt delivery "
-                        "and hub SLA rankings."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "mis",
-                        "automation",
-                        "automate",
-                        "report",
-                    ]
-                ):
-
-                    answer = (
-                        "⚙️ We can automate your daily MIS using "
-                        "Python, SQL, ERP systems, REST APIs and "
-                        "Excel/reporting pipelines."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "sql",
-                        "database",
-                        "mysql",
-                        "postgres",
-                        "sql server",
-                    ]
-                ):
-
-                    answer = (
-                        "🗄️ We work with SQL-based data pipelines, "
-                        "ETL, data transformation, reporting datasets "
-                        "and analytics-ready logistics data models."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "price",
-                        "cost",
-                        "pricing",
-                        "budget",
-                        "quote",
-                    ]
-                ):
-
-                    answer = (
-                        "💰 Project pricing depends on the scope, "
-                        "data sources, dashboard complexity, automation "
-                        "requirements and AI/ML requirements. "
-                        "Please submit the Request Project form "
-                        "with your requirements and we'll review it."
-                    )
-
-
-                elif any(
-                    word in q
-                    for word in [
-                        "hello",
-                        "hi",
-                        "hey",
-                        "namaste",
-                    ]
-                ):
-
-                    answer = (
-                        "👋 Hello! I can help you with Power BI, "
-                        "logistics analytics, TAT, ageing, hub analytics, "
-                        "MIS automation, SQL, API integration and AI/ML."
-                    )
-
-
-                else:
-
-                    answer = (
-                        "👍 Thanks for your question. "
-                        "LogiIntelli specializes in logistics analytics, "
-                        "Power BI, SQL, MIS automation, API/ERP integration "
-                        "and predictive AI. "
-                        "For a detailed solution, please use "
-                        "the Request Project form."
-                    )
-
-
-                st.session_state.chat_messages.append(
-                    {
-                        "role": "assistant",
-                        "content": answer,
-                    }
-                )
-
-                st.rerun()
-
-
-        # ----------------------------------------------------
-        # CLOSE CHAT
-        # ----------------------------------------------------
-
-        if st.button(
-            "✕ Close Assistant",
-            key="close_chatbot",
-            use_container_width=True,
-        ):
-
-            st.session_state.chat_open = False
-            st.rerun()
