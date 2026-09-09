@@ -1,7 +1,9 @@
 from datetime import datetime
 import json
-import streamlit as st
+import re
+
 import requests
+import streamlit as st
 
 
 # ============================================================
@@ -9,10 +11,21 @@ import requests
 # ============================================================
 
 st.set_page_config(
-    page_title="LogiIntelli | Logistics AI, Data Analytics & Business Intelligence",
+    page_title="LogiIntelli | Logistics AI, Data Analytics & BI",
     page_icon="🚚",
     layout="wide",
     initial_sidebar_state="collapsed",
+)
+
+
+# ============================================================
+# GOOGLE APPS SCRIPT WEB APP
+# ============================================================
+
+GOOGLE_SHEET_WEB_APP_URL = (
+    "https://script.google.com/macros/s/"
+    "AKfycbyate5bFtUmuT6TB1YqYhSGq0ED09kuMSXHdkYfj86avev7GZqnSlpyhlgXOfaorycl"
+    "/exec"
 )
 
 
@@ -21,11 +34,18 @@ st.set_page_config(
 # ============================================================
 
 def html(content):
-    """
-    Render HTML directly using Streamlit's native HTML renderer.
-    This prevents HTML from appearing as plain text/code.
-    """
     st.html(content)
+
+
+# ============================================================
+# SESSION STATE
+# ============================================================
+
+if "page" not in st.session_state:
+    st.session_state.page = "Home"
+
+if "submitted" not in st.session_state:
+    st.session_state.submitted = False
 
 
 # ============================================================
@@ -34,6 +54,10 @@ def html(content):
 
 html("""
 <style>
+
+/* ============================================================
+   GLOBAL
+============================================================ */
 
 html, body {
     background-color: #F8FAFC;
@@ -53,7 +77,7 @@ html, body {
 
 .block-container {
     max-width: 1400px;
-    padding-top: 1.5rem;
+    padding-top: 1.2rem;
     padding-bottom: 3rem;
 }
 
@@ -64,19 +88,19 @@ html, body {
 
 .main-title {
     text-align: center;
-    font-size: 44px;
+    font-size: 46px;
     font-weight: 900;
     color: #0B2545;
-    letter-spacing: -1px;
+    letter-spacing: -1.5px;
     margin-bottom: 4px;
 }
 
 .sub-title {
     text-align: center;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 650;
     color: #0066CC;
-    letter-spacing: .4px;
+    letter-spacing: .5px;
     margin-bottom: 25px;
 }
 
@@ -85,8 +109,37 @@ html, body {
    NAVIGATION
 ============================================================ */
 
-.nav-button {
+.nav-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.stButton > button {
     width: 100%;
+    min-height: 42px;
+
+    border-radius: 10px;
+
+    border: 1px solid #E2E8F0;
+
+    background: #FFFFFF;
+
+    color: #0B2545;
+
+    font-weight: 700;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+.stButton > button:hover {
+    background: #0B2545;
+    color: #FFFFFF;
+    border-color: #0B2545;
+    transform: translateY(-1px);
 }
 
 
@@ -95,8 +148,10 @@ html, body {
 ============================================================ */
 
 .hero {
-    padding: 50px 45px;
-    border-radius: 20px;
+
+    padding: 52px 48px;
+
+    border-radius: 22px;
 
     background:
         linear-gradient(
@@ -109,31 +164,46 @@ html, body {
     border: 1px solid #0B2545;
 
     box-shadow:
-        0 15px 35px rgba(11, 37, 69, 0.18);
+        0 18px 40px rgba(11, 37, 69, 0.18);
 
     margin-top: 15px;
+
     margin-bottom: 35px;
 }
 
 .hero h1 {
+
     color: #FFFFFF;
-    font-size: 34px;
-    font-weight: 850;
+
+    font-size: 36px;
+
+    font-weight: 900;
+
     margin-bottom: 20px;
+
+    line-height: 1.2;
 }
 
 .hero h2 {
+
     color: #FFFFFF;
+
     font-size: 28px;
-    font-weight: 800;
+
+    font-weight: 850;
+
     margin-bottom: 15px;
 }
 
 .hero p {
+
     color: #E2E8F0;
+
     font-size: 17px;
+
     line-height: 1.75;
-    margin-bottom: 16px;
+
+    margin-bottom: 15px;
 }
 
 .hero strong {
@@ -146,17 +216,26 @@ html, body {
 ============================================================ */
 
 .section-title {
-    font-size: 30px;
-    font-weight: 850;
+
+    font-size: 31px;
+
+    font-weight: 900;
+
     color: #0B2545;
-    margin-top: 40px;
-    margin-bottom: 6px;
+
+    margin-top: 42px;
+
+    margin-bottom: 7px;
 }
 
 .section-subtitle {
+
     color: #64748B;
+
     font-size: 15px;
-    line-height: 1.6;
+
+    line-height: 1.65;
+
     margin-bottom: 25px;
 }
 
@@ -171,14 +250,14 @@ html, body {
 
     background: #FFFFFF;
 
-    padding: 25px;
+    padding: 26px;
 
-    border-radius: 16px;
+    border-radius: 17px;
 
     border: 1px solid #E2E8F0;
 
     box-shadow:
-        0 5px 15px rgba(15, 23, 42, 0.05);
+        0 6px 18px rgba(15, 23, 42, 0.05);
 
     margin-bottom: 20px;
 
@@ -197,7 +276,7 @@ html, body {
     border-color: #0066CC;
 
     box-shadow:
-        0 12px 28px rgba(0, 102, 204, 0.12);
+        0 14px 30px rgba(0, 102, 204, 0.12);
 }
 
 .card h2,
@@ -206,7 +285,7 @@ html, body {
 
     color: #0B2545;
 
-    font-weight: 800;
+    font-weight: 850;
 
     margin-bottom: 12px;
 }
@@ -226,19 +305,19 @@ html, body {
 
 
 /* ============================================================
-   METRIC CARDS
+   METRICS
 ============================================================ */
 
 .metric-card {
 
     text-align: center;
 
-    padding: 25px 15px;
+    padding: 27px 15px;
 }
 
 .metric-value {
 
-    font-size: 34px;
+    font-size: 35px;
 
     font-weight: 900;
 
@@ -253,7 +332,7 @@ html, body {
 
     font-size: 14px;
 
-    font-weight: 650;
+    font-weight: 700;
 }
 
 
@@ -265,7 +344,7 @@ html, body {
 
     font-size: 40px;
 
-    margin-bottom: 8px;
+    margin-bottom: 9px;
 }
 
 
@@ -284,7 +363,7 @@ html, body {
     border: 1px solid #E2E8F0;
 
     box-shadow:
-        0 5px 15px rgba(15, 23, 42, 0.04);
+        0 6px 18px rgba(15, 23, 42, 0.04);
 
     margin-top: 20px;
 
@@ -322,7 +401,7 @@ html, body {
 
     font-size: 15px;
 
-    font-weight: 750;
+    font-weight: 800;
 
     color: #0B2545;
 }
@@ -342,7 +421,7 @@ html, body {
 
     color: #0066CC;
 
-    font-weight: 700;
+    font-weight: 800;
 }
 
 
@@ -356,9 +435,9 @@ div[data-testid="stForm"] {
 
     border: 1px solid #E2E8F0;
 
-    border-radius: 18px;
+    border-radius: 19px;
 
-    padding: 28px;
+    padding: 30px;
 
     box-shadow:
         0 8px 25px rgba(15, 23, 42, 0.06);
@@ -368,7 +447,7 @@ div[data-testid="stWidgetLabel"] label {
 
     color: #0B2545 !important;
 
-    font-weight: 700 !important;
+    font-weight: 750 !important;
 }
 
 div[data-testid="stForm"] input,
@@ -391,38 +470,7 @@ div[data-testid="stForm"] textarea:focus {
 
 
 /* ============================================================
-   BUTTONS
-============================================================ */
-
-.stButton > button {
-
-    border-radius: 9px;
-
-    border: 1px solid #E2E8F0;
-
-    background: #FFFFFF;
-
-    color: #0B2545;
-
-    font-weight: 700;
-
-    min-height: 42px;
-
-    transition: all .2s ease;
-}
-
-.stButton > button:hover {
-
-    background: #0B2545;
-
-    color: #FFFFFF;
-
-    border-color: #0B2545;
-}
-
-
-/* ============================================================
-   SUBMIT BUTTON
+   FORM SUBMIT
 ============================================================ */
 
 div[data-testid="stFormSubmitButton"] button {
@@ -433,11 +481,13 @@ div[data-testid="stFormSubmitButton"] button {
 
     border: none !important;
 
-    border-radius: 9px !important;
+    border-radius: 10px !important;
 
-    font-weight: 750 !important;
+    font-weight: 800 !important;
 
-    padding: 10px 25px !important;
+    padding: 10px 28px !important;
+
+    min-height: 45px;
 }
 
 div[data-testid="stFormSubmitButton"] button:hover {
@@ -456,12 +506,36 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
     text-decoration: none;
 
-    font-weight: 650;
+    font-weight: 700;
 }
 
 .contact-link:hover {
 
     text-decoration: underline;
+}
+
+
+/* ============================================================
+   BADGES
+============================================================ */
+
+.badge {
+
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    background: #EFF6FF;
+
+    color: #0066CC;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    margin-top: 5px;
 }
 
 
@@ -473,7 +547,7 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
     text-align: center;
 
-    padding: 35px 20px;
+    padding: 38px 20px;
 
     margin-top: 50px;
 
@@ -488,9 +562,9 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
     color: #0B2545;
 
-    font-size: 19px;
+    font-size: 20px;
 
-    font-weight: 850;
+    font-weight: 900;
 
     margin-bottom: 10px;
 }
@@ -512,10 +586,15 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
     .hero {
         padding: 30px 22px;
+        border-radius: 16px;
     }
 
     .hero h1 {
-        font-size: 26px;
+        font-size: 27px;
+    }
+
+    .hero h2 {
+        font-size: 23px;
     }
 
     .hero p {
@@ -524,6 +603,10 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
     .section-title {
         font-size: 25px;
+    }
+
+    .metric-value {
+        font-size: 29px;
     }
 
 }
@@ -538,6 +621,7 @@ div[data-testid="stFormSubmitButton"] button:hover {
 
 html("""
 <div>
+
     <div class="main-title">
         🚚 LogiIntelli
     </div>
@@ -545,16 +629,9 @@ html("""
     <div class="sub-title">
         Logistics Analytics • AI & Predictive Intelligence • BI Automation
     </div>
+
 </div>
 """)
-
-
-# ============================================================
-# SESSION STATE
-# ============================================================
-
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
 
 
 # ============================================================
@@ -591,6 +668,9 @@ for idx, page_name in enumerate(pages):
         ):
 
             st.session_state.page = page_name
+
+            st.session_state.submitted = False
+
             st.rerun()
 
 
@@ -612,15 +692,17 @@ if page == "Home":
 
         <p>
             <strong>LogiIntelli</strong> is a Logistics AI,
-            Data Analytics, and Business Intelligence platform focused
-            on helping courier, logistics, supply chain, and e-commerce
-            businesses transform operational data into actionable intelligence.
+            Data Analytics, and Business Intelligence platform
+            focused on helping courier, logistics, supply chain,
+            and e-commerce businesses transform operational data
+            into actionable intelligence.
         </p>
 
         <p>
-            We build AI-powered logistics analytics, Power BI dashboards,
-            SQL data engineering solutions, machine learning models,
-            predictive analytics, automated MIS systems, API integrations,
+            We build AI-powered logistics analytics,
+            Power BI dashboards, SQL data engineering solutions,
+            machine learning models, predictive analytics,
+            automated MIS systems, API integrations,
             and real-time operational intelligence platforms.
         </p>
 
@@ -1092,7 +1174,7 @@ elif page == "Projects":
                     <div style="
                         color:#0066CC;
                         font-size:13px;
-                        font-weight:800;
+                        font-weight:850;
                         margin-bottom:8px;
                     ">
                         PROJECT {number}
@@ -1111,17 +1193,16 @@ elif page == "Projects":
                         {tech}
                     </p>
 
-                    <p>
-                        <strong>Category:</strong><br>
+                    <span class="badge">
                         {category}
-                    </p>
+                    </span>
 
                 </div>
                 """)
 
 
 # ============================================================
-# REQUEST PROJECT
+# REQUEST PROJECT PAGE
 # ============================================================
 
 elif page == "Request Project":
@@ -1138,23 +1219,17 @@ elif page == "Request Project":
     """)
 
 
-    GOOGLE_SHEET_WEB_APP_URL = st.secrets.get(
-        "GOOGLE_SHEET_WEB_APP_URL",
-        ""
-    )
-
-
-    if not GOOGLE_SHEET_WEB_APP_URL:
-
-        st.info(
-            "Project request system is currently being configured."
-        )
-
-
-    with st.form("project_request_form"):
+    with st.form(
+        "project_request_form",
+        clear_on_submit=False
+    ):
 
         col1, col2 = st.columns(2)
 
+
+        # ====================================================
+        # LEFT
+        # ====================================================
 
         with col1:
 
@@ -1174,6 +1249,10 @@ elif page == "Request Project":
                 "Phone / WhatsApp"
             )
 
+
+        # ====================================================
+        # RIGHT
+        # ====================================================
 
         with col2:
 
@@ -1219,9 +1298,13 @@ elif page == "Request Project":
             )
 
 
+        # ====================================================
+        # REQUIREMENT
+        # ====================================================
+
         requirement = st.text_area(
             "Describe Your Requirement *",
-            height=150,
+            height=160,
             placeholder=(
                 "Example: We need an automated daily courier "
                 "performance dashboard and an AI model for "
@@ -1231,34 +1314,49 @@ elif page == "Request Project":
 
 
         submitted = st.form_submit_button(
-            "Submit Project Request"
+            "🚀 Submit Project Request",
+            use_container_width=True,
         )
 
 
+        # ====================================================
+        # FORM VALIDATION
+        # ====================================================
+
         if submitted:
 
-            if not contact_name.strip():
+            contact_name_clean = contact_name.strip()
+
+            email_clean = email.strip()
+
+            requirement_clean = requirement.strip()
+
+
+            if not contact_name_clean:
 
                 st.warning(
                     "Please enter the Contact Person name."
                 )
 
-            elif not email.strip():
+            elif not email_clean:
 
                 st.warning(
-                    "Please enter your Email address."
+                    "Please enter your Business Email."
                 )
 
-            elif not requirement.strip():
+            elif not re.match(
+                r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                email_clean
+            ):
+
+                st.warning(
+                    "Please enter a valid email address."
+                )
+
+            elif not requirement_clean:
 
                 st.warning(
                     "Please describe your project requirement."
-                )
-
-            elif not GOOGLE_SHEET_WEB_APP_URL:
-
-                st.error(
-                    "Project request system is not configured yet."
                 )
 
             else:
@@ -1269,13 +1367,13 @@ elif page == "Request Project":
                         "%Y-%m-%d %H:%M:%S"
                     ),
 
-                    "Company": company_name,
+                    "Company": company_name.strip(),
 
-                    "Contact": contact_name,
+                    "Contact": contact_name_clean,
 
-                    "Email": email,
+                    "Email": email_clean,
 
-                    "Phone": phone,
+                    "Phone": phone.strip(),
 
                     "Service": service,
 
@@ -1283,54 +1381,99 @@ elif page == "Request Project":
 
                     "Timeline": timeline,
 
-                    "Requirement": requirement,
+                    "Requirement": requirement_clean,
                 }
 
 
+                # ====================================================
+                # SEND TO GOOGLE APPS SCRIPT
+                # ====================================================
+
                 try:
 
-                    response = requests.post(
-                        GOOGLE_SHEET_WEB_APP_URL,
-                        data=json.dumps(payload),
-                        headers={
-                            "Content-Type":
-                            "text/plain;charset=utf-8"
-                        },
-                        timeout=15,
-                    )
+                    with st.spinner(
+                        "Submitting your project request..."
+                    ):
 
+                        response = requests.post(
+
+                            GOOGLE_SHEET_WEB_APP_URL,
+
+                            data=json.dumps(payload),
+
+                            headers={
+                                "Content-Type":
+                                "text/plain;charset=utf-8"
+                            },
+
+                            timeout=20,
+
+                            allow_redirects=True,
+                        )
+
+
+                    # ====================================================
+                    # SUCCESS
+                    # ====================================================
 
                     if response.status_code == 200:
+
+                        st.session_state.submitted = True
 
                         st.success(
                             "🎉 Thank you! Your project request "
                             "has been submitted successfully."
                         )
 
+                        st.info(
+                            "Our team will review your requirement "
+                            "and contact you shortly."
+                        )
+
+
+                    # ====================================================
+                    # FAILURE
+                    # ====================================================
+
                     else:
 
                         st.error(
-                            f"Submission failed. "
-                            f"Status Code: {response.status_code}"
+                            "Submission failed. "
+                            f"Server returned status "
+                            f"{response.status_code}."
+                        )
+
+                        st.code(
+                            response.text[:500]
                         )
 
 
                 except requests.exceptions.Timeout:
 
                     st.error(
-                        "Request timed out. Please try again."
+                        "⏱️ The request timed out. "
+                        "Please try again."
+                    )
+
+
+                except requests.exceptions.ConnectionError:
+
+                    st.error(
+                        "🌐 Unable to connect to the project "
+                        "request server. Please check your "
+                        "internet connection."
                     )
 
 
                 except requests.exceptions.RequestException as e:
 
                     st.error(
-                        f"Unable to submit request: {e}"
+                        f"Unable to submit request: {str(e)}"
                     )
 
 
 # ============================================================
-# ABOUT
+# ABOUT PAGE
 # ============================================================
 
 elif page == "About":
@@ -1338,6 +1481,11 @@ elif page == "About":
     html("""
     <div class="section-title">
         About LogiIntelli
+    </div>
+
+    <div class="section-subtitle">
+        AI, analytics, automation and business intelligence
+        for logistics and supply chain operations.
     </div>
 
     <div class="card">
@@ -1389,10 +1537,14 @@ elif page == "About":
         </h3>
 
         <p>
-            🐍 Python &nbsp; • &nbsp;
-            🗄️ SQL & Data Engineering &nbsp; • &nbsp;
-            📊 Power BI & DAX &nbsp; • &nbsp;
-            🤖 Machine Learning & AI &nbsp; • &nbsp;
+            🐍 Python
+            &nbsp; • &nbsp;
+            🗄️ SQL & Data Engineering
+            &nbsp; • &nbsp;
+            📊 Power BI & DAX
+            &nbsp; • &nbsp;
+            🤖 Machine Learning & AI
+            &nbsp; • &nbsp;
             🔗 REST APIs & Automation
         </p>
 
@@ -1401,7 +1553,7 @@ elif page == "About":
 
 
 # ============================================================
-# CONTACT
+# CONTACT PAGE
 # ============================================================
 
 elif page == "Contact":
@@ -1421,6 +1573,10 @@ elif page == "Contact":
     c1, c2 = st.columns(2)
 
 
+    # ========================================================
+    # CONTACT DETAILS
+    # ========================================================
+
     with c1:
 
         html("""
@@ -1439,6 +1595,7 @@ elif page == "Contact":
                 </a>
             </p>
 
+
             <h3>
                 📱 Phone / WhatsApp
             </h3>
@@ -1456,6 +1613,10 @@ elif page == "Contact":
         </div>
         """)
 
+
+    # ========================================================
+    # SOCIAL
+    # ========================================================
 
     with c2:
 
@@ -1476,6 +1637,7 @@ elif page == "Contact":
                 </a>
             </p>
 
+
             <h3>
                 💻 GitHub
             </h3>
@@ -1492,6 +1654,30 @@ elif page == "Contact":
 
         </div>
         """)
+
+
+    # ========================================================
+    # CONTACT CTA
+    # ========================================================
+
+    html("""
+    <div class="hero">
+
+        <h2>
+            Let's Build Something Intelligent
+        </h2>
+
+        <p>
+            Whether you need a Power BI dashboard,
+            automated MIS system, SQL analytics solution,
+            logistics AI model, API integration,
+            or predictive analytics platform,
+            LogiIntelli can help transform your operational
+            data into measurable business value.
+        </p>
+
+    </div>
+    """)
 
 
 # ============================================================
