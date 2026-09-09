@@ -53,12 +53,14 @@ if "chat_submitted" not in st.session_state:
 
 # ============================================================
 # HTML HELPER
+#
 # IMPORTANT:
-# Use markdown instead of st.html for predictable rendering.
+# Use st.html() for raw HTML.
+# Do NOT change this to st.markdown().
 # ============================================================
 
 def render_html(content):
-    st.markdown(content, unsafe_allow_html=True)
+    st.html(content)
 
 
 # ============================================================
@@ -501,7 +503,7 @@ def chatbot_response(user_message):
 
     return (
         "Your conversation is complete. 🎉\n\n"
-        "Click **Start New Conversation** if you need anything else."
+        "Click **New Chat** if you need anything else."
     )
 
 
@@ -518,8 +520,7 @@ render_html(
    ============================================================ */
 
 html,
-body,
-.stApp {
+body {
 
     font-family:
         Arial,
@@ -527,11 +528,6 @@ body,
         sans-serif;
 
 }
-
-
-/* ============================================================
-   APP BACKGROUND
-   ============================================================ */
 
 .stApp {
 
@@ -567,41 +563,45 @@ body,
 
 
 /* ============================================================
-   HIDE STREAMLIT DEFAULT UI
+   HIDE STREAMLIT DEFAULT
    ============================================================ */
 
 #MainMenu {
-    visibility: hidden;
+
+    visibility: hidden !important;
+
 }
 
 footer {
-    visibility: hidden;
+
+    visibility: hidden !important;
+
 }
 
 
 /* ============================================================
-   HEADER
+   LOGO
    ============================================================ */
 
 .logo-title {
 
-    font-size: 27px !important;
+    font-size: 27px;
 
-    font-weight: 800 !important;
+    font-weight: 800;
 
-    color: #0B2545 !important;
+    color: #0B2545;
 
-    line-height: 1.2 !important;
+    line-height: 1.2;
 
 }
 
 .logo-subtitle {
 
-    font-size: 12px !important;
+    font-size: 12px;
 
-    color: #60758A !important;
+    color: #60758A;
 
-    margin-top: 3px !important;
+    margin-top: 4px;
 
 }
 
@@ -641,15 +641,13 @@ footer {
 
 .hero {
 
-    display: block !important;
+    width: 100%;
 
-    width: 100% !important;
+    box-sizing: border-box;
 
-    box-sizing: border-box !important;
+    padding: 65px 45px;
 
-    padding: 65px 45px !important;
-
-    border-radius: 28px !important;
+    border-radius: 28px;
 
     background:
         linear-gradient(
@@ -657,114 +655,85 @@ footer {
             #071d35 0%,
             #0b3c6f 45%,
             #0066cc 100%
-        ) !important;
+        );
 
-    color: white !important;
+    color: white;
 
-    margin-top: 20px !important;
+    margin-top: 20px;
 
-    margin-bottom: 35px !important;
+    margin-bottom: 35px;
 
     box-shadow:
-        0 20px 60px rgba(0, 50, 100, 0.20) !important;
+        0 20px 60px rgba(0, 50, 100, 0.20);
 
 }
 
 .hero-small-title {
 
-    display: block !important;
+    color: #7ec8ff;
 
-    color: #7ec8ff !important;
+    font-size: 14px;
 
-    font-size: 14px !important;
+    font-weight: 800;
 
-    font-weight: 800 !important;
+    letter-spacing: 1px;
 
-    letter-spacing: 1px !important;
-
-    margin-bottom: 12px !important;
+    margin-bottom: 12px;
 
 }
 
 .hero h1 {
 
-    display: block !important;
-
     color: #ffffff !important;
 
-    font-size: 50px !important;
+    font-size: 50px;
 
-    font-weight: 800 !important;
+    line-height: 1.1;
 
-    line-height: 1.1 !important;
+    font-weight: 800;
 
-    margin: 0 0 15px 0 !important;
-
-    padding: 0 !important;
-
-    visibility: visible !important;
-
-    opacity: 1 !important;
+    margin: 0 0 15px 0;
 
 }
 
 .hero p {
 
-    display: block !important;
+    max-width: 850px;
 
-    max-width: 850px !important;
+    color: #dbeeff;
 
-    color: #dbeeff !important;
+    font-size: 18px;
 
-    font-size: 18px !important;
+    line-height: 1.7;
 
-    line-height: 1.7 !important;
-
-    margin: 0 !important;
+    margin: 0;
 
 }
 
 
 /* ============================================================
-   SECTION TITLE
-   IMPORTANT FIX FOR INVISIBLE HEADINGS
+   SECTION HEADINGS
    ============================================================ */
 
 .section-title {
 
-    display: block !important;
+    display: block;
 
-    width: 100% !important;
-
-    box-sizing: border-box !important;
+    width: 100%;
 
     color: #0B2545 !important;
 
-    font-size: 30px !important;
+    font-size: 30px;
 
-    font-weight: 800 !important;
+    font-weight: 800;
 
-    line-height: 1.3 !important;
+    line-height: 1.3;
 
-    margin-top: 35px !important;
+    margin-top: 35px;
 
-    margin-bottom: 20px !important;
+    margin-bottom: 20px;
 
-    padding: 0 !important;
-
-    visibility: visible !important;
-
-    opacity: 1 !important;
-
-}
-
-.section-title * {
-
-    color: #0B2545 !important;
-
-    visibility: visible !important;
-
-    opacity: 1 !important;
+    padding: 0;
 
 }
 
@@ -778,24 +747,20 @@ footer {
 .metric-card,
 .info-card {
 
-    display: block !important;
+    background: rgba(255,255,255,0.96);
 
-    width: 100% !important;
+    border: 1px solid #e2eaf2;
 
-    box-sizing: border-box !important;
+    border-radius: 18px;
 
-    background: rgba(255,255,255,0.96) !important;
-
-    border: 1px solid #e2eaf2 !important;
-
-    border-radius: 18px !important;
-
-    padding: 24px !important;
+    padding: 24px;
 
     box-shadow:
-        0 8px 30px rgba(15,42,70,0.06) !important;
+        0 8px 30px rgba(15,42,70,0.06);
 
-    height: 100% !important;
+    height: 100%;
+
+    box-sizing: border-box;
 
 }
 
@@ -803,13 +768,13 @@ footer {
 .project-card:hover {
 
     box-shadow:
-        0 15px 40px rgba(15,42,70,0.12) !important;
+        0 15px 40px rgba(15,42,70,0.12);
 
 }
 
 
 /* ============================================================
-   CARD TEXT
+   CARD HEADINGS
    ============================================================ */
 
 .service-card h3,
@@ -820,17 +785,18 @@ footer {
 
     color: #0B2545 !important;
 
-    visibility: visible !important;
-
-    opacity: 1 !important;
-
 }
+
+
+/* ============================================================
+   CARD TEXT
+   ============================================================ */
 
 .service-card p,
 .project-card p,
 .info-card p {
 
-    color: #60758A !important;
+    color: #60758A;
 
 }
 
@@ -841,27 +807,27 @@ footer {
 
 .metric-number {
 
-    font-size: 34px !important;
+    font-size: 34px;
 
-    font-weight: 800 !important;
+    font-weight: 800;
 
-    color: #0066CC !important;
+    color: #0066CC;
 
 }
 
 .metric-label {
 
-    color: #60758A !important;
+    color: #60758A;
 
-    font-size: 14px !important;
+    font-size: 14px;
 
-    margin-top: 5px !important;
+    margin-top: 5px;
 
 }
 
 
 /* ============================================================
-   FORMS
+   FORM LABELS
    ============================================================ */
 
 .stTextInput label,
@@ -876,7 +842,7 @@ footer {
 
 
 /* ============================================================
-   SUBMIT BUTTON
+   FORM SUBMIT
    ============================================================ */
 
 .stFormSubmitButton button {
@@ -900,7 +866,7 @@ footer {
 
 
 /* ============================================================
-   FLOATING CHAT LAUNCHER
+   CHAT LAUNCHER
    ============================================================ */
 
 .st-key-chat_launcher {
@@ -919,7 +885,7 @@ footer {
 
 
 /* ============================================================
-   CHAT LAUNCHER BUTTON
+   CHAT BUTTON
    ============================================================ */
 
 .st-key-chat_launcher button {
@@ -950,7 +916,7 @@ footer {
 
 
 /* ============================================================
-   FLOATING CHAT WINDOW
+   CHAT PANEL
    ============================================================ */
 
 .st-key-chat_panel {
@@ -1000,58 +966,58 @@ footer {
             135deg,
             #071d35,
             #0066cc
-        ) !important;
+        );
 
-    color: white !important;
+    color: white;
 
-    padding: 16px !important;
+    padding: 16px;
 
-    border-radius: 15px !important;
+    border-radius: 15px;
 
-    margin-bottom: 15px !important;
+    margin-bottom: 15px;
 
 }
 
 .chat-header-title {
 
-    font-size: 17px !important;
+    font-size: 17px;
 
-    font-weight: 800 !important;
+    font-weight: 800;
 
-    color: white !important;
+    color: white;
 
 }
 
 .chat-header-status {
 
-    font-size: 11px !important;
+    font-size: 11px;
 
-    margin-top: 4px !important;
+    margin-top: 4px;
 
-    color: #cce8ff !important;
+    color: #cce8ff;
 
 }
 
 
 /* ============================================================
-   CHAT INFORMATION
+   CHAT INFO
    ============================================================ */
 
 .chat-info {
 
-    background: #f2f7fc !important;
+    background: #f2f7fc;
 
-    border-radius: 12px !important;
+    border-radius: 12px;
 
-    padding: 12px !important;
+    padding: 12px;
 
-    color: #536a80 !important;
+    color: #536a80;
 
-    font-size: 12px !important;
+    font-size: 12px;
 
-    line-height: 1.6 !important;
+    line-height: 1.6;
 
-    margin-bottom: 15px !important;
+    margin-bottom: 15px;
 
 }
 
@@ -1085,37 +1051,18 @@ footer {
 
 
 /* ============================================================
-   CHAT MARKDOWN
-   ============================================================ */
-
-.st-key-chat_panel [data-testid="stChatMessage"] p {
-
-    color: #26384a !important;
-
-}
-
-.st-key-chat_panel [data-testid="stChatMessage"] strong {
-
-    color: #0B2545 !important;
-
-}
-
-
-/* ============================================================
    FOOTER
    ============================================================ */
 
 .footer {
 
-    display: block !important;
+    text-align: center;
 
-    text-align: center !important;
+    color: #718297;
 
-    color: #718297 !important;
+    font-size: 12px;
 
-    font-size: 12px !important;
-
-    padding: 35px 10px !important;
+    padding: 35px 10px;
 
 }
 
@@ -1136,27 +1083,27 @@ footer {
 
     .hero {
 
-        padding: 40px 25px !important;
+        padding: 40px 25px;
 
-        border-radius: 20px !important;
+        border-radius: 20px;
 
     }
 
     .hero h1 {
 
-        font-size: 36px !important;
+        font-size: 36px;
 
     }
 
     .hero p {
 
-        font-size: 15px !important;
+        font-size: 15px;
 
     }
 
     .section-title {
 
-        font-size: 25px !important;
+        font-size: 25px;
 
     }
 
@@ -1597,11 +1544,17 @@ elif page == "Services":
                 f"""
 <div class="service-card">
 
-    <div style="font-size:35px;">
+    <div style="
+        font-size:35px;
+        margin-bottom:10px;
+    ">
         {icon}
     </div>
 
-    <h3 style="color:#0B2545;">
+    <h3 style="
+        color:#0B2545;
+        margin-bottom:10px;
+    ">
         {title}
     </h3>
 
@@ -1696,6 +1649,7 @@ elif page == "Projects":
 
     <h3 style="
         color:#0B2545;
+        margin-bottom:10px;
     ">
         {title}
     </h3>
@@ -2264,7 +2218,7 @@ if st.session_state.chat_open:
 
 
         # ====================================================
-        # MESSAGES
+        # CHAT MESSAGES
         # ====================================================
 
         for msg in st.session_state.chat_messages:
