@@ -106,6 +106,21 @@ footer {
 
 header[data-testid="stHeader"] {
     background: transparent !important;
+    visibility: hidden !important;
+    height: 0px !important;
+}
+
+/* Hide Streamlit Cloud top-right controls such as Manage App */
+[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+[data-testid="stStatusWidget"] {
+    display: none !important;
 }
 
 
