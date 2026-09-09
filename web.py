@@ -3,6 +3,7 @@ import json
 import re
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 # ============================================================
@@ -11,7 +12,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="JYORA Consulting | Data Analytics, AI & BI",
-    page_icon="",
+    page_icon="🚚",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -2684,4 +2685,4 @@ chatbot_html = r"""
 # RENDER CHATBOT
 # ============================================================
 
-html(chatbot_html)
+components.html(chatbot_html, height=1, scrolling=False)
